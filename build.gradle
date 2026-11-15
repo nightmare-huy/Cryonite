@@ -84,6 +84,19 @@ repositories {
             includeGroup 'mezz.jei'
         }
     }
+    maven {
+        // Create, Ponder (with Catnip) and Flywheel
+        name = 'Create'
+        url = 'https://maven.createmod.net'
+    }
+    maven {
+        // Registrate, the registration library Create is built on
+        name = 'Registrate'
+        url = 'https://maven.ithundxr.dev/snapshots'
+        content {
+            includeGroup 'com.tterrag.registrate'
+        }
+    }
 }
 
 dependencies {
@@ -92,6 +105,16 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // Create is optional as well: the Kinetic Energy Converter (compat/create) is only registered when it is installed.
+    // The "slim" jar is Create without its bundled libraries, so Ponder, Flywheel and Registrate are listed explicitly.
+    // Create is on the classpath of every dev run: runData generates the converter's files and
+    // runGameTestServer spins real shafts at 8048 RPM.
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation "net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}"
+    compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}"
+    runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}"
+    implementation "com.tterrag.registrate:Registrate:${registrate_version}"
 }
 
 // Expands ${...} placeholders of src/main/templates (neoforge.mods.toml).
@@ -106,6 +129,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_license            : mod_license,
             mod_version            : mod_version,
             jei_version_range      : jei_version_range,
+            create_version_range   : create_version_range,
     ]
     inputs.properties replaceProperties
     expand replaceProperties

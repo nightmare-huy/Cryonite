@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "side": "cryonite:block/kinetic_energy_converter_side",
+    "front": "cryonite:block/kinetic_energy_converter_front",
+    "back": "cryonite:block/kinetic_energy_converter_back",
+    "particle": "cryonite:block/kinetic_energy_converter_side"
+  },
+  "elements": [
+    {
+      "name": "casing",
+      "from": [0, 0, 0],
+      "to": [16, 12, 16],
+      "faces": {
+        "north": {"uv": [0, 4, 16, 16], "texture": "#side", "cullface": "north"},
+        "east": {"uv": [0, 4, 16, 16], "texture": "#side", "cullface": "east"},
+        "south": {"uv": [0, 4, 16, 16], "texture": "#side", "cullface": "south"},
+        "west": {"uv": [0, 4, 16, 16], "texture": "#side", "cullface": "west"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#front"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#back", "cullface": "down"}
+      }
+    },
+    {
+      "name": "collar",
+      "from": [4, 12, 4],
+      "to": [12, 14, 12],
+      "faces": {
+        "north": {"uv": [4, 0, 12, 2], "texture": "#side"},
+        "east": {"uv": [4, 0, 12, 2], "texture": "#side"},
+        "south": {"uv": [4, 0, 12, 2], "texture": "#side"},
+        "west": {"uv": [4, 0, 12, 2], "texture": "#side"},
+        "up": {"uv": [4, 4, 12, 12], "texture": "#front"}
+      }
+    }
+  ]
+}

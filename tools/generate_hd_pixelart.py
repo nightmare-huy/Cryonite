@@ -1334,11 +1334,8 @@ def engraved(mask):
     return color
 
 
-def build_gui() -> np.ndarray:
-    canvas = Canvas(256, 256)
-    width, height = 176, 166
-
-    # --- panel: dark netherite plate with a raised bevel and a faint stone grain
+def draw_panel(canvas, width, height):
+    """Dark netherite plate with a raised bevel, a faint stone grain and rounded corners."""
     outline, light, light2, dark, dark2 = (rgb(c) for c in ("#07060a", "#6d6976", "#56525e", "#131118", "#1f1d25"))
     canvas.fill(0, 0, width, height, outline)
     canvas.fill(1, 1, width - 2, height - 2, light)
@@ -1356,6 +1353,12 @@ def build_gui() -> np.ndarray:
         for dx, dy in ((0, 0), (1, 0), (0, 1)):
             canvas.px[cy + dy * sy, cx + dx * sx] = 0
         canvas.fill(cx + sx, cy + sy, 1, 1, outline)
+
+
+def build_gui() -> np.ndarray:
+    canvas = Canvas(256, 256)
+    width, height = 176, 166
+    draw_panel(canvas, width, height)
 
     # --- ancient-city trim: engraved line with sculk-teal studs, gold rivets in the corners
     trim_dark, trim_light, teal, teal_hi = (rgb(c) for c in ("#15131a", "#454150", "#0e5560", "#29c7c1"))
@@ -1436,6 +1439,241 @@ def build_gui() -> np.ndarray:
     return np.clip(np.round(canvas.px), 0, 255).astype(np.uint8)
 
 
+# ============================================================================================ Kinetic Energy Converter
+#
+# Create integration (compat/create). The block model (models/block/kinetic_energy_converter.json) is a
+# 12 pixel deep casing with a collar around the shaft:
+#   side   rows 4..15 are the casing wall (row 4 touches the front), rows 0..1 of x 4..11 wrap the collar
+#   front  the face the shaft leaves through, the centre 8x8 is the top of the collar
+#   back   the energy socket
+# The GUI sheet is 512x256: the 256x196 panel at the origin, the lit energy column and the lit RPM
+# gauge right of it. Every rectangle mirrors KineticConverterScreen.
+
+class Converter(Tier):
+    """Create's brass on netherite plating, Aether energy in the conduits."""
+    name = "converter"
+    frames = 16
+    metal = ramp("#120d16", "#1d1620", "#2b222c", "#3a3038", "#4b4148", "#5f565c", "#787076", "#978f93")   # netherite
+    handle = ramp("#5a3a22", "#8a5c38", "#c4944f", "#eabf66", "#ffeb8c")                                    # brass
+    energy = ramp("#b5179e", "#7a3fd0", "#4ea8de", "#72efdd", "#e2fff8")                                    # aether, closed loop
+    spark = ramp("#b8743f", "#f4a261", "#ffd166", "#ffe6a3", "#ffffff")                                     # aether gold
+    extra = ramp("#3d403d", "#5a5d5a", "#70756f", "#828784", "#8f9691")                                     # andesite shaft
+
+    def energy_px(self, level, x, y, t, seed):
+        wave = cyclic(self.energy, (x + y) / 16 * 1.2 - t + level * 0.09)
+        crest = max(0.0, math.sin(TAU * ((x + y) / 16 * 1.2 - t))) ** 3
+        return mix(wave, (255, 255, 255), 0.4 * crest)
+
+    def spark_px(self, level, x, y, t, seed):
+        return sample(self.spark, level + 1.0 * math.sin(TAU * (t + noise(x, y, seed) * 0.5)))
+
+
+CONVERTER = Converter()
+
+CONVERTER_SIDE = [
+    "0000beddddcb0000",     # collar, lit from above
+    "0000acccbbba0000",
+    "0000000000000000",
+    "0000000000000000",
+    "cdddddddddddddcb",     # brass rail at the front edge
+    "baaaaaaaaaaaaaa0",
+    "4555555555555552",     # netherite plate
+    "43d3333333333d31",
+    "4310000000000131",
+    "431BCDEDCBABCD31",     # aether conduit
+    "431ABCDCBAABCB31",
+    "4311111111111131",
+    "43d3333333333d31",
+    "3222222222222221",
+    "bcccccccccccccba",     # brass rail at the back edge
+    "a00000000000000a",
+]
+
+CONVERTER_BACK = [
+    "cddddddddddddddb",
+    "d55555555555554a",
+    "d5d3333333333d2a",
+    "d533333333333 2a".replace(" ", "3"),
+    "d533bddddddc332a",
+    "d533d000000b332a",
+    "d533d0BCDC0b332a",
+    "d533d0CEEC0b332a",
+    "d533d0DEED0b332a",
+    "d533d0CDCB0b332a",
+    "d533d000000b332a",
+    "d533cbbbbbba332a",
+    "d53333333333332a",
+    "d5d3333333333d2a",
+    "d42222222222222a",
+    "baaaaaaaaaaaaaa0",
+]
+
+
+def converter_front() -> list[str]:
+    """Brass frame, netherite plate, a brass collar around the shaft hole and four Aether lamps."""
+    rows = []
+    for y in range(16):
+        row = ""
+        for x in range(16):
+            edge = min(x, y, 15 - x, 15 - y)
+            ring = max(abs(x - 7.5), abs(y - 7.5))          # 0.5 in the centre, 7.5 on the border
+            lit = (x + y) < 15                              # top left half catches the light
+            if edge == 0:
+                token = "d" if (y == 0 or x == 0) and lit else "b" if lit else "a"
+            elif ring <= 1.5:
+                token = "0" if ring <= 0.5 else "1"         # the hole, hidden behind the shaft
+            elif ring <= 2.5:
+                token = "a"                                 # shadow around the shaft
+            elif ring <= 3.5:
+                token = "d" if lit else "b"                 # top of the collar
+            elif ring <= 4.5:
+                token = "1"                                 # shadow under the collar
+            elif edge == 1:
+                token = "5" if lit else "2"
+            else:
+                token = "3"
+            row += token
+        rows.append(row)
+    lamps = "7,2:CD 7,13:DC 2,7:C 2,8:D 13,7:D 13,8:C 2,2:d 13,2:c 2,13:c 13,13:b 5,5:e 10,10:a"
+    return patch(rows, lamps)
+
+
+def build_converter(sprites):
+    front = converter_front()
+    for grid, name in ((CONVERTER_SIDE, "side"), (front, "front"), (CONVERTER_BACK, "back")):
+        check_grid(grid, "converter " + name)
+        sprites[f"block/kinetic_energy_converter_{name}"] = (animate(grid, CONVERTER, "converter_" + name), CONVERTER)
+
+
+CONVERTER_GUI_SIZE = (256, 196)
+CONVERTER_BAR = (11, 21, 16, 164)            # energy column, lit sprite at u=256 v=0
+CONVERTER_GAUGE = (39, 179, 204, 4)          # RPM gauge, lit sprite at u=280 v=0
+CONVERTER_READOUT = (34, 143, 214, 43)       # recessed plate behind the three readouts and the gauge
+CONVERTER_CONTENT = (34, 214)                # x and width of the widget column
+CONVERTER_ROWS = (32, 54, 76, 98, 120)       # y of the five 18 pixel high widget rows
+
+BOLT_ICON = [
+    "....##.",
+    "...##..",
+    "..##...",
+    ".#####.",
+    "...##..",
+    "..##...",
+    ".##....",
+    ".#.....",
+]
+
+COG_ICON = [
+    "...##.##...",
+    ".#.#####.#.",
+    ".#########.",
+    "..###.###..",
+    "####...####",
+    ".###...###.",
+    "####...####",
+    "..###.###..",
+    ".#########.",
+    ".#.#####.#.",
+    "...##.##...",
+]
+
+
+def build_converter_gui() -> np.ndarray:
+    canvas = Canvas(512, 256)
+    width, height = CONVERTER_GUI_SIZE
+    draw_panel(canvas, width, height)
+
+    brass_dark, brass, brass_hi = rgb("#5a3a22"), rgb("#c4944f"), rgb("#ffeb8c")
+    trim_dark, trim_light = rgb("#15131a"), rgb("#454150")
+
+    # --- brass frame with rivets in the corners, a brass rule under the title
+    canvas.bevel(5, 5, width - 10, height - 10, trim_dark, trim_light)
+    for x, y in ((4, 4), (width - 7, 4), (4, height - 7), (width - 7, height - 7)):
+        canvas.fill(x, y, 3, 3, brass_dark)
+        canvas.fill(x, y, 2, 2, brass)
+        canvas.fill(x, y, 1, 1, brass_hi)
+    canvas.fill(10, 17, width - 20, 1, brass_dark)
+    canvas.fill(10, 16, width - 20, 1, brass)
+    for x in range(22, width - 20, 24):
+        canvas.fill(x, 16, 2, 1, brass_hi)
+
+    # --- icons next to the title: energy on the left, rotation on the right
+    for (ix, iy), rows, color in (((16, 7), BOLT_ICON, rgb("#72efdd")), ((width - 27, 5), COG_ICON, brass)):
+        for my, row in enumerate(rows):
+            for mx, c in enumerate(row):
+                if c == "#":
+                    canvas.fill(ix + mx, iy + my, 1, 1, color)
+
+    # --- energy column: recessed slot with a tick every 10 %
+    bx, by, bw, bh = CONVERTER_BAR
+    canvas.fill(bx, by, bw, bh, rgb("#0d0b11"))
+    canvas.bevel(bx - 1, by - 1, bw + 2, bh + 2, SLOT_DARK, SLOT_LIGHT, corner=mix(SLOT_DARK, SLOT_LIGHT, 0.5))
+    for step in range(1, 10):
+        y = by + bh - round(bh * step / 10)
+        canvas.fill(bx, y, 3 if step != 5 else 5, 1, rgb("#3a3742"))
+
+    # --- faint recesses behind the widget rows, so the buttons sit in the plate
+    cx, cw = CONVERTER_CONTENT
+    for y in CONVERTER_ROWS:
+        canvas.fill(cx - 1, y - 1, cw + 2, 20, rgb("#211f27"))
+        canvas.bevel(cx - 1, y - 1, cw + 2, 20, rgb("#19171e"), rgb("#3d3a45"))
+
+    # --- readouts: dark plate with a brass rule above, the RPM gauge at its bottom
+    rx, ry, rw, rh = CONVERTER_READOUT
+    canvas.fill(rx, ry - 3, rw, 1, brass_dark)
+    canvas.fill(rx, ry - 4, rw, 1, brass)
+    canvas.fill(rx, ry, rw, rh, rgb("#15131a"))
+    canvas.bevel(rx, ry, rw, rh, SLOT_DARK, SLOT_LIGHT, corner=mix(SLOT_DARK, SLOT_LIGHT, 0.5))
+    gx, gy, gw, gh = CONVERTER_GAUGE
+    canvas.fill(gx, gy, gw, gh, rgb("#08070b"))
+    canvas.bevel(gx - 1, gy - 1, gw + 2, gh + 2, rgb("#050407"), rgb("#4b4753"))
+    for step in range(1, 8):                                     # a tick every 1006 RPM, a longer one at 256
+        canvas.fill(gx + round(gw * step / 8), gy + gh - 1, 1, 1, rgb("#3a3742"))
+    canvas.fill(gx + round(gw * 256 / 8048), gy, 1, gh, rgb("#5a3a22"))
+
+    # --- lit energy column (u=256): Aether colours, brighter towards the top, split into cells
+    aether = ramp("#b5179e", "#7a3fd0", "#4ea8de", "#72efdd", "#e2fff8")
+    for y in range(bh):
+        level = (bh - 1 - y) / (bh - 1) * (len(aether) - 1)
+        for x in range(bw):
+            color = sample(aether, level)
+            shade = 1.18 if x in (1, 2) else 0.72 if x in (0, bw - 1) else 0.88 if x >= bw - 3 else 1.0
+            if (bh - 1 - y) % 4 == 3:
+                shade *= 0.62                                         # cell borders
+            canvas.fill(256 + x, y, 1, 1, np.clip(color * shade, 0, 255))
+
+    # --- lit RPM gauge (u=280): the four tiers from left to right
+    journey = ramp("#00b4d8", "#48cae4", "#ff6d00", "#ffba08", "#9d4edd", "#e0aaff", "#ffd166", "#ffffff")
+    for x in range(gw):
+        color = sample(journey, x / (gw - 1) * (len(journey) - 1))
+        for y in range(gh):
+            shade = 1.15 if y == 1 else 0.7 if y == gh - 1 else 0.9 if y == 0 else 1.0
+            canvas.fill(280 + x, y, 1, 1, np.clip(color * shade, 0, 255))
+
+    return np.clip(np.round(canvas.px), 0, 255).astype(np.uint8)
+
+
+def preview_converter(sprites, images, path: Path):
+    """Contact sheet of the converter: its three faces and the panel with the lit sprites in place."""
+    scale, pad = 2, 8
+    gui = images["gui/container/kinetic_converter_gui"]
+    width, height = CONVERTER_GUI_SIZE
+    panel = gui[:height, :width].copy()
+    bx, by, bw, bh = CONVERTER_BAR
+    filled = round(bh * 0.7)
+    panel[by + bh - filled:by + bh, bx:bx + bw] = gui[bh - filled:bh, 256:256 + bw]
+    gx, gy, gw, gh = CONVERTER_GAUGE
+    panel[gy:gy + gh, gx:gx + gw] = gui[0:gh, 280:280 + gw]
+    faces = [sprites[f"block/kinetic_energy_converter_{name}"][0][0] for name in ("front", "side", "back")]
+    face = 16 * 6
+    sheet = Image.new("RGBA", (width * scale + face + 3 * pad, max(height * scale, 3 * (face + pad)) + 2 * pad), (139, 139, 139, 255))
+    sheet.alpha_composite(Image.fromarray(panel, "RGBA").resize((width * scale, height * scale), Image.NEAREST), (pad, pad))
+    for i, tile in enumerate(faces):
+        sheet.alpha_composite(Image.fromarray(tile, "RGBA").resize((face, face), Image.NEAREST), (width * scale + 2 * pad, pad + i * (face + pad)))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sheet.convert("RGB").save(path)
+
+
 # ============================================================================================ output
 
 
@@ -1464,11 +1702,12 @@ def check_names(sprites, images):
     """Every texture the generated models reference must exist, and nothing may be left unreferenced."""
     import re
     models = ROOT / "src" / "generated" / "resources" / "assets" / MODID / "models"
+    handmade = ROOT / "src" / "main" / "resources" / "assets" / MODID / "models"
     referenced = set()
-    for model in models.rglob("*.json"):
+    for model in list(models.rglob("*.json")) + list(handmade.rglob("*.json")):
         referenced.update(re.findall(rf'"{MODID}:((?:item|block)/[a-z0-9_/]+)"', model.read_text()))
     referenced = {name for name in referenced if (OUT / (name + ".png")).exists() or name in sprites
-                  or not (models / (name + ".json")).exists()}        # model parents are not textures
+                  or not any((root / (name + ".json")).exists() for root in (models, handmade))}   # model parents are not textures
     produced = {name for name in sprites if name.startswith(("item/", "block/"))}
     problems = [f"referenced by a model but not generated: {n}" for n in sorted(referenced - produced)]
     problems += [f"generated but not referenced by any model: {n}" for n in sorted(produced - referenced)]
@@ -1525,14 +1764,17 @@ def main():
     images: dict[str, np.ndarray] = {}
     build_items(sprites)
     build_blocks(sprites)
+    build_converter(sprites)
     build_armor(images)
     images["gui/container/primordial_smelter"] = build_gui()
+    images["gui/container/kinetic_converter_gui"] = build_converter_gui()
 
     animated = sum(write_sprite(name, frames, tier) for name, (frames, tier) in sprites.items())
     for name, pixels in images.items():
         save_png(OUT / (name + ".png"), pixels)
     print(f"written to {OUT.relative_to(ROOT)}: {len(sprites)} item/block textures ({animated} animated), "
-          f"{sum(n.startswith('models/') for n in images)} armor layers, 1 GUI sheet")
+          f"{sum(n.startswith('models/') for n in images)} armor layers, "
+          f"{sum(n.startswith('gui/') for n in images)} GUI sheets")
 
     problems = check_names(sprites, images)
     for problem in problems:
@@ -1541,7 +1783,9 @@ def main():
 
     if args.preview:
         preview(sprites, images, Path(args.preview))
-        print(f"preview: {args.preview}")
+        converter = Path(args.preview).with_name("kinetic_converter.png")
+        preview_converter(sprites, images, converter)
+        print(f"preview: {args.preview}, {converter}")
     return 1 if problems else 0
 
 

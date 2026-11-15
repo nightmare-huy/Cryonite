@@ -9,6 +9,7 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
@@ -82,6 +83,10 @@ public class CryoniteJeiPlugin implements IModPlugin {
         info(registration, ModItems.INACTIVE_AETHER, page("inactive_aether"));
         info(registration, ModItems.AETHER_INGOT, page("aether_ingot"));
         info(registration, ModItems.PRIMORDIAL_SMELTER, page("primordial_smelter"));
+
+        // ---- Create integration: the block is only registered while Create is installed
+        BuiltInRegistries.ITEM.getOptional(Cryonite.KINETIC_ENERGY_CONVERTER)
+                .ifPresent(converter -> info(registration, converter, page("kinetic_energy_converter")));
     }
 
     private static void info(IRecipeRegistration registration, ItemLike item, String... translationKeys) {

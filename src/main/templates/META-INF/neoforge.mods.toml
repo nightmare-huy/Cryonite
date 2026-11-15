@@ -33,3 +33,11 @@ forged in the Primordial Smelter.
     versionRange="${jei_version_range}"
     ordering="NONE"
     side="CLIENT"
+
+# Optional: adds the Kinetic Energy Converter, an FE powered generator of rotation (compat/create).
+[[dependencies.${mod_id}]]
+    modId="create"
+    type="optional"
+    versionRange="${create_version_range}"
+    ordering="AFTER"
+    side="BOTH"

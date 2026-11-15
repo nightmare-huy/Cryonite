@@ -3,6 +3,7 @@ package dev.nightmarehuy.cryonite.datagen;
 import dev.nightmarehuy.cryonite.Cryonite;
 import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlock;
 import dev.nightmarehuy.cryonite.registry.ModBlocks;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
@@ -23,6 +24,19 @@ public class ModBlockStateProvider extends BlockStateProvider {
         cube(ModBlocks.VOID_ORE);
         cube(ModBlocks.INFERNITE_BLOCK);
         smelter();
+        kineticEnergyConverter();
+    }
+
+    /**
+     * Create integration: the hand-made model points its shaft side up and is turned towards FACING.
+     * The block only exists while Create is installed, which is the case for every dev run (see build.gradle).
+     */
+    private void kineticEnergyConverter() {
+        Block converter = BuiltInRegistries.BLOCK.getOptional(Cryonite.KINETIC_ENERGY_CONVERTER)
+                .orElseThrow(() -> new IllegalStateException("The Kinetic Energy Converter is not registered: run the data generators with Create"));
+        ModelFile model = models().getExistingFile(modLoc("block/kinetic_energy_converter"));
+        directionalBlock(converter, model);
+        simpleBlockItem(converter, model);
     }
 
     private void cube(DeferredBlock<? extends Block> block) {

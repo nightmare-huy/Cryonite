@@ -40,7 +40,8 @@ public final class ModTagProviders {
                     ModBlocks.CRYONITE_ORE.get(),
                     ModBlocks.INFERNITE_ORE.get(),
                     ModBlocks.VOID_ORE.get(),
-                    ModBlocks.INFERNITE_BLOCK.get());
+                    ModBlocks.INFERNITE_BLOCK.get())
+                    .addOptional(Cryonite.KINETIC_ENERGY_CONVERTER);
 
             // ---- what a multitool digs (this tag only feeds its vanilla Tool component)
             tag(ModTags.Blocks.MINEABLE_WITH_MULTITOOL)
@@ -52,7 +53,8 @@ public final class ModTagProviders {
                     .addTag(BlockTags.LEAVES);
 
             // ---- what each block needs
-            tag(BlockTags.NEEDS_DIAMOND_TOOL).add(ModBlocks.PRIMORDIAL_SMELTER.get(), ModBlocks.INFERNITE_BLOCK.get());
+            tag(BlockTags.NEEDS_DIAMOND_TOOL).add(ModBlocks.PRIMORDIAL_SMELTER.get(), ModBlocks.INFERNITE_BLOCK.get())
+                    .addOptional(Cryonite.KINETIC_ENERGY_CONVERTER);     // exists only with Create installed
             tag(Tags.Blocks.NEEDS_NETHERITE_TOOL).add(ModBlocks.CRYONITE_ORE.get());
             tag(ModTags.Blocks.NEEDS_CRYONITE_TOOL).add(ModBlocks.INFERNITE_ORE.get());
             tag(ModTags.Blocks.NEEDS_INFERNITE_TOOL).add(ModBlocks.VOID_ORE.get());

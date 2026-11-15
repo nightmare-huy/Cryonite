@@ -93,6 +93,30 @@ public final class ModLanguageProvider {
             add("gui.cryonite.slot.catalyst", "Catalyst");
             add("gui.cryonite.slot.fuel", "Special fuel");
 
+            // Create integration: the Kinetic Energy Converter (compat/create) and its control panel.
+            add("block.cryonite.kinetic_energy_converter", "Kinetic Energy Converter");
+            add("container.cryonite.kinetic_energy_converter", "Kinetic Energy Converter");
+            add("gui.cryonite.kinetic_converter.target", "Target speed, 0–8048 RPM");
+            add("gui.cryonite.kinetic_converter.apply", "Apply");
+            add("gui.cryonite.kinetic_converter.slider", "Speed: %s RPM");
+            add("gui.cryonite.kinetic_converter.preset.min", "MIN (0)");
+            add("gui.cryonite.kinetic_converter.preset.max", "MAX (8048)");
+            add("gui.cryonite.kinetic_converter.direction", "Direction: %s");
+            add("gui.cryonite.kinetic_converter.direction.cw", "CW ⟳");
+            add("gui.cryonite.kinetic_converter.direction.ccw", "CCW ⟲");
+            add("gui.cryonite.kinetic_converter.power.on", "Power: ON");
+            add("gui.cryonite.kinetic_converter.power.off", "Power: OFF");
+            add("gui.cryonite.kinetic_converter.speed", "Speed: %s RPM");
+            add("gui.cryonite.kinetic_converter.output", "Power output: %s SU");
+            add("gui.cryonite.kinetic_converter.consumption", "Consumption: %s FE/t");
+            add("gui.cryonite.kinetic_converter.energy", "Energy: %s / %s FE");
+            add("gui.cryonite.kinetic_converter.energy.input", "Input: up to %s FE/t");
+            add("gui.cryonite.kinetic_converter.status.running", "Running");
+            add("gui.cryonite.kinetic_converter.status.off", "Switched off");
+            add("gui.cryonite.kinetic_converter.status.idle", "Idle");
+            add("gui.cryonite.kinetic_converter.status.no_energy", "No energy");
+            add("gui.cryonite.kinetic_converter.status.overstressed", "Overstressed");
+
             add("death.attack.cryonite.aether_burst", "%1$s was erased by Aether");
             add("death.attack.cryonite.aether_burst.player", "%1$s was erased by the Aether of %2$s");
             add("death.attack.cryonite.aether_burst.item", "%1$s was erased by %2$s using %3$s");
@@ -160,6 +184,10 @@ public final class ModLanguageProvider {
             add("tooltip.cryonite.primordial_smelter.purpose", "Smelts the materials of all four tiers");
             add("tooltip.cryonite.primordial_smelter.slots", "Slots: input, up to two catalysts, fuel");
             add("tooltip.cryonite.primordial_smelter.fuel", "Every recipe burns its own fuel");
+            add("tooltip.cryonite.kinetic_energy_converter.purpose", "Turns Forge Energy into rotation for Create");
+            add("tooltip.cryonite.kinetic_energy_converter.energy", "Buffer: 10,000,000 FE, input up to 1,000,000 FE/t on five sides");
+            add("tooltip.cryonite.kinetic_energy_converter.speed", "0–8048 RPM, 1024 SU and 4 FE/t per RPM");
+            add("tooltip.cryonite.kinetic_energy_converter.gui", "Right-click to set speed and direction");
 
             // JEI (compat/jei): the two documentation categories.
             add("jei.cryonite.category.world_interaction", "World Processing (Quenching & Stabilizing)");
@@ -193,6 +221,7 @@ public final class ModLanguageProvider {
             add("jei.cryonite.info.inactive_aether", "Crafting table: Netherite Ingot + Cryonite Ingot + Infernite Ingot + Void Ingot.\n\nSmelt it in the Primordial Smelter with a Block of Infernite as fuel to get an Aether Ingot.");
             add("jei.cryonite.info.aether_ingot", "Inactive Aether smelted in the Primordial Smelter on a Block of Infernite.\n\nAether weapons, tools and armor are crafted on the crafting table in the usual shapes (ingots and sticks), no template needed.");
             add("jei.cryonite.info.primordial_smelter", "Crafting: 4 Obsidian, 2 Blaze Rods, 2 Netherite Scrap and a Blast Furnace.\n\nSlots: main ingredient, up to two catalysts, fuel and result. Catalyst slots a recipe does not use must stay empty. Every recipe burns its own fuel, ordinary fuel does not work:\n- Raw Cryonite, Cryonite dust: Blaze Rod or Magma Block\n- Cooled Infernite Blank: Blaze Powder, Blaze Rod or Lava Bucket\n- Stabilized Void Clusters: Blaze Rod or Lava Bucket\n- Inactive Aether: Block of Infernite");
+            add("jei.cryonite.info.kinetic_energy_converter", "Needs the Create mod. Crafting: Cryonite, Infernite, Void and Aether Ingots in the corners, a Block of Redstone on top, an Electron Tube, a Brass Casing and a Shaft in the middle row, a Precision Mechanism at the bottom.\n\nTurns Forge Energy into rotation. The shaft leaves through the front; the other five sides accept up to 1,000,000 FE/t from the cables of any mod into a buffer of 10,000,000 FE.\n\nRight-click opens the control panel: speed from 0 to 8048 RPM, direction and a power switch.\n- Stress capacity: 1024 SU per RPM (8,241,152 SU at 8048 RPM)\n- Consumption: 4 FE/t per RPM (32,192 FE/t at 8048 RPM)\nWithout energy the generator stops.\n\nWith this block installed Create's speed limit (maxRotationSpeed) is raised from 256 to 8048 RPM.");
         }
 
         private void gear(GearTier tier, String name) {
@@ -304,6 +333,30 @@ public final class ModLanguageProvider {
             add("gui.cryonite.slot.catalyst", "Катализатор");
             add("gui.cryonite.slot.fuel", "Особое топливо");
 
+            // Интеграция с Create: Кинетический преобразователь энергии (compat/create) и его панель управления.
+            add("block.cryonite.kinetic_energy_converter", "Кинетический преобразователь энергии");
+            add("container.cryonite.kinetic_energy_converter", "Кинетический преобразователь энергии");
+            add("gui.cryonite.kinetic_converter.target", "Целевая скорость, 0–8048 RPM");
+            add("gui.cryonite.kinetic_converter.apply", "Применить");
+            add("gui.cryonite.kinetic_converter.slider", "Скорость: %s RPM");
+            add("gui.cryonite.kinetic_converter.preset.min", "MIN (0)");
+            add("gui.cryonite.kinetic_converter.preset.max", "MAX (8048)");
+            add("gui.cryonite.kinetic_converter.direction", "Направление: %s");
+            add("gui.cryonite.kinetic_converter.direction.cw", "CW ⟳");
+            add("gui.cryonite.kinetic_converter.direction.ccw", "CCW ⟲");
+            add("gui.cryonite.kinetic_converter.power.on", "Питание: ВКЛ");
+            add("gui.cryonite.kinetic_converter.power.off", "Питание: ВЫКЛ");
+            add("gui.cryonite.kinetic_converter.speed", "Скорость: %s RPM");
+            add("gui.cryonite.kinetic_converter.output", "Выход мощности: %s SU");
+            add("gui.cryonite.kinetic_converter.consumption", "Потребление: %s FE/t");
+            add("gui.cryonite.kinetic_converter.energy", "Энергия: %s / %s FE");
+            add("gui.cryonite.kinetic_converter.energy.input", "Приём: до %s FE/t");
+            add("gui.cryonite.kinetic_converter.status.running", "Работает");
+            add("gui.cryonite.kinetic_converter.status.off", "Выключен");
+            add("gui.cryonite.kinetic_converter.status.idle", "Простой");
+            add("gui.cryonite.kinetic_converter.status.no_energy", "Нет энергии");
+            add("gui.cryonite.kinetic_converter.status.overstressed", "Перегрузка");
+
             add("death.attack.cryonite.aether_burst", "%1$s стёрт Эфиром");
             add("death.attack.cryonite.aether_burst.player", "%1$s стёрт Эфиром игрока %2$s");
             add("death.attack.cryonite.aether_burst.item", "%1$s стёрт игроком %2$s с помощью %3$s");
@@ -371,6 +424,10 @@ public final class ModLanguageProvider {
             add("tooltip.cryonite.primordial_smelter.purpose", "Плавит материалы всех четырёх тиров");
             add("tooltip.cryonite.primordial_smelter.slots", "Слоты: сырьё, до двух катализаторов, топливо");
             add("tooltip.cryonite.primordial_smelter.fuel", "У каждого рецепта своё топливо");
+            add("tooltip.cryonite.kinetic_energy_converter.purpose", "Превращает энергию FE во вращение для Create");
+            add("tooltip.cryonite.kinetic_energy_converter.energy", "Буфер: 10 000 000 FE, приём до 1 000 000 FE/t с пяти сторон");
+            add("tooltip.cryonite.kinetic_energy_converter.speed", "0–8048 RPM, 1024 SU и 4 FE/t на каждый RPM");
+            add("tooltip.cryonite.kinetic_energy_converter.gui", "ПКМ: настройка скорости и направления");
 
             // JEI (compat/jei): the two documentation categories.
             add("jei.cryonite.category.world_interaction", "Мировая переработка (закалка и стабилизация)");
@@ -404,6 +461,7 @@ public final class ModLanguageProvider {
             add("jei.cryonite.info.inactive_aether", "Верстак: незеритовый слиток + Крионитовый слиток + Инфернитовый слиток + Слиток Войда.\n\nПереплавьте в Первородной Плавильне, используя Блок инфернита как топливо, и получите Эфирный слиток.");
             add("jei.cryonite.info.aether_ingot", "Неактивный Эфир, переплавленный в Первородной Плавильне на Блоке инфернита.\n\nЭфирное оружие, инструменты и броня крафтятся на верстаке по обычным схемам (слитки и палки), шаблон не нужен.");
             add("jei.cryonite.info.primordial_smelter", "Крафт: 4 обсидиана, 2 огненных стержня, 2 незеритовых лома и плавильная печь.\n\nСлоты: основной ингредиент, до двух катализаторов, топливо и результат. Слоты катализаторов, не занятые рецептом, должны быть пустыми. У каждого рецепта своё топливо, обычное не подходит:\n- Сырой крионит, пыль крионита: огненный стержень или блок магмы\n- Охлаждённая инфернитовая заготовка: огненный порошок, огненный стержень или ведро лавы\n- Стабилизированные кластеры Войда: огненный стержень или ведро лавы\n- Неактивный Эфир: Блок инфернита");
+            add("jei.cryonite.info.kinetic_energy_converter", "Нужен мод Create. Крафт: слитки крионита, инфернита, Войда и Эфира по углам, блок редстоуна сверху, электронная лампа, латунный корпус и вал в среднем ряду, механизм точности снизу.\n\nПревращает энергию FE во вращение. Вал выходит из передней стороны, остальные пять сторон принимают до 1 000 000 FE/t от кабелей любого мода в буфер на 10 000 000 FE.\n\nПКМ открывает панель управления: скорость от 0 до 8048 RPM, направление и выключатель.\n- Мощность: 1024 SU на каждый RPM (8 241 152 SU при 8048 RPM)\n- Потребление: 4 FE/t на каждый RPM (32 192 FE/t при 8048 RPM)\nБез энергии генератор останавливается.\n\nС этим блоком лимит скорости Create (maxRotationSpeed) поднят с 256 до 8048 RPM.");
         }
 
         private void gear(GearTier tier, String masculine, String feminine, String plural) {

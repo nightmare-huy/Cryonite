@@ -15,11 +15,13 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
 public class ModRecipeProvider extends RecipeProvider {
@@ -42,6 +44,7 @@ public class ModRecipeProvider extends RecipeProvider {
         aether(output);
         upgrades(output);
         multitools(output);
+        kineticEnergyConverter(output);
     }
 
     // ------------------------------------------------------------------ the smelter itself
@@ -57,6 +60,38 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('F', Items.BLAST_FURNACE)
                 .unlockedBy("has_netherite_scrap", has(Items.NETHERITE_SCRAP))
                 .save(output);
+    }
+
+    // ------------------------------------------------------------------ Create integration
+
+    /**
+     * Kinetic Energy Converter: the ingots of all four tiers in the corners of a Brass Casing,
+     * energy enters on the left (Electron Tube), rotation leaves on the right (Shaft).
+     * The recipe is only loaded while Create is installed.
+     */
+    private void kineticEnergyConverter(RecipeOutput output) {
+        Item converter = BuiltInRegistries.ITEM.getOptional(Cryonite.KINETIC_ENERGY_CONVERTER)
+                .orElseThrow(() -> new IllegalStateException("The Kinetic Energy Converter is not registered: run the data generators with Create"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, converter)
+                .pattern("CRI")
+                .pattern("EBS")
+                .pattern("VPA")
+                .define('C', ModItems.CRYONITE_INGOT)
+                .define('I', ModItems.INFERNITE_INGOT)
+                .define('V', ModItems.VOID_INGOT)
+                .define('A', ModItems.AETHER_INGOT)
+                .define('R', Items.REDSTONE_BLOCK)
+                .define('E', createItem("electron_tube"))
+                .define('B', createItem("brass_casing"))
+                .define('S', createItem("shaft"))
+                .define('P', createItem("precision_mechanism"))
+                .unlockedBy("has_aether_ingot", has(ModItems.AETHER_INGOT))
+                .save(output.withConditions(new ModLoadedCondition(Cryonite.CREATE_MODID)));
+    }
+
+    private static Item createItem(String path) {
+        return BuiltInRegistries.ITEM.getOptional(ResourceLocation.fromNamespaceAndPath(Cryonite.CREATE_MODID, path))
+                .orElseThrow(() -> new IllegalStateException("Create has no item named " + path));
     }
 
     // ------------------------------------------------------------------ tier 1

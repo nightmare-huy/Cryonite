@@ -3,6 +3,7 @@ package dev.nightmarehuy.cryonite.registry;
 import dev.nightmarehuy.cryonite.Cryonite;
 import dev.nightmarehuy.cryonite.tier.GearTier;
 import java.util.function.Supplier;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -44,6 +45,9 @@ public final class ModCreativeTabs {
                 for (GearTier tier : GearTier.values()) {
                     ModItems.gear(tier).all().forEach(output::accept);
                 }
+
+                // Only registered while Create is installed (compat/create).
+                BuiltInRegistries.ITEM.getOptional(Cryonite.KINETIC_ENERGY_CONVERTER).ifPresent(output::accept);
             })
             .build());
 
