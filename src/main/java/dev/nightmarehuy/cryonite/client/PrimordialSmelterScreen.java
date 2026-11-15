@@ -30,6 +30,9 @@ public class PrimordialSmelterScreen extends AbstractContainerScreen<PrimordialS
     private static final int FLAME_V = 0;
     private static final int ARROW_U = 176;
     private static final int ARROW_V = 14;
+    // The panel is dark, so the labels use light colours instead of the vanilla dark grey.
+    private static final int TITLE_COLOR = 0xEBD9A8;
+    private static final int LABEL_COLOR = 0xA9A5B4;
 
     public PrimordialSmelterScreen(PrimordialSmelterMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -58,6 +61,12 @@ public class PrimordialSmelterScreen extends AbstractContainerScreen<PrimordialS
         if (arrow > 0) {
             graphics.blit(TEXTURE, leftPos + ARROW_X, topPos + ARROW_Y, ARROW_U, ARROW_V, arrow, ARROW_HEIGHT);
         }
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        graphics.drawString(font, title, titleLabelX, titleLabelY, TITLE_COLOR, false);
+        graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, LABEL_COLOR, false);
     }
 
     @Override

@@ -50,4 +50,12 @@ GitHub Actions (`.github/workflows/build.yml`) на каждый push компи
 - `src/main/java/dev/nightmarehuy/cryonite/` — код (`registry`, `tier`, `item`, `block`, `recipe`, `menu`, `ability`,
   `event`, `network`, `loot`, `worldgen`, `client`, `datagen`, `gametest`).
 - `src/generated/resources/` — результат `runData`, руками не редактируется.
-- `tools/gen_textures.py` — процедурный генератор всех текстур (нужен Pillow).
+- `tools/generate_hd_pixelart.py` — генератор всех текстур (предметы, блоки, броня на игроке, GUI) и их
+  `.png.mcmeta`; нужны Pillow и numpy. Ванильные текстуры (фон руд, шейдинг незеритовой брони и т. п.) скрипт берёт
+  из кэша Gradle после первой сборки или из пути `--vanilla <папка или jar>`.
+
+## Текстуры
+
+![Текстуры мода](docs/textures.png)
+
+Перегенерация: `python tools/generate_hd_pixelart.py --preview docs/textures.png`.
