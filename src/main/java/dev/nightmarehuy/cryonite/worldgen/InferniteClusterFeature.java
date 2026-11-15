@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -52,20 +53,20 @@ public class InferniteClusterFeature extends Feature<NoneFeatureConfiguration> {
                     }
                     boolean inner = Math.max(Math.abs(dx), Math.max(Math.abs(dy), Math.abs(dz))) <= 1;
                     BlockState shell = inner ? Blocks.MAGMA_BLOCK.defaultBlockState() : Blocks.BLACKSTONE.defaultBlockState();
-                    level.setBlock(cursor, shell, UPDATE_CLIENTS);
+                    level.setBlock(cursor, shell, Block.UPDATE_CLIENTS);
                 }
             }
         }
 
         // Core: the origin plus up to two neighbours.
         BlockState ore = ModBlocks.INFERNITE_ORE.get().defaultBlockState();
-        level.setBlock(origin, ore, UPDATE_CLIENTS);
+        level.setBlock(origin, ore, Block.UPDATE_CLIENTS);
         int extra = random.nextInt(3);
         for (int i = 0; i < extra; i++) {
             BlockPos neighbour = origin.relative(Direction.getRandom(random));
             BlockState current = level.getBlockState(neighbour);
             if (current.is(Blocks.MAGMA_BLOCK) || isReplaceable(level, neighbour)) {
-                level.setBlock(neighbour, ore, UPDATE_CLIENTS);
+                level.setBlock(neighbour, ore, Block.UPDATE_CLIENTS);
             }
         }
         return true;
