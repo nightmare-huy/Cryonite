@@ -1028,6 +1028,8 @@ public final class CryoniteGameTests {
         Vec3 direction = helper.absoluteVec(towards).subtract(start);
         float yaw = (float) (Math.toDegrees(Math.atan2(direction.z, direction.x)) - 90.0);
         player.moveTo(start.x, start.y, start.z, yaw, 0.0F);
+        // A real player's head follows the body every tick; a mock player is never ticked.
+        player.setYHeadRot(yaw);
     }
 
     private static void check(boolean condition, String message) {

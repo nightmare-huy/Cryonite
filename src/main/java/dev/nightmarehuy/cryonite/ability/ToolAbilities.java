@@ -20,10 +20,12 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
@@ -271,13 +273,23 @@ public final class ToolAbilities {
         return hardness <= originHardness + AREA_HARDNESS_TOLERANCE && level.getBlockEntity(pos) == null;
     }
 
-    /** The block face the player is mining: taken from a server side ray cast, falling back to the view direction. */
+    /**
+     * The block face the player is mining: a server side ray cast along the line of sight, falling back to
+     * the view direction when the ray does not end on {@code origin}.
+     *
+     * <p>The ray is built from the body rotation the last movement packet delivered. {@code player.pick}
+     * would use the head rotation, which the server only catches up at its next tick: after a quick turn
+     * it can still point at the previous target and pick the wrong plane.</p>
+     */
     private static Direction minedFace(ServerPlayer player, BlockPos origin) {
-        HitResult hit = player.pick(player.blockInteractionRange() + 1.0, 1.0F, false);
-        if (hit instanceof BlockHitResult blockHit && blockHit.getType() == HitResult.Type.BLOCK && blockHit.getBlockPos().equals(origin)) {
-            return blockHit.getDirection();
+        Vec3 eye = player.getEyePosition();
+        Vec3 look = player.getLookAngle();
+        Vec3 end = eye.add(look.scale(player.blockInteractionRange() + 1.0));
+        BlockHitResult hit = player.level().clip(new ClipContext(eye, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        if (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(origin)) {
+            return hit.getDirection();
         }
-        return Direction.orderedByNearest(player)[0].getOpposite();
+        return Direction.getNearest(look.x, look.y, look.z).getOpposite();
     }
 
     private ToolAbilities() {}
