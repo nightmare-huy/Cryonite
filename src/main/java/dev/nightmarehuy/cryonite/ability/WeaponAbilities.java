@@ -44,11 +44,11 @@ public final class WeaponAbilities {
     /** Tier 3: dash distance in blocks and cooldown in ticks. */
     public static final double DASH_DISTANCE = 7.0;
     public static final int DASH_COOLDOWN_TICKS = 100;
-    /** Tier 4: extra pure magic damage relative to the hit, and health stolen per hit. */
+    /** Tier 4: share of every hit that is dealt as pure magic, and health stolen per hit. */
     private static final float MAGIC_FRACTION = 0.50F;
     private static final float LIFE_STEAL = 2.0F;
 
-    /** Magic bursts are dealt at the end of the server tick so they never interfere with the hit that caused them. */
+    /** The magic halves are dealt at the end of the server tick so they never interfere with the hit that caused them. */
     private static final List<PendingBurst> PENDING_BURSTS = new ArrayList<>();
 
     private record PendingBurst(LivingEntity target, LivingEntity attacker, float amount) {}
@@ -65,8 +65,8 @@ public final class WeaponAbilities {
             return;
         }
         LivingEntity target = event.getEntity();
-        float damage = event.getAmount();
         float[] bonus = {0.0F};
+        boolean[] aether = {false};
 
         TierAbilityHandler.cascade(level,
                 () -> { // Tier 1 - Cryonite: frostbite, +25% against creatures of fire
@@ -88,12 +88,17 @@ public final class WeaponAbilities {
                 },
                 () -> // Tier 3 - Void: 30% of the armor is ignored
                         event.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) -> reduction * (1.0F - ARMOR_IGNORED)),
-                () -> // Tier 4 - Aether: +50% as pure magic that no armor or shield can stop
-                        PENDING_BURSTS.add(new PendingBurst(target, attacker, damage * MAGIC_FRACTION)));
+                () -> // Tier 4 - Aether: half of the damage becomes pure magic (applied below, once the total is known)
+                        aether[0] = true);
 
-        if (bonus[0] > 0.0F) {
-            event.setAmount(damage * (1.0F + bonus[0]));
+        float total = event.getAmount() * (1.0F + bonus[0]);
+        if (aether[0]) {
+            // The physical half goes through armor and shields as usual, the magic half ignores both.
+            float magic = total * MAGIC_FRACTION;
+            PENDING_BURSTS.add(new PendingBurst(target, attacker, magic));
+            total -= magic;
         }
+        event.setAmount(total);
     }
 
     /** Tier 4: every hit that actually hurt heals the attacker by one heart. */

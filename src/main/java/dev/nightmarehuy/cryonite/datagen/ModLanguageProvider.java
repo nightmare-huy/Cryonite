@@ -66,7 +66,7 @@ public final class ModLanguageProvider {
             add("tooltip.cryonite.ability.weapon.cryonite", "Freezes and slows, +25% damage to creatures of fire");
             add("tooltip.cryonite.ability.weapon.infernite", "Blue fire, +25% damage to undead, frost and water creatures and Cryonite armor");
             add("tooltip.cryonite.ability.weapon.void", "Ignores 30% of armor; sword: right-click to dash 7 blocks");
-            add("tooltip.cryonite.ability.weapon.aether", "+50% pure magic damage, heals 1 heart per hit");
+            add("tooltip.cryonite.ability.weapon.aether", "Half of the damage is pure magic (ignores armor and shields), heals 1 heart per hit");
             add("tooltip.cryonite.ability.tool.cryonite", "Breaks ice and snow instantly");
             add("tooltip.cryonite.ability.tool.infernite", "Auto-smelt, works with Fortune (Shift + right-click or hotkey)");
             add("tooltip.cryonite.ability.tool.void", "Telekinesis: drops and experience go straight to you");
@@ -175,7 +175,7 @@ public final class ModLanguageProvider {
             add("tooltip.cryonite.ability.weapon.cryonite", "Заморозка и замедление, +25% урона огненным существам");
             add("tooltip.cryonite.ability.weapon.infernite", "Синее пламя, +25% урона нежити, ледяным и водным мобам и крионитовой броне");
             add("tooltip.cryonite.ability.weapon.void", "Игнорирует 30% брони; меч: ПКМ — рывок на 7 блоков");
-            add("tooltip.cryonite.ability.weapon.aether", "+50% чистого магического урона, +1 сердце за удар");
+            add("tooltip.cryonite.ability.weapon.aether", "50% урона — чистая магия (игнорирует броню и щит), +1 сердце за удар");
             add("tooltip.cryonite.ability.tool.cryonite", "Мгновенно ломает лёд и снег");
             add("tooltip.cryonite.ability.tool.infernite", "Автоплавка, работает с Удачей (Shift + ПКМ или клавиша)");
             add("tooltip.cryonite.ability.tool.void", "Телекинез: добыча и опыт сразу попадают к вам");

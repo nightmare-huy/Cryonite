@@ -87,17 +87,20 @@ public final class EventHandler {
     /** Runs last so protection mods had their chance to cancel the break before the anomaly and 3x3 mining start. */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (event.isCanceled() || !(event.getPlayer() instanceof ServerPlayer player)) {
+        Player player = event.getPlayer();
+        if (event.isCanceled() || player == null || player.level().isClientSide) {
             return;
         }
         if (event.getState().is(ModBlocks.VOID_ORE) && !player.isCreative()) {
             triggerVoidAnomaly(player);
         }
-        ToolAbilities.mineArea(player, event.getPos(), event.getState());
+        if (player instanceof ServerPlayer serverPlayer) {
+            ToolAbilities.mineArea(serverPlayer, event.getPos(), event.getState());
+        }
     }
 
     /** Breaking Void Ore: a gravity pulse drags the miner towards the void and blinds them for 3 seconds. */
-    private static void triggerVoidAnomaly(ServerPlayer player) {
+    private static void triggerVoidAnomaly(Player player) {
         Vec3 motion = player.getDeltaMovement();
         player.setDeltaMovement(motion.x, ANOMALY_PULL, motion.z);
         player.hurtMarked = true;

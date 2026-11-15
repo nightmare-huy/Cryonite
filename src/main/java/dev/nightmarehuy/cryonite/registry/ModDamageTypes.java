@@ -9,7 +9,7 @@ import net.minecraft.world.damagesource.DamageType;
 
 public final class ModDamageTypes {
     /**
-     * Pure magic half of an Aether weapon hit. Its tags (see the damage type tag provider) make it ignore
+     * The pure magic half of an Aether weapon hit. Its tags (see the damage type tag provider) make it ignore
      * armor, shields, protection enchantments and invulnerability frames.
      */
     public static final ResourceKey<DamageType> AETHER_BURST = ResourceKey.create(Registries.DAMAGE_TYPE, Cryonite.id("aether_burst"));
