@@ -1,0 +1,30 @@
+{
+  "type": "cryonite:primordial_smelting",
+  "catalysts": [
+    {
+      "count": 4,
+      "item": "cryonite:infernite_ingot"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:shulker_shell"
+    }
+  ],
+  "cookingTime": 400,
+  "fuel": [
+    {
+      "item": "minecraft:blaze_rod"
+    },
+    {
+      "item": "minecraft:lava_bucket"
+    }
+  ],
+  "input": {
+    "count": 4,
+    "item": "cryonite:stabilized_void_cluster"
+  },
+  "result": {
+    "count": 1,
+    "id": "cryonite:molten_void_blank"
+  }
+}

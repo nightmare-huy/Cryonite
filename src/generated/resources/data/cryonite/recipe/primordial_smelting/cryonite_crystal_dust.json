@@ -1,0 +1,19 @@
+{
+  "type": "cryonite:primordial_smelting",
+  "fuel": [
+    {
+      "item": "minecraft:blaze_rod"
+    },
+    {
+      "item": "minecraft:magma_block"
+    }
+  ],
+  "input": {
+    "count": 1,
+    "item": "cryonite:raw_cryonite"
+  },
+  "result": {
+    "count": 1,
+    "id": "cryonite:cryonite_crystal_dust"
+  }
+}

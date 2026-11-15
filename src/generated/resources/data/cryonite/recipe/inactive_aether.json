@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:netherite_ingot"
+    },
+    {
+      "item": "cryonite:cryonite_ingot"
+    },
+    {
+      "item": "cryonite:infernite_ingot"
+    },
+    {
+      "item": "cryonite:void_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "cryonite:inactive_aether"
+  }
+}

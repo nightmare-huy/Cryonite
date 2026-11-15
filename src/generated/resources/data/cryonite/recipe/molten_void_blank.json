@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "cryonite:stabilized_void_cluster"
+    },
+    {
+      "item": "cryonite:stabilized_void_cluster"
+    },
+    {
+      "item": "cryonite:stabilized_void_cluster"
+    },
+    {
+      "item": "cryonite:stabilized_void_cluster"
+    },
+    {
+      "item": "cryonite:infernite_ingot"
+    },
+    {
+      "item": "cryonite:infernite_ingot"
+    },
+    {
+      "item": "cryonite:infernite_ingot"
+    },
+    {
+      "item": "cryonite:infernite_ingot"
+    },
+    {
+      "item": "minecraft:shulker_shell"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "cryonite:molten_void_blank"
+  }
+}

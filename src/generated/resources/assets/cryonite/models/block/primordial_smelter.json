@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "cryonite:block/primordial_smelter_front",
+    "side": "cryonite:block/primordial_smelter_side",
+    "top": "cryonite:block/primordial_smelter_top"
+  }
+}

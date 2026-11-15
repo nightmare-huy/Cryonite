@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cryonite_crystal_dust": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cryonite:cryonite_crystal_dust"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cryonite:cryonite_ingot"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cryonite_crystal_dust"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cryonite:cryonite_ingot"
+    ]
+  }
+}
