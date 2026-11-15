@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "cryonite:cryonite_crystal_dust"
+    },
+    {
+      "items": [
+        "minecraft:netherite_scrap",
+        "minecraft:echo_shard"
+      ]
+    }
+  ],
+  "result": {
+    "id": "cryonite:cryonite_ingot"
+  }
+}

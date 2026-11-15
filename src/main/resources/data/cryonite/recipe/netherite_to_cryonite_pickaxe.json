@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "cryonite:cryonite_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "minecraft:netherite_pickaxe"
+  },
+  "addition": {
+    "item": "cryonite:cryonite_ingot"
+  },
+  "result": {
+    "id": "cryonite:cryonite_pickaxe"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "cryonite:primordial_smelting",
+  "ingredient": {
+    "item": "cryonite:raw_cryonite"
+  },
+  "fuel": {
+    "items": [
+      "minecraft:blaze_rod",
+      "minecraft:magma_block"
+    ]
+  },
+  "result": {
+    "id": "cryonite:cryonite_crystal_dust"
+  },
+  "cooking_time": 240
+}

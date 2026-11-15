@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ITI",
+    "III",
+    "IDI"
+  ],
+  "key": {
+    "I": {
+      "item": "cryonite:infernite_ingot"
+    },
+    "T": {
+      "item": "cryonite:void_upgrade_smithing_template"
+    },
+    "D": {
+      "item": "minecraft:dragon_breath"
+    }
+  },
+  "result": {
+    "id": "cryonite:void_upgrade_smithing_template",
+    "count": 2
+  }
+}

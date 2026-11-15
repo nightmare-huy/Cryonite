@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "ingredient": {
+    "item": "cryonite:raw_cryonite"
+  },
+  "result": {
+    "id": "cryonite:cryonite_crystal_dust"
+  },
+  "experience": 1.0,
+  "cookingtime": 200
+}

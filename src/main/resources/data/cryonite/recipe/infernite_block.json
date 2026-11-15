@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "cryonite:infernite_ingot"
+    }
+  },
+  "result": {
+    "id": "cryonite:infernite_block"
+  }
+}

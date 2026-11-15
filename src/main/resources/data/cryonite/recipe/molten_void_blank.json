@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "VIV",
+    "ISI",
+    "VIV"
+  ],
+  "key": {
+    "V": {
+      "item": "cryonite:stabilized_void_cluster"
+    },
+    "I": {
+      "item": "cryonite:infernite_ingot"
+    },
+    "S": {
+      "item": "minecraft:shulker_shell"
+    }
+  },
+  "result": {
+    "id": "cryonite:molten_void_blank"
+  }
+}

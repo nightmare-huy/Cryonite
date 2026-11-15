@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "cryonite:block/primordial_smelter",
+      "y": 0
+    },
+    "facing=north,lit=true": {
+      "model": "cryonite:block/primordial_smelter",
+      "y": 0
+    },
+    "facing=east,lit=false": {
+      "model": "cryonite:block/primordial_smelter",
+      "y": 90
+    },
+    "facing=east,lit=true": {
+      "model": "cryonite:block/primordial_smelter",
+      "y": 90
+    },
+    "facing=south,lit=false": {
+      "model": "cryonite:block/primordial_smelter",
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "cryonite:block/primordial_smelter",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "cryonite:block/primordial_smelter",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "cryonite:block/primordial_smelter",
+      "y": 270
+    }
+  }
+}

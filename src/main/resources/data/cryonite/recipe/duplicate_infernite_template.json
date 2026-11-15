@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BBB",
+    "BTI",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:basalt"
+    },
+    "T": {
+      "item": "cryonite:infernite_upgrade_smithing_template"
+    },
+    "I": {
+      "item": "cryonite:cryonite_ingot"
+    }
+  },
+  "result": {
+    "id": "cryonite:infernite_upgrade_smithing_template",
+    "count": 2
+  }
+}

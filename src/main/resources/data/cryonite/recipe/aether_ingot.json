@@ -1,0 +1,13 @@
+{
+  "type": "cryonite:primordial_smelting",
+  "ingredient": {
+    "item": "cryonite:inactive_aether"
+  },
+  "fuel": {
+    "item": "cryonite:infernite_block"
+  },
+  "result": {
+    "id": "cryonite:aether_ingot"
+  },
+  "cooking_time": 600
+}

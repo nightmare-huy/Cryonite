@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "cryonite:infernite_upgrade_smithing_template"
+  },
+  "base": {
+    "item": "cryonite:cryonite_axe"
+  },
+  "addition": {
+    "item": "cryonite:infernite_ingot"
+  },
+  "result": {
+    "id": "cryonite:infernite_axe"
+  }
+}

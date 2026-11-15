@@ -1,0 +1,23 @@
+{
+  "type": "cryonite:primordial_smelting",
+  "ingredient": {
+    "item": "cryonite:cooled_infernite_blank"
+  },
+  "catalyst_1": {
+    "item": "minecraft:gold_block"
+  },
+  "catalyst_2": {
+    "item": "minecraft:ghast_tear"
+  },
+  "fuel": {
+    "items": [
+      "minecraft:blaze_powder",
+      "minecraft:blaze_rod",
+      "minecraft:lava_bucket"
+    ]
+  },
+  "result": {
+    "id": "cryonite:infernite_ingot"
+  },
+  "cooking_time": 300
+}

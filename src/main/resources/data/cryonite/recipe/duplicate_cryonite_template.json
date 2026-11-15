@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DDD",
+    "DTN",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:deepslate"
+    },
+    "T": {
+      "item": "cryonite:cryonite_upgrade_smithing_template"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "result": {
+    "id": "cryonite:cryonite_upgrade_smithing_template",
+    "count": 2
+  }
+}

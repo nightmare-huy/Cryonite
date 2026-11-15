@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+[[mods]]
+modId="cryonite"
+version="${file.jarVersion}"
+displayName="Cryonite"
+authors="Cryonite Team"
+description='''Adds the Primordial Smelter and four cascading endgame equipment tiers.'''
+[[dependencies.cryonite]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.0,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.cryonite]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1,1.22)"
+ordering="NONE"
+side="BOTH"
