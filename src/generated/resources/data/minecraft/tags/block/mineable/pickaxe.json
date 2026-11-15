@@ -4,6 +4,10 @@
     "cryonite:cryonite_ore",
     "cryonite:infernite_ore",
     "cryonite:void_ore",
-    "cryonite:infernite_block"
+    "cryonite:infernite_block",
+    {
+      "id": "cryonite:kinetic_energy_converter",
+      "required": false
+    }
   ]
 }

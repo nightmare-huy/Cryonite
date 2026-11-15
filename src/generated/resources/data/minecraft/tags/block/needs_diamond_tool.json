@@ -1,6 +1,10 @@
 {
   "values": [
     "cryonite:primordial_smelter",
-    "cryonite:infernite_block"
+    "cryonite:infernite_block",
+    {
+      "id": "cryonite:kinetic_energy_converter",
+      "required": false
+    }
   ]
 }
