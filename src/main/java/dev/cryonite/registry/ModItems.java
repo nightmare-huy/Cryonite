@@ -4,13 +4,15 @@ import dev.cryonite.Cryonite;
 import dev.cryonite.item.RawCryoniteItem;
 import dev.cryonite.item.MoltenInferniteShardItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.component.Unbreakable;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Cryonite.MOD_ID);
     private static DeferredItem<Item> item(String id) { return ITEMS.registerSimpleItem(id, new Item.Properties()); }
-    private static DeferredItem<Item> indestructible(String id) { return ITEMS.register(id, () -> new Item(new Item.Properties().fireResistant().stacksTo(1).component(net.minecraft.core.component.DataComponents.UNBREAKABLE, net.minecraft.util.Unit.INSTANCE).component(ModComponents.AUTO_SMELT.get(), false).component(ModComponents.AREA_MINING.get(), false))); }
+    private static DeferredItem<Item> indestructible(String id) { return ITEMS.register(id, () -> new Item(new Item.Properties().fireResistant().stacksTo(1).component(net.minecraft.core.component.DataComponents.UNBREAKABLE, new Unbreakable(true)).component(ModComponents.AUTO_SMELT.get(), false).component(ModComponents.AREA_MINING.get(), false))); }
 
     public static final DeferredItem<Item> RAW_CRYONITE = ITEMS.register("raw_cryonite", () -> new RawCryoniteItem(new Item.Properties()));
     public static final DeferredItem<Item> CRYONITE_CRYSTAL_DUST = item("cryonite_crystal_dust");
@@ -24,11 +26,11 @@ public final class ModItems {
     public static final DeferredItem<Item> VOID_INGOT = item("void_ingot");
     public static final DeferredItem<Item> INACTIVE_AETHER = item("inactive_aether");
     public static final DeferredItem<Item> AETHER_INGOT = item("aether_ingot");
-    public static final DeferredItem<Item> CRYONITE_ORE_ITEM = ITEMS.registerSimpleBlockItem("cryonite_ore", ModBlocks.CRYONITE_ORE);
-    public static final DeferredItem<Item> INFERNITE_ORE_ITEM = ITEMS.registerSimpleBlockItem("infernite_ore", ModBlocks.INFERNITE_ORE);
-    public static final DeferredItem<Item> VOID_ORE_ITEM = ITEMS.registerSimpleBlockItem("void_ore", ModBlocks.VOID_ORE);
-    public static final DeferredItem<Item> INFERNITE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("infernite_block", ModBlocks.INFERNITE_BLOCK);
-    public static final DeferredItem<Item> PRIMORDIAL_SMELTER_ITEM = ITEMS.registerSimpleBlockItem("primordial_smelter", ModBlocks.PRIMORDIAL_SMELTER);
+    public static final DeferredItem<BlockItem> CRYONITE_ORE_ITEM = ITEMS.registerSimpleBlockItem("cryonite_ore", ModBlocks.CRYONITE_ORE);
+    public static final DeferredItem<BlockItem> INFERNITE_ORE_ITEM = ITEMS.registerSimpleBlockItem("infernite_ore", ModBlocks.INFERNITE_ORE);
+    public static final DeferredItem<BlockItem> VOID_ORE_ITEM = ITEMS.registerSimpleBlockItem("void_ore", ModBlocks.VOID_ORE);
+    public static final DeferredItem<BlockItem> INFERNITE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("infernite_block", ModBlocks.INFERNITE_BLOCK);
+    public static final DeferredItem<BlockItem> PRIMORDIAL_SMELTER_ITEM = ITEMS.registerSimpleBlockItem("primordial_smelter", ModBlocks.PRIMORDIAL_SMELTER);
     public static final DeferredItem<Item> CRYONITE_TEMPLATE = item("cryonite_upgrade_smithing_template");
     public static final DeferredItem<Item> INFERNITE_TEMPLATE = item("infernite_upgrade_smithing_template");
     public static final DeferredItem<Item> VOID_TEMPLATE = item("void_upgrade_smithing_template");

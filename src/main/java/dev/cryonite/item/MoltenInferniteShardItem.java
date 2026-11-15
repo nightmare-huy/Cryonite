@@ -36,7 +36,7 @@ public class MoltenInferniteShardItem extends Item {
         if (level.isClientSide || !(entity instanceof Player player) || player.tickCount % 20 != 0) return;
         boolean cooled = player.getInventory().items.stream().anyMatch(s -> s.is(net.minecraft.world.item.Items.SNOWBALL) || s.is(net.minecraft.world.item.Items.ICE) || s.is(net.minecraft.world.item.Items.PACKED_ICE) || s.is(net.minecraft.world.item.Items.BLUE_ICE));
         if (cooled) return;
-        player.setSecondsOnFire(2);
+        player.igniteForSeconds(2.0F);
         if (player.tickCount % 100 == 0) {
             var candidates = player.getInventory().items.stream().filter(s -> !s.isEmpty() && FRAGILE.stream().anyMatch(token -> s.getDescriptionId().contains(token))).toList();
             if (!candidates.isEmpty()) candidates.get(player.getRandom().nextInt(candidates.size())).shrink(1);

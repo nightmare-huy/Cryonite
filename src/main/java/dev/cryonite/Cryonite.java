@@ -10,14 +10,12 @@ import dev.cryonite.registry.ModCreativeTabs;
 import dev.cryonite.recipe.ModRecipes;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Cryonite.MOD_ID)
 public final class Cryonite {
     public static final String MOD_ID = "cryonite";
 
-    public Cryonite() {
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+    public Cryonite(IEventBus bus) {
         ModComponents.REGISTER.register(bus);
         ModAttachments.TYPES.register(bus);
         ModBlocks.BLOCKS.register(bus);

@@ -12,7 +12,7 @@ public final class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.cryonite"))
             .icon(() -> ModItems.AETHER_INGOT.get().getDefaultInstance())
-            .displayItems((parameters, output) -> ModItems.ITEMS.getEntries().forEach(output::accept))
+            .displayItems((parameters, output) -> ModItems.ITEMS.getEntries().forEach(holder -> output.accept(holder.get())))
             .build());
     private ModCreativeTabs() {}
 }

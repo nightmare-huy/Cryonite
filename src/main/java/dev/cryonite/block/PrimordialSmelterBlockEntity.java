@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuProvider;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import dev.cryonite.menu.PrimordialSmelterMenu;
