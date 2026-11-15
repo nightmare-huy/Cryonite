@@ -12,8 +12,12 @@
 ./gradlew runGameTestServer  # 19 серверных GameTest-ов
 ```
 
-GitHub Actions (`.github/workflows/build.yml`) на каждый push компилирует мод, запускает датаген, сборку и GameTest-ы;
-готовый jar лежит в артефакте `cryonite-jar`.
+Готовый jar можно не собирать, а скачать со страницы [Releases](https://github.com/nightmare-huy/Cryonite/releases/latest).
+
+GitHub Actions (`.github/workflows/build.yml`) на каждый push компилирует мод, запускает датаген, сборку и GameTest-ы.
+Если всё прошло успешно, jar выкладывается в [Releases](https://github.com/nightmare-huy/Cryonite/releases) — в релиз
+`v<mod_version>`, один на версию: каждая новая сборка заменяет в нём файл. Чтобы начать новый релиз, поднимите
+`mod_version` в `gradle.properties`.
 
 ## Прогрессия
 

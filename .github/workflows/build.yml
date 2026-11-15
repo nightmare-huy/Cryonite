@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the release step compares the release tag with this branch's history
 
       - name: Setup JDK 21
         uses: actions/setup-java@v4
@@ -89,3 +91,40 @@ jobs:
         with:
           name: cryonite-jar
           path: build/libs/*.jar
+
+      # Keeps one GitHub release per mod version (tag v<mod_version>) and puts the freshly built jar into it.
+      # Runs only when every stage above succeeded. Bump mod_version in gradle.properties to start a new release.
+      - name: Publish release
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          prop() { grep "^$1=" gradle.properties | cut -d= -f2- | tr -d '[:space:]'; }
+          version="$(prop mod_version)"
+          tag="v${version}"
+          jar="build/libs/$(prop mod_id)-${version}.jar"
+          sha="$(git rev-parse HEAD)"
+          test -f "$jar"
+
+          # Never overwrite a release that was built from a different line of history.
+          if git ls-remote --exit-code --tags origin "refs/tags/${tag}" >/dev/null; then
+            git fetch --quiet --force origin "refs/tags/${tag}:refs/tags/${tag}"
+            if ! git merge-base --is-ancestor "${tag}^{commit}" "$sha"; then
+              echo "::warning::Release ${tag} belongs to another branch's history; jar not published. Bump mod_version in gradle.properties."
+              exit 0
+            fi
+          fi
+
+          git tag --force "$tag" "$sha"
+          git push --force origin "refs/tags/${tag}"
+
+          title="Cryonite ${tag}"
+          notes="NeoForge $(prop neo_version), Minecraft $(prop minecraft_version), Java 21.
+          Built by GitHub Actions (run #${GITHUB_RUN_NUMBER}) from ${sha}."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$jar" --clobber
+            gh release edit "$tag" --title "$title" --notes "$notes" --prerelease=false --latest
+          else
+            gh release create "$tag" "$jar" --verify-tag --title "$title" --notes "$notes" --latest
+          fi
