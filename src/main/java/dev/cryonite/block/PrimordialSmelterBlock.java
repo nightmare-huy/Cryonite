@@ -43,7 +43,7 @@ public class PrimordialSmelterBlock extends BaseEntityBlock {
     @Override public BlockState mirror(BlockState state, Mirror mirror) { return state.rotate(mirror.getRotation(state.getValue(FACING))); }
     @Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new PrimordialSmelterBlockEntity(pos, state); }
-    @Override public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    @Override protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer && level.getBlockEntity(pos) instanceof PrimordialSmelterBlockEntity smelter) {
             serverPlayer.openMenu(smelter, buffer -> buffer.writeBlockPos(pos));
         }

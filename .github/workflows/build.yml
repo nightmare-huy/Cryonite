@@ -36,7 +36,7 @@ jobs:
           gradle --no-daemon --stacktrace clean build 2>&1 | tee .ci-logs/build.log
           result=${PIPESTATUS[0]}
           if [ "$result" -ne 0 ]; then
-            diagnostic=$(grep -E '(What went wrong:|^\* Exception|^Caused by:|^e:|error:|Could not|NoSuch|Exception|FAILED)' .ci-logs/build.log | tail -n 25 | tr '\n' ' ' | cut -c1-5000)
+            diagnostic=$(grep -A3 -B1 -E '(What went wrong:|error:|Could not|NoSuch|Exception|FAILED)' .ci-logs/build.log | tail -n 40 | tr '\n' ' ' | cut -c1-5000)
             if [ -z "$diagnostic" ]; then diagnostic=$(tail -n 25 .ci-logs/build.log | tr '\n' ' ' | cut -c1-5000); fi
             echo "::error title=Gradle build failure::${diagnostic:-See build.log artifact}"
           fi
