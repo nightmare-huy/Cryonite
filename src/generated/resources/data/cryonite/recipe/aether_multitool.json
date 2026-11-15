@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "cryonite:aether_ingot"
+    },
+    "/": [
+      {
+        "item": "minecraft:stick"
+      },
+      {
+        "item": "minecraft:blaze_rod"
+      }
+    ],
+    "A": {
+      "item": "cryonite:aether_axe"
+    },
+    "P": {
+      "item": "cryonite:aether_pickaxe"
+    },
+    "S": {
+      "item": "cryonite:aether_shovel"
+    }
+  },
+  "pattern": [
+    "ASP",
+    "#/#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cryonite:aether_multitool"
+  }
+}

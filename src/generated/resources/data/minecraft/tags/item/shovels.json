@@ -1,8 +1,12 @@
 {
   "values": [
     "cryonite:cryonite_shovel",
+    "cryonite:cryonite_multitool",
     "cryonite:infernite_shovel",
+    "cryonite:infernite_multitool",
     "cryonite:void_shovel",
-    "cryonite:aether_shovel"
+    "cryonite:void_multitool",
+    "cryonite:aether_shovel",
+    "cryonite:aether_multitool"
   ]
 }

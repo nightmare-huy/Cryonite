@@ -1,8 +1,12 @@
 {
   "values": [
     "cryonite:cryonite_pickaxe",
+    "cryonite:cryonite_multitool",
     "cryonite:infernite_pickaxe",
+    "cryonite:infernite_multitool",
     "cryonite:void_pickaxe",
-    "cryonite:aether_pickaxe"
+    "cryonite:void_multitool",
+    "cryonite:aether_pickaxe",
+    "cryonite:aether_multitool"
   ]
 }

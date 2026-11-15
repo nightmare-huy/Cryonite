@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cryonite:void_multitool"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_void_pickaxe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cryonite:void_pickaxe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_void_pickaxe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cryonite:void_multitool"
+    ]
+  }
+}
