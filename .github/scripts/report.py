@@ -9,7 +9,8 @@ import urllib.request
 LIMIT = 60000
 INTERESTING = re.compile(
     r"error:|warning: \[|FAILED|FAILURE|What went wrong|Exception|Caused by|\bERROR\b|/ERROR\]|\[WARN|/WARN\]|"
-    r"at dev\.nightmarehuy|BUILD |Missing|Couldn't|Could not|Unknown|Parsing error|Failed|failed|GameTest|tests? (passed|failed)|required tests",
+    r"at dev\.nightmarehuy|BUILD |Missing|Couldn't|Could not|Unknown|Parsing error|Failed|failed|GameTest|tests? (passed|failed)|required tests|"
+    r"maxRotationSpeed",
 )
 
 

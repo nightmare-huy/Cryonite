@@ -1,5 +1,6 @@
 package dev.nightmarehuy.cryonite.gametest;
 
+import com.mojang.authlib.GameProfile;
 import dev.nightmarehuy.cryonite.Cryonite;
 import dev.nightmarehuy.cryonite.ability.TierAbilityHandler;
 import dev.nightmarehuy.cryonite.ability.ToolAbilities;
@@ -17,9 +18,11 @@ import dev.nightmarehuy.cryonite.registry.ModItems;
 import dev.nightmarehuy.cryonite.registry.ModRecipes;
 import dev.nightmarehuy.cryonite.tier.GearTier;
 import dev.nightmarehuy.cryonite.worldgen.ModWorldgen;
+import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -31,11 +34,14 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.locale.Language;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -78,6 +84,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 /**
  * Server-side GameTests ({@code ./gradlew runGameTestServer}). They boot a real dedicated server with the
@@ -522,7 +529,7 @@ public final class CryoniteGameTests {
             }
         }
         BlockPos centre = new BlockPos(4, 3, 5);
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ServerPlayer player = mockPlayer(helper);
         try {
             player.setGameMode(GameType.SURVIVAL);
             place(helper, player, new Vec3(4.5, 2.0, 2.5), new Vec3(4.5, 2.0, 8.5));
@@ -558,7 +565,7 @@ public final class CryoniteGameTests {
 
     @GameTest(template = EMPTY)
     public static void voidSwordDashes(GameTestHelper helper) {
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ServerPlayer player = mockPlayer(helper);
         try {
             player.setGameMode(GameType.SURVIVAL);
             place(helper, player, new Vec3(1.5, 2.0, 4.5), new Vec3(8.5, 2.0, 4.5));
@@ -675,7 +682,7 @@ public final class CryoniteGameTests {
 
     @GameTest(template = EMPTY)
     public static void voidMultitoolDashesOnlyInTheAir(GameTestHelper helper) {
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ServerPlayer player = mockPlayer(helper);
         try {
             player.setGameMode(GameType.SURVIVAL);
             place(helper, player, new Vec3(1.5, 2.0, 4.5), new Vec3(8.5, 2.0, 4.5));
@@ -719,7 +726,7 @@ public final class CryoniteGameTests {
         check(ToolAbilities.Mode.AREA_MINING.keyName().equals("key.cryonite.toggle_3x3"), "3x3 tooltip must name its own key");
         check(ToolAbilities.Mode.AUTO_SMELT.keyName().equals("key.cryonite.toggle_autosmelt"), "auto-smelt tooltip must name its own key");
 
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ServerPlayer player = mockPlayer(helper);
         try {
             ItemStack aether = new ItemStack(ModItems.gear(GearTier.AETHER).multitool().get());
             player.setItemInHand(InteractionHand.MAIN_HAND, aether);
@@ -792,7 +799,7 @@ public final class CryoniteGameTests {
             }
         }
         BlockPos centre = new BlockPos(4, 2, 4);
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ServerPlayer player = mockPlayer(helper);
         try {
             player.setGameMode(GameType.SURVIVAL);
             Vec3 above = helper.absoluteVec(new Vec3(4.5, 3.0, 4.5));
@@ -838,7 +845,7 @@ public final class CryoniteGameTests {
         bystanders.forEach(pos -> helper.setBlock(pos, Blocks.DIRT));
         BlockPos centre = new BlockPos(6, 3, 4);
 
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ServerPlayer player = mockPlayer(helper);
         try {
             player.setGameMode(GameType.SURVIVAL);
             place(helper, player, new Vec3(3.5, 2.0, 4.5), new Vec3(8.5, 2.0, 4.5));
@@ -1020,6 +1027,36 @@ public final class CryoniteGameTests {
         entity.setItemSlot(EquipmentSlot.CHEST, new ItemStack(gear.chestplate().get()));
         entity.setItemSlot(EquipmentSlot.LEGS, new ItemStack(gear.leggings().get()));
         entity.setItemSlot(EquipmentSlot.FEET, new ItemStack(gear.boots().get()));
+    }
+
+    /**
+     * {@link GameTestHelper#makeMockServerPlayerInLevel()} with a connection that takes the packets of every mod.
+     *
+     * <p>The vanilla mock connection has negotiated no channels, so NeoForge rejects every modded packet sent
+     * to it. Create (part of the test server for the Kinetic Energy Converter) greets every player that logs
+     * in with such packets and broadcasts more of them every tick, which failed the login of the mock player
+     * and then the whole server. NeoForge's {@code configureMockConnection} makes the connection behave like
+     * a NeoForge client that knows all registered payloads.</p>
+     */
+    private static ServerPlayer mockPlayer(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        CommonListenerCookie cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-mock-player"), false);
+        ServerPlayer player = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation()) {
+            @Override
+            public boolean isSpectator() {
+                return false;
+            }
+
+            @Override
+            public boolean isCreative() {
+                return true;
+            }
+        };
+        Connection connection = new Connection(PacketFlow.SERVERBOUND);
+        new EmbeddedChannel(connection);
+        NetworkRegistry.configureMockConnection(connection);
+        level.getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
+        return player;
     }
 
     /** Puts a mock player at {@code from} (structure coordinates) looking horizontally towards {@code towards}. */
