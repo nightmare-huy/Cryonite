@@ -82,7 +82,7 @@
   "tooltip.cryonite.ability.tool.cryonite": "Breaks ice and snow instantly",
   "tooltip.cryonite.ability.tool.infernite": "Auto-smelt, works with Fortune (Shift + right-click or hotkey)",
   "tooltip.cryonite.ability.tool.void": "Telekinesis: drops and experience go straight to you",
-  "tooltip.cryonite.ability.weapon.aether": "+50% pure magic damage, heals 1 heart per hit",
+  "tooltip.cryonite.ability.weapon.aether": "Half of the damage is pure magic (ignores armor and shields), heals 1 heart per hit",
   "tooltip.cryonite.ability.weapon.cryonite": "Freezes and slows, +25% damage to creatures of fire",
   "tooltip.cryonite.ability.weapon.infernite": "Blue fire, +25% damage to undead, frost and water creatures and Cryonite armor",
   "tooltip.cryonite.ability.weapon.void": "Ignores 30% of armor; sword: right-click to dash 7 blocks",

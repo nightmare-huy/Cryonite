@@ -82,7 +82,7 @@
   "tooltip.cryonite.ability.tool.cryonite": "Мгновенно ломает лёд и снег",
   "tooltip.cryonite.ability.tool.infernite": "Автоплавка, работает с Удачей (Shift + ПКМ или клавиша)",
   "tooltip.cryonite.ability.tool.void": "Телекинез: добыча и опыт сразу попадают к вам",
-  "tooltip.cryonite.ability.weapon.aether": "+50% чистого магического урона, +1 сердце за удар",
+  "tooltip.cryonite.ability.weapon.aether": "50% урона — чистая магия (игнорирует броню и щит), +1 сердце за удар",
   "tooltip.cryonite.ability.weapon.cryonite": "Заморозка и замедление, +25% урона огненным существам",
   "tooltip.cryonite.ability.weapon.infernite": "Синее пламя, +25% урона нежити, ледяным и водным мобам и крионитовой броне",
   "tooltip.cryonite.ability.weapon.void": "Игнорирует 30% брони; меч: ПКМ — рывок на 7 блоков",
