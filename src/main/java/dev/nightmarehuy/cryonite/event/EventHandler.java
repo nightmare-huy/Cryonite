@@ -10,8 +10,6 @@ import dev.nightmarehuy.cryonite.tier.GearTier;
 import dev.nightmarehuy.cryonite.tier.TieredGear;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -27,7 +25,6 @@ import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -131,20 +128,6 @@ public final class EventHandler {
 
     private static boolean hasTelekinesis(Player player) {
         return GearTier.VOID.unlockedAt(TierAbilityHandler.handheldLevel(player.getMainHandItem()));
-    }
-
-    /** Shift + right-click with an Infernite+ tool toggles auto-smelt (when the click is not used by a block). */
-    @SubscribeEvent
-    public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        Player player = event.getEntity();
-        if (event.getHand() != InteractionHand.MAIN_HAND || !player.isShiftKeyDown() || !ToolAbilities.Mode.AUTO_SMELT.isSupported(event.getItemStack())) {
-            return;
-        }
-        if (player instanceof ServerPlayer serverPlayer) {
-            ToolAbilities.toggle(serverPlayer, ToolAbilities.Mode.AUTO_SMELT);
-        }
-        event.setCancellationResult(InteractionResult.SUCCESS);
-        event.setCanceled(true);
     }
 
     // ------------------------------------------------------------------ dropped items

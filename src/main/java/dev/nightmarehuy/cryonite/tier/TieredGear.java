@@ -15,6 +15,8 @@ public interface TieredGear {
         PICKAXE(false, true),
         SHOVEL(false, true),
         HOE(false, true),
+        /** Pickaxe, axe, shovel and hoe in one head; fights like a sword. */
+        MULTITOOL(true, true),
         ARMOR(false, false);
 
         private final boolean weapon;

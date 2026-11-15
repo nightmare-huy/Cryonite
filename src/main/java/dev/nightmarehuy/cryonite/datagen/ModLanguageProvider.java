@@ -61,25 +61,33 @@ public final class ModLanguageProvider {
             add("tooltip.cryonite.ability.armor.aether", "Creative flight, strong regeneration, immune to harmful effects and magic");
             add("tooltip.cryonite.ability.weapon.cryonite", "Freezes and slows, +25% damage to creatures of fire");
             add("tooltip.cryonite.ability.weapon.infernite", "Blue fire, +25% damage to undead, frost and water creatures and Cryonite armor");
-            add("tooltip.cryonite.ability.weapon.void", "Ignores 30% of armor; sword: right-click to dash 7 blocks");
+            add("tooltip.cryonite.ability.weapon.void", "Ignores 30% of armor; sword and multitool: right-click to dash 7 blocks");
             add("tooltip.cryonite.ability.weapon.aether", "Half of the damage is pure magic (ignores armor and shields), heals 1 heart per hit");
             add("tooltip.cryonite.ability.tool.cryonite", "Breaks ice and snow instantly");
-            add("tooltip.cryonite.ability.tool.infernite", "Auto-smelt, works with Fortune (Shift + right-click or hotkey)");
+            add("tooltip.cryonite.ability.tool.infernite", "Auto-smelt, works with Fortune");
             add("tooltip.cryonite.ability.tool.void", "Telekinesis: drops and experience go straight to you");
-            add("tooltip.cryonite.ability.tool.aether", "3x3 mining (hotkey)");
+            add("tooltip.cryonite.ability.tool.aether", "3×3 mining");
+            add("tooltip.cryonite.mode.auto_smelt", "Auto-smelt: %s [Key: %s]");
+            add("tooltip.cryonite.mode.auto_smelt.on", "ON");
+            add("tooltip.cryonite.mode.auto_smelt.off", "OFF");
+            add("tooltip.cryonite.mode.area_mining", "Mining mode: %s [Key: %s]");
+            add("tooltip.cryonite.mode.area_mining.on", "3×3");
+            add("tooltip.cryonite.mode.area_mining.off", "1×1");
 
             add("message.cryonite.auto_smelt", "Auto-smelt");
-            add("message.cryonite.area_mining", "3x3 mining");
-            add("message.cryonite.enabled", "ON");
-            add("message.cryonite.disabled", "OFF");
+            add("message.cryonite.auto_smelt.on", "ENABLED");
+            add("message.cryonite.auto_smelt.off", "DISABLED");
+            add("message.cryonite.area_mining", "3×3 mining mode");
+            add("message.cryonite.area_mining.on", "ENABLED");
+            add("message.cryonite.area_mining.off", "DISABLED");
             add("message.cryonite.mode_state", "%s: %s");
             add("message.cryonite.mode_unsupported", "The held item does not support %s");
             add("message.cryonite.item_burned", "The Molten Infernite Shard burned %s!");
             add("message.cryonite.void_rescue", "The Void armor pulled you back");
 
             add("key.categories.cryonite", "Cryonite");
-            add("key.cryonite.toggle_auto_smelt", "Toggle Auto-smelt");
-            add("key.cryonite.toggle_area_mining", "Toggle 3x3 Mining");
+            add("key.cryonite.toggle_3x3", "Toggle 3×3 Mining Mode");
+            add("key.cryonite.toggle_autosmelt", "Toggle Auto-smelt");
 
             add("gui.cryonite.slot.input", "Main ingredient");
             add("gui.cryonite.slot.catalyst", "Catalyst");
@@ -194,6 +202,7 @@ public final class ModLanguageProvider {
             addItem(gear.axe(), name + " Axe");
             addItem(gear.shovel(), name + " Shovel");
             addItem(gear.hoe(), name + " Hoe");
+            addItem(gear.multitool(), name + " Multitool");
             addItem(gear.helmet(), name + " Helmet");
             addItem(gear.chestplate(), name + " Chestplate");
             addItem(gear.leggings(), name + " Leggings");
@@ -263,25 +272,33 @@ public final class ModLanguageProvider {
             add("tooltip.cryonite.ability.armor.aether", "Креативный полёт, сильная регенерация, иммунитет к негативным эффектам и магии");
             add("tooltip.cryonite.ability.weapon.cryonite", "Заморозка и замедление, +25% урона огненным существам");
             add("tooltip.cryonite.ability.weapon.infernite", "Синее пламя, +25% урона нежити, ледяным и водным мобам и крионитовой броне");
-            add("tooltip.cryonite.ability.weapon.void", "Игнорирует 30% брони; меч: ПКМ — рывок на 7 блоков");
+            add("tooltip.cryonite.ability.weapon.void", "Игнорирует 30% брони; меч и мультитул: ПКМ — рывок на 7 блоков");
             add("tooltip.cryonite.ability.weapon.aether", "50% урона — чистая магия (игнорирует броню и щит), +1 сердце за удар");
             add("tooltip.cryonite.ability.tool.cryonite", "Мгновенно ломает лёд и снег");
-            add("tooltip.cryonite.ability.tool.infernite", "Автоплавка, работает с Удачей (Shift + ПКМ или клавиша)");
+            add("tooltip.cryonite.ability.tool.infernite", "Автоплавка, работает с Удачей");
             add("tooltip.cryonite.ability.tool.void", "Телекинез: добыча и опыт сразу попадают к вам");
-            add("tooltip.cryonite.ability.tool.aether", "Копание 3x3 (клавиша)");
+            add("tooltip.cryonite.ability.tool.aether", "Копание 3×3");
+            add("tooltip.cryonite.mode.auto_smelt", "Автоплавка: %s [Клавиша: %s]");
+            add("tooltip.cryonite.mode.auto_smelt.on", "ВКЛ");
+            add("tooltip.cryonite.mode.auto_smelt.off", "ВЫКЛ");
+            add("tooltip.cryonite.mode.area_mining", "Режим копания: %s [Клавиша: %s]");
+            add("tooltip.cryonite.mode.area_mining.on", "3×3");
+            add("tooltip.cryonite.mode.area_mining.off", "1×1");
 
             add("message.cryonite.auto_smelt", "Автоплавка");
-            add("message.cryonite.area_mining", "Копание 3x3");
-            add("message.cryonite.enabled", "ВКЛ");
-            add("message.cryonite.disabled", "ВЫКЛ");
+            add("message.cryonite.auto_smelt.on", "ВКЛЮЧЕНА");
+            add("message.cryonite.auto_smelt.off", "ВЫКЛЮЧЕНА");
+            add("message.cryonite.area_mining", "Режим копания 3×3");
+            add("message.cryonite.area_mining.on", "ВКЛЮЧЕН");
+            add("message.cryonite.area_mining.off", "ВЫКЛЮЧЕН");
             add("message.cryonite.mode_state", "%s: %s");
             add("message.cryonite.mode_unsupported", "Предмет в руке не поддерживает режим «%s»");
             add("message.cryonite.item_burned", "Раскалённый осколок инфернита сжёг: %s!");
             add("message.cryonite.void_rescue", "Броня Войда вернула вас обратно");
 
             add("key.categories.cryonite", "Крионит");
-            add("key.cryonite.toggle_auto_smelt", "Переключить автоплавку");
-            add("key.cryonite.toggle_area_mining", "Переключить копание 3x3");
+            add("key.cryonite.toggle_3x3", "Переключить режим копания 3×3");
+            add("key.cryonite.toggle_autosmelt", "Переключить Автоплавку");
 
             add("gui.cryonite.slot.input", "Основной ингредиент");
             add("gui.cryonite.slot.catalyst", "Катализатор");
@@ -396,6 +413,8 @@ public final class ModLanguageProvider {
             addItem(gear.axe(), masculine + " топор");
             addItem(gear.shovel(), feminine + " лопата");
             addItem(gear.hoe(), feminine + " мотыга");
+            // The Void multitool is named the other way round on purpose: "Мультитул войда".
+            addItem(gear.multitool(), tier == GearTier.VOID ? "Мультитул войда" : masculine + " мультитул");
             addItem(gear.helmet(), masculine + " шлем");
             addItem(gear.chestplate(), masculine + " нагрудник");
             addItem(gear.leggings(), plural + " поножи");

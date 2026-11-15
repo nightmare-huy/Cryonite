@@ -10,6 +10,7 @@ import dev.nightmarehuy.cryonite.item.RawCryoniteItem;
 import dev.nightmarehuy.cryonite.item.TieredArmorItem;
 import dev.nightmarehuy.cryonite.item.TieredAxeItem;
 import dev.nightmarehuy.cryonite.item.TieredHoeItem;
+import dev.nightmarehuy.cryonite.item.TieredMultitoolItem;
 import dev.nightmarehuy.cryonite.item.TieredPickaxeItem;
 import dev.nightmarehuy.cryonite.item.TieredShovelItem;
 import dev.nightmarehuy.cryonite.item.TieredSwordItem;
@@ -162,6 +163,8 @@ public final class ModItems {
                         .attributes(diggerAttributes(toolTier, tier.shovelDamage(), GearTier.SHOVEL_SPEED)))),
                 REGISTER.register(prefix + "hoe", () -> new TieredHoeItem(tier, toolTier, gearProperties(tier)
                         .attributes(diggerAttributes(toolTier, GearTier.HOE_DAMAGE, GearTier.HOE_SPEED)))),
+                REGISTER.register(prefix + "multitool", () -> new TieredMultitoolItem(tier, toolTier, gearProperties(tier)
+                        .attributes(diggerAttributes(toolTier, tier.multitoolDamage(), GearTier.MULTITOOL_SPEED)))),
                 registerArmor(tier, armor, "helmet", ArmorItem.Type.HELMET),
                 registerArmor(tier, armor, "chestplate", ArmorItem.Type.CHESTPLATE),
                 registerArmor(tier, armor, "leggings", ArmorItem.Type.LEGGINGS),
@@ -180,21 +183,27 @@ public final class ModItems {
             DeferredItem<TieredAxeItem> axe,
             DeferredItem<TieredShovelItem> shovel,
             DeferredItem<TieredHoeItem> hoe,
+            DeferredItem<TieredMultitoolItem> multitool,
             DeferredItem<TieredArmorItem> helmet,
             DeferredItem<TieredArmorItem> chestplate,
             DeferredItem<TieredArmorItem> leggings,
             DeferredItem<TieredArmorItem> boots) {
 
         public List<DeferredItem<? extends Item>> handheld() {
-            return List.of(sword, pickaxe, axe, shovel, hoe);
+            return List.of(sword, pickaxe, axe, shovel, hoe, multitool);
         }
 
         public List<DeferredItem<? extends Item>> armor() {
             return List.of(helmet, chestplate, leggings, boots);
         }
 
-        public List<DeferredItem<? extends Item>> all() {
+        /** The nine pieces that have a Netherite counterpart, in the order of the smithing upgrade chain. */
+        public List<DeferredItem<? extends Item>> classic() {
             return List.of(sword, pickaxe, axe, shovel, hoe, helmet, chestplate, leggings, boots);
+        }
+
+        public List<DeferredItem<? extends Item>> all() {
+            return List.of(sword, pickaxe, axe, shovel, hoe, multitool, helmet, chestplate, leggings, boots);
         }
     }
 

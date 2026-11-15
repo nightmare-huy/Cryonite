@@ -17,13 +17,13 @@ import org.lwjgl.glfw.GLFW;
 public final class ClientSetup {
     public static final String KEY_CATEGORY = "key.categories.cryonite";
 
-    /** Toggles auto-smelt of the held Infernite+ tool. */
-    public static final KeyMapping TOGGLE_AUTO_SMELT = new KeyMapping(
-            "key.cryonite.toggle_auto_smelt", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, KEY_CATEGORY);
+    /** Toggles 3x3 mining of the held Aether tool or multitool. */
+    public static final KeyMapping KEY_3X3 = new KeyMapping(
+            "key.cryonite.toggle_3x3", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, KEY_CATEGORY);
 
-    /** Toggles 3x3 mining of the held Aether tool. */
-    public static final KeyMapping TOGGLE_AREA_MINING = new KeyMapping(
-            "key.cryonite.toggle_area_mining", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, KEY_CATEGORY);
+    /** Toggles auto-smelt of the held Infernite+ tool or multitool. */
+    public static final KeyMapping KEY_AUTOSMELT = new KeyMapping(
+            "key.cryonite.toggle_autosmelt", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, KEY_CATEGORY);
 
     public static void init(IEventBus modBus) {
         modBus.addListener(ClientSetup::registerScreens);
@@ -36,8 +36,8 @@ public final class ClientSetup {
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(TOGGLE_AUTO_SMELT);
-        event.register(TOGGLE_AREA_MINING);
+        event.register(KEY_3X3);
+        event.register(KEY_AUTOSMELT);
     }
 
     private ClientSetup() {}

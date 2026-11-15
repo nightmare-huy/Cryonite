@@ -21,6 +21,9 @@ public final class ModTags {
         public static final TagKey<Block> INCORRECT_FOR_VOID_TOOL = tag("incorrect_for_void_tool");
         public static final TagKey<Block> INCORRECT_FOR_AETHER_TOOL = tag("incorrect_for_aether_tool");
 
+        /** Everything a multitool digs: the four vanilla {@code mineable/*} tags plus leaves and cobwebs. */
+        public static final TagKey<Block> MINEABLE_WITH_MULTITOOL = tag("mineable/multitool");
+
         /** Blocks an Infernite cluster may grow into inside the Basalt Deltas. */
         public static final TagKey<Block> INFERNITE_CLUSTER_REPLACEABLES = tag("infernite_cluster_replaceables");
 
@@ -38,6 +41,9 @@ public final class ModTags {
         public static final TagKey<Item> BURNABLE_BY_INFERNITE = tag("burnable_by_infernite");
         /** Dropped items that ignore explosions, cacti, fire and every other non-void damage. */
         public static final TagKey<Item> INDESTRUCTIBLE = tag("indestructible");
+
+        /** The four multitools. */
+        public static final TagKey<Item> MULTITOOLS = tag("multitools");
 
         public static final TagKey<Item> CRYONITE_GEAR = tag("cryonite_gear");
         public static final TagKey<Item> INFERNITE_GEAR = tag("infernite_gear");

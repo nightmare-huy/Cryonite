@@ -42,6 +42,15 @@ public final class ModTagProviders {
                     ModBlocks.VOID_ORE.get(),
                     ModBlocks.INFERNITE_BLOCK.get());
 
+            // ---- what a multitool digs (this tag only feeds its vanilla Tool component)
+            tag(ModTags.Blocks.MINEABLE_WITH_MULTITOOL)
+                    .add(net.minecraft.world.level.block.Blocks.COBWEB)
+                    .addTag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .addTag(BlockTags.MINEABLE_WITH_AXE)
+                    .addTag(BlockTags.MINEABLE_WITH_SHOVEL)
+                    .addTag(BlockTags.MINEABLE_WITH_HOE)
+                    .addTag(BlockTags.LEAVES);
+
             // ---- what each block needs
             tag(BlockTags.NEEDS_DIAMOND_TOOL).add(ModBlocks.PRIMORDIAL_SMELTER.get(), ModBlocks.INFERNITE_BLOCK.get());
             tag(Tags.Blocks.NEEDS_NETHERITE_TOOL).add(ModBlocks.CRYONITE_ORE.get());
@@ -161,6 +170,12 @@ public final class ModTagProviders {
                 tag(ItemTags.AXES).add(gear.axe().get());
                 tag(ItemTags.SHOVELS).add(gear.shovel().get());
                 tag(ItemTags.HOES).add(gear.hoe().get());
+                // A multitool is all four tools at once: it takes every mining enchantment and, as an axe, Sharpness.
+                tag(ModTags.Items.MULTITOOLS).add(gear.multitool().get());
+                tag(ItemTags.PICKAXES).add(gear.multitool().get());
+                tag(ItemTags.AXES).add(gear.multitool().get());
+                tag(ItemTags.SHOVELS).add(gear.multitool().get());
+                tag(ItemTags.HOES).add(gear.multitool().get());
                 tag(ItemTags.HEAD_ARMOR).add(gear.helmet().get());
                 tag(ItemTags.CHEST_ARMOR).add(gear.chestplate().get());
                 tag(ItemTags.LEG_ARMOR).add(gear.leggings().get());

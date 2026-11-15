@@ -41,6 +41,7 @@ public class ModRecipeProvider extends RecipeProvider {
         voidTier(output);
         aether(output);
         upgrades(output);
+        multitools(output);
     }
 
     // ------------------------------------------------------------------ the smelter itself
@@ -219,7 +220,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS);
         List<Item> previous = netherite;
         for (GearTier tier : List.of(GearTier.CRYONITE, GearTier.INFERNITE, GearTier.VOID)) {
-            List<Item> current = ModItems.gear(tier).all().stream().map(holder -> (Item) holder.get()).toList();
+            List<Item> current = ModItems.gear(tier).classic().stream().map(holder -> (Item) holder.get()).toList();
             Item template = ModItems.upgradeTemplate(tier).get();
             for (int i = 0; i < current.size(); i++) {
                 Item result = current.get(i);
@@ -231,6 +232,40 @@ public class ModRecipeProvider extends RecipeProvider {
                         .save(output, Cryonite.id(BuiltInRegistries.ITEM.getKey(result).getPath() + "_smithing"));
             }
             previous = current;
+        }
+    }
+
+    // ------------------------------------------------------------------ multitools
+
+    /**
+     * Crafting table, every tier: axe, shovel and pickaxe of the tier over two of its ingots and a handle
+     * (a stick or a blaze rod). Smithing table: Cryonite -> Infernite -> Void multitool with the usual
+     * template and ingot, so an existing multitool can be carried up instead of being rebuilt.
+     */
+    private void multitools(RecipeOutput output) {
+        for (GearTier tier : GearTier.values()) {
+            ModItems.GearSet gear = ModItems.gear(tier);
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, gear.multitool())
+                    .pattern("ASP")
+                    .pattern("#/#")
+                    .define('A', gear.axe())
+                    .define('S', gear.shovel())
+                    .define('P', gear.pickaxe())
+                    .define('#', tier.ingot())
+                    .define('/', Ingredient.of(Items.STICK, Items.BLAZE_ROD))
+                    .unlockedBy("has_" + tier.id() + "_pickaxe", has(gear.pickaxe()))
+                    .save(output);
+        }
+
+        Item previous = ModItems.gear(GearTier.CRYONITE).multitool().get();
+        for (GearTier tier : List.of(GearTier.INFERNITE, GearTier.VOID)) {
+            Item result = ModItems.gear(tier).multitool().get();
+            SmithingTransformRecipeBuilder.smithing(
+                            Ingredient.of(ModItems.upgradeTemplate(tier).get()), Ingredient.of(previous), Ingredient.of(tier.ingot()),
+                            RecipeCategory.TOOLS, result)
+                    .unlocks("has_" + tier.id() + "_ingot", has(tier.ingot()))
+                    .save(output, Cryonite.id(BuiltInRegistries.ITEM.getKey(result).getPath() + "_smithing"));
+            previous = result;
         }
     }
 

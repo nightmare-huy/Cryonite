@@ -8,6 +8,7 @@ import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlock;
 import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlockEntity;
 import dev.nightmarehuy.cryonite.compat.jei.AcquisitionJeiRecipe;
 import dev.nightmarehuy.cryonite.compat.jei.WorldInteractionJeiRecipe;
+import dev.nightmarehuy.cryonite.network.ToggleToolModePayload;
 import dev.nightmarehuy.cryonite.recipe.PrimordialRecipeInput;
 import dev.nightmarehuy.cryonite.registry.ModBlocks;
 import dev.nightmarehuy.cryonite.registry.ModDataComponents;
@@ -36,6 +37,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -140,6 +142,7 @@ public final class CryoniteGameTests {
             stats(gear.axe().get(), tier.axeDamage(), GearTier.AXE_SPEED);
             stats(gear.pickaxe().get(), tier.pickaxeDamage(), GearTier.PICKAXE_SPEED);
             stats(gear.shovel().get(), tier.shovelDamage(), GearTier.SHOVEL_SPEED);
+            stats(gear.multitool().get(), tier.multitoolDamage(), GearTier.MULTITOOL_SPEED);
 
             double armor = 0.0;
             double toughness = 0.0;
@@ -574,6 +577,292 @@ public final class CryoniteGameTests {
         helper.succeed();
     }
 
+    // ------------------------------------------------------------------ multitools, hotkeys and the 3x3 planes
+
+    @GameTest(template = EMPTY)
+    public static void multitoolsDigEverythingOfTheirTier(GameTestHelper helper) {
+        List<BlockState> diggable = List.of(
+                Blocks.STONE.defaultBlockState(), Blocks.OBSIDIAN.defaultBlockState(),      // pickaxe
+                Blocks.OAK_LOG.defaultBlockState(),                                          // axe
+                Blocks.DIRT.defaultBlockState(), Blocks.GRAVEL.defaultBlockState(),          // shovel
+                Blocks.HAY_BLOCK.defaultBlockState(),                                        // hoe
+                Blocks.OAK_LEAVES.defaultBlockState());
+        BlockState cobweb = Blocks.COBWEB.defaultBlockState();
+        BlockState glass = Blocks.GLASS.defaultBlockState();
+        double[] expected = {11.0, 14.0, 18.0, 25.0};   // damage and dig speed happen to be the same numbers
+
+        for (GearTier tier : GearTier.values()) {
+            Item multitool = ModItems.gear(tier).multitool().get();
+            ItemStack stack = new ItemStack(multitool);
+            double value = expected[tier.level() - 1];
+
+            stats(multitool, value, 1.2);
+            near(tier.multitoolDamage(), tier.swordDamage() + 1.0, tier + " multitool damage is the sword + 1");
+            for (BlockState state : diggable) {
+                harvest(multitool, state, true);
+                near(stack.getDestroySpeed(state), value, tier + " multitool speed on " + state.getBlock());
+            }
+            harvest(multitool, cobweb, true);
+            near(stack.getDestroySpeed(cobweb), Math.max(15.0, value), tier + " multitool speed on cobwebs");
+            harvest(multitool, glass, false);
+            near(stack.getDestroySpeed(glass), 1.0, tier + " multitool speed on a block of no tool");
+
+            // Weapon and tool at once: both ability cascades see the full tier.
+            check(TierAbilityHandler.weaponLevel(stack) == tier.level(), tier + " multitool must count as a weapon");
+            check(TierAbilityHandler.toolLevel(stack) == tier.level(), tier + " multitool must count as a tool");
+            check(ToolAbilities.Mode.AUTO_SMELT.isSupported(stack) == (tier.level() >= 2), tier + " multitool: auto-smelt starts with Infernite");
+            check(ToolAbilities.Mode.AREA_MINING.isSupported(stack) == (tier == GearTier.AETHER), tier + " multitool: 3x3 is Aether only");
+        }
+
+        // The tier gate is the one of the pickaxes: Void Ore needs Infernite.
+        Item cryonite = ModItems.gear(GearTier.CRYONITE).multitool().get();
+        BlockState voidOre = ModBlocks.VOID_ORE.get().defaultBlockState();
+        harvest(cryonite, ModBlocks.CRYONITE_ORE.get().defaultBlockState(), true);
+        harvest(cryonite, ModBlocks.INFERNITE_ORE.get().defaultBlockState(), true);
+        harvest(cryonite, voidOre, false);
+        near(new ItemStack(cryonite).getDestroySpeed(voidOre), 1.0, "a block above the tier is dug at hand speed");
+        Item infernite = ModItems.gear(GearTier.INFERNITE).multitool().get();
+        harvest(infernite, voidOre, true);
+
+        // Inherited mining abilities: auto-smelt from Infernite on.
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 2, 4));
+        check(drops(level, Blocks.IRON_ORE.defaultBlockState(), pos, new ItemStack(cryonite), Items.RAW_IRON), "the Cryonite multitool does not smelt");
+        check(drops(level, Blocks.IRON_ORE.defaultBlockState(), pos, new ItemStack(infernite), Items.IRON_INGOT), "the Infernite multitool smelts");
+
+        // Crafting recipes of all four tiers and the two smithing upgrades.
+        for (String recipe : List.of("cryonite_multitool", "infernite_multitool", "void_multitool", "aether_multitool",
+                "infernite_multitool_smithing", "void_multitool_smithing")) {
+            check(level.getRecipeManager().byKey(Cryonite.id(recipe)).isPresent(), "missing recipe " + recipe);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void multitoolStripsFlattensAndTills(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.gear(GearTier.CRYONITE).multitool().get()));
+
+        BlockPos log = new BlockPos(2, 2, 2);
+        BlockPos path = new BlockPos(4, 2, 2);
+        BlockPos field = new BlockPos(6, 2, 2);
+        BlockPos stone = new BlockPos(4, 2, 6);
+        helper.setBlock(log, Blocks.OAK_LOG);
+        helper.setBlock(path, Blocks.GRASS_BLOCK);
+        helper.setBlock(field, Blocks.GRASS_BLOCK);
+        helper.setBlock(stone, Blocks.STONE);
+
+        check(rightClick(helper, player, log).consumesAction(), "stripping must consume the click");
+        check(helper.getBlockState(log).is(Blocks.STRIPPED_OAK_LOG), "right-click strips logs like an axe");
+        check(rightClick(helper, player, path).consumesAction(), "flattening must consume the click");
+        check(helper.getBlockState(path).is(Blocks.DIRT_PATH), "right-click makes a path like a shovel");
+        check(rightClick(helper, player, stone) == InteractionResult.PASS, "nothing to do on stone: the click must pass through");
+
+        player.setShiftKeyDown(true);
+        check(rightClick(helper, player, field).consumesAction(), "tilling must consume the click");
+        check(helper.getBlockState(field).is(Blocks.FARMLAND), "Shift + right-click tills like a hoe");
+        helper.setBlock(log, Blocks.BIRCH_LOG);
+        rightClick(helper, player, log);
+        check(helper.getBlockState(log).is(Blocks.STRIPPED_BIRCH_LOG), "with nothing to till, Shift + right-click still strips");
+        helper.succeed();
+    }
+
+    private static InteractionResult rightClick(GameTestHelper helper, Player player, BlockPos pos) {
+        BlockPos absolute = helper.absolutePos(pos);
+        return player.getMainHandItem().useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,
+                new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)));
+    }
+
+    @GameTest(template = EMPTY)
+    public static void voidMultitoolDashesOnlyInTheAir(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            place(helper, player, new Vec3(1.5, 2.0, 4.5), new Vec3(8.5, 2.0, 4.5));
+            Vec3 start = player.position();
+
+            ItemStack cryonite = new ItemStack(ModItems.gear(GearTier.CRYONITE).multitool().get());
+            player.setItemInHand(InteractionHand.MAIN_HAND, cryonite);
+            check(cryonite.use(helper.getLevel(), player, InteractionHand.MAIN_HAND).getResult() == InteractionResult.PASS, "no dash below the Void tier");
+
+            ItemStack multitool = new ItemStack(ModItems.gear(GearTier.VOID).multitool().get());
+            player.setItemInHand(InteractionHand.MAIN_HAND, multitool);
+
+            // A block within reach at eye level: that click belongs to the tool, not to the dash.
+            BlockPos wall = new BlockPos(3, 3, 4);
+            helper.setBlock(wall, Blocks.STONE);
+            check(multitool.use(helper.getLevel(), player, InteractionHand.MAIN_HAND).getResult() == InteractionResult.PASS, "no dash when a block is targeted");
+            check(player.position().distanceTo(start) < 1.0E-6, "the player must not move");
+            check(!player.getCooldowns().isOnCooldown(multitool.getItem()), "a refused dash must not start the cooldown");
+
+            helper.setBlock(wall, Blocks.AIR);
+            check(multitool.use(helper.getLevel(), player, InteractionHand.MAIN_HAND).getResult().consumesAction(), "right-click in the air must dash");
+            double travelled = player.position().distanceTo(start);
+            check(travelled > 3.0 && travelled <= WeaponAbilities.DASH_DISTANCE + 0.01, "dash distance was " + travelled);
+            check(player.getCooldowns().isOnCooldown(multitool.getItem()), "the dash must start its cooldown");
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
+    }
+
+    /** The server side of the two hotkeys, and the tooltip lines that show the state and the key. */
+    @GameTest(template = EMPTY)
+    public static void hotkeysToggleTheModesOnTheServerStack(GameTestHelper helper) {
+        check(ToggleToolModePayload.MODE_3X3 == 0 && ToggleToolModePayload.MODE_AUTO_SMELT == 1, "payload mode types are 0 = 3x3, 1 = auto-smelt");
+        check(ToolAbilities.Mode.byNetworkId(0) == ToolAbilities.Mode.AREA_MINING, "mode type 0 is 3x3 mining");
+        check(ToolAbilities.Mode.byNetworkId(1) == ToolAbilities.Mode.AUTO_SMELT, "mode type 1 is auto-smelt");
+        check(ToolAbilities.Mode.byNetworkId(7) == null && ToolAbilities.Mode.byNetworkId(-1) == null, "unknown mode types are ignored");
+        for (String key : List.of("key.categories.cryonite", "key.cryonite.toggle_3x3", "key.cryonite.toggle_autosmelt")) {
+            check(Language.getInstance().has(key), "no en_us translation for " + key);
+        }
+        check(ToolAbilities.Mode.AREA_MINING.keyName().equals("key.cryonite.toggle_3x3"), "3x3 tooltip must name its own key");
+        check(ToolAbilities.Mode.AUTO_SMELT.keyName().equals("key.cryonite.toggle_autosmelt"), "auto-smelt tooltip must name its own key");
+
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            ItemStack aether = new ItemStack(ModItems.gear(GearTier.AETHER).multitool().get());
+            player.setItemInHand(InteractionHand.MAIN_HAND, aether);
+            ToolAbilities.toggle(player, ToolAbilities.Mode.AREA_MINING);
+            check(Boolean.TRUE.equals(player.getMainHandItem().get(ModDataComponents.AREA_MINING.get())), "V must write the 3x3 component on the server stack");
+            ToolAbilities.toggle(player, ToolAbilities.Mode.AREA_MINING);
+            check(!ToolAbilities.Mode.AREA_MINING.isActive(player.getMainHandItem()), "a second press switches 3x3 off again");
+            ToolAbilities.toggle(player, ToolAbilities.Mode.AUTO_SMELT);
+            check(Boolean.FALSE.equals(player.getMainHandItem().get(ModDataComponents.AUTO_SMELT.get())), "B must switch auto-smelt off");
+
+            // The tier is checked on the server: a Void multitool has no 3x3, a Cryonite one has neither mode.
+            ItemStack voidTool = new ItemStack(ModItems.gear(GearTier.VOID).multitool().get());
+            player.setItemInHand(InteractionHand.MAIN_HAND, voidTool);
+            ToolAbilities.toggle(player, ToolAbilities.Mode.AREA_MINING);
+            check(!player.getMainHandItem().has(ModDataComponents.AREA_MINING.get()), "3x3 must not be switchable below Aether");
+            ItemStack cryonite = new ItemStack(ModItems.gear(GearTier.CRYONITE).multitool().get());
+            player.setItemInHand(InteractionHand.MAIN_HAND, cryonite);
+            ToolAbilities.toggle(player, ToolAbilities.Mode.AUTO_SMELT);
+            check(!player.getMainHandItem().has(ModDataComponents.AUTO_SMELT.get()), "auto-smelt must not be switchable below Infernite");
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+
+        // Tooltip: one line per supported mode, on every tool and on the multitools.
+        for (GearTier tier : GearTier.values()) {
+            ModItems.GearSet gear = ModItems.gear(tier);
+            int lines = tier == GearTier.AETHER ? 2 : tier.level() >= 2 ? 1 : 0;
+            for (var tool : List.of(gear.pickaxe(), gear.axe(), gear.shovel(), gear.hoe(), gear.multitool())) {
+                check(modeLines(new ItemStack(tool.get())) == lines, tool.getId() + " must show " + lines + " mode line(s)");
+            }
+            check(modeLines(new ItemStack(gear.sword().get())) == 0, "swords have no tool modes");
+        }
+        helper.succeed();
+    }
+
+    private static int modeLines(ItemStack stack) {
+        List<Component> lines = new ArrayList<>();
+        stack.getItem().appendHoverText(stack, Item.TooltipContext.EMPTY, lines, TooltipFlag.NORMAL);
+        lines.forEach(CryoniteGameTests::assertTranslated);
+        return lines.size();
+    }
+
+    /** UP / DOWN give the X/Z plane, NORTH / SOUTH the X/Y wall, WEST / EAST the Z/Y wall. */
+    @GameTest(template = EMPTY)
+    public static void areaMiningPlaneFollowsTheMinedFace(GameTestHelper helper) {
+        BlockPos origin = new BlockPos(10, 20, 30);
+        for (Direction face : Direction.values()) {
+            List<BlockPos> area = ToolAbilities.areaAround(origin, face);
+            check(area.size() == 8 && area.stream().distinct().count() == 8 && !area.contains(origin), face + ": eight distinct neighbours expected");
+            for (BlockPos pos : area) {
+                check(pos.get(face.getAxis()) == origin.get(face.getAxis()), face + ": " + pos + " left the plane of the face");
+                for (Direction.Axis axis : Direction.Axis.values()) {
+                    check(Math.abs(pos.get(axis) - origin.get(axis)) <= 1, face + ": " + pos + " is not adjacent");
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    /** Looking straight down: the Aether multitool takes a 3x3 of stone, dirt, gravel and wood out of the floor at once. */
+    @GameTest(template = EMPTY)
+    public static void aetherMultitoolMinesAMixedFloor(GameTestHelper helper) {
+        Block[] mix = {Blocks.STONE, Blocks.DIRT, Blocks.GRAVEL, Blocks.OAK_LOG, Blocks.COBBLESTONE,
+                Blocks.OAK_PLANKS, Blocks.SAND, Blocks.HAY_BLOCK, Blocks.OAK_LEAVES};
+        // 5x5 floor: the mixed 3x3 in the middle, a ring of cobblestone around it that must survive.
+        for (int x = 2; x <= 6; x++) {
+            for (int z = 2; z <= 6; z++) {
+                boolean inner = x >= 3 && x <= 5 && z >= 3 && z <= 5;
+                helper.setBlock(new BlockPos(x, 2, z), inner ? mix[(x - 3) * 3 + (z - 3)] : Blocks.COBBLESTONE);
+            }
+        }
+        BlockPos centre = new BlockPos(4, 2, 4);
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            Vec3 above = helper.absoluteVec(new Vec3(4.5, 3.0, 4.5));
+            player.moveTo(above.x, above.y, above.z, 0.0F, 90.0F);
+
+            ItemStack multitool = new ItemStack(ModItems.gear(GearTier.AETHER).multitool().get());
+            player.setItemInHand(InteractionHand.MAIN_HAND, multitool);
+            ToolAbilities.toggle(player, ToolAbilities.Mode.AREA_MINING);
+            player.gameMode.destroyBlock(helper.absolutePos(centre));
+
+            for (int x = 2; x <= 6; x++) {
+                for (int z = 2; z <= 6; z++) {
+                    BlockPos pos = new BlockPos(x, 2, z);
+                    boolean inner = x >= 3 && x <= 5 && z >= 3 && z <= 5;
+                    if (inner) {
+                        check(helper.getBlockState(pos).isAir(), "floor block " + x + "/" + z + " of the 3x3 must be mined");
+                    } else {
+                        check(helper.getBlockState(pos).is(Blocks.COBBLESTONE), "block " + x + "/" + z + " outside the 3x3 must stay (no chain reaction)");
+                    }
+                }
+            }
+            // Telekinesis and auto-smelt are inherited: nothing lies around, stone and cobblestone arrive as stone.
+            check(player.getInventory().countItem(Items.STONE) == 2, "expected 2 smelted stone, got " + player.getInventory().countItem(Items.STONE));
+            check(player.getInventory().countItem(Items.DIRT) == 1, "expected the dirt in the inventory");
+            List<ItemEntity> lying = helper.getLevel().getEntitiesOfClass(ItemEntity.class, helper.getBounds());
+            check(lying.isEmpty(), "telekinesis must not leave drops on the ground");
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
+    }
+
+    /** The third plane: a wall the player faces along the X axis is mined in Z/Y. */
+    @GameTest(template = EMPTY)
+    public static void aetherShovelMinesASideWall(GameTestHelper helper) {
+        for (int z = 3; z <= 5; z++) {
+            for (int y = 2; y <= 4; y++) {
+                helper.setBlock(new BlockPos(6, y, z), Blocks.DIRT);
+            }
+        }
+        // Same plane but outside the 3x3, and directly behind the centre: both must survive.
+        List<BlockPos> bystanders = List.of(new BlockPos(6, 3, 2), new BlockPos(6, 3, 6), new BlockPos(7, 3, 4));
+        bystanders.forEach(pos -> helper.setBlock(pos, Blocks.DIRT));
+        BlockPos centre = new BlockPos(6, 3, 4);
+
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            place(helper, player, new Vec3(3.5, 2.0, 4.5), new Vec3(8.5, 2.0, 4.5));
+
+            ItemStack shovel = new ItemStack(ModItems.gear(GearTier.AETHER).shovel().get());
+            shovel.set(ModDataComponents.AREA_MINING.get(), true);
+            player.setItemInHand(InteractionHand.MAIN_HAND, shovel);
+            player.gameMode.destroyBlock(helper.absolutePos(centre));
+
+            for (int z = 3; z <= 5; z++) {
+                for (int y = 2; y <= 4; y++) {
+                    check(helper.getBlockState(new BlockPos(6, y, z)).isAir(), "wall block " + z + "/" + y + " of the 3x3 must be mined");
+                }
+            }
+            for (BlockPos pos : bystanders) {
+                check(helper.getBlockState(pos).is(Blocks.DIRT), "block " + pos + " is outside the 3x3 plane and must stay");
+            }
+            check(player.getInventory().countItem(Items.DIRT) == 9, "expected 9 dirt in the inventory, got " + player.getInventory().countItem(Items.DIRT));
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
+    }
+
     // ------------------------------------------------------------------ step 5: data and world generation
 
     @GameTest(template = EMPTY)
@@ -714,6 +1003,11 @@ public final class CryoniteGameTests {
     private static void assertTranslated(Component text) {
         if (text.getContents() instanceof TranslatableContents contents) {
             check(Language.getInstance().has(contents.getKey()), "no en_us translation for " + contents.getKey());
+            for (Object argument : contents.getArgs()) {
+                if (argument instanceof Component component) {
+                    assertTranslated(component);
+                }
+            }
         }
         text.getSiblings().forEach(CryoniteGameTests::assertTranslated);
     }

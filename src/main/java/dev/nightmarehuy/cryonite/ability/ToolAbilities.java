@@ -2,10 +2,10 @@ package dev.nightmarehuy.cryonite.ability;
 
 import dev.nightmarehuy.cryonite.registry.ModDataComponents;
 import dev.nightmarehuy.cryonite.tier.GearTier;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +28,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
 /**
- * Mining abilities of pickaxes, axes, shovels and hoes.
+ * Mining abilities of pickaxes, axes, shovels, hoes and multitools.
  * Tier 1: ice and snow break instantly. Tier 2: auto-smelt (the loot itself is rewritten by
  * {@link dev.nightmarehuy.cryonite.loot.AutoSmeltLootModifier}). Tier 3: telekinesis. Tier 4: 3x3 mining.
  */
@@ -38,30 +38,74 @@ public final class ToolAbilities {
     private static final float INSTANT_BREAK_SPEED = 1.0E6F;
     private static final int BLOCK_BREAK_EVENT = 2001;
 
-    /** Players currently inside a 3x3 break, so the extra blocks do not start their own 3x3. */
-    private static final Set<UUID> AREA_MINERS = new HashSet<>();
+    /**
+     * Set while the eight extra blocks of a 3x3 break are being destroyed. Every one of them fires its own
+     * break event; without this guard each would start another 3x3 and the area would spread without end.
+     */
+    private static final ThreadLocal<Boolean> IS_MINING_3X3 = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     /** The two switchable tool modes; their state is stored in data components on the stack. */
     public enum Mode {
-        AUTO_SMELT(GearTier.INFERNITE, true, "message.cryonite.auto_smelt"),
-        AREA_MINING(GearTier.AETHER, false, "message.cryonite.area_mining");
+        AUTO_SMELT(1, GearTier.INFERNITE, true, "auto_smelt", "key.cryonite.toggle_autosmelt"),
+        AREA_MINING(0, GearTier.AETHER, false, "area_mining", "key.cryonite.toggle_3x3");
 
+        private final int networkId;
         private final GearTier requiredTier;
         private final boolean enabledByDefault;
-        private final String messageKey;
+        private final String name;
+        private final String keyName;
 
-        Mode(GearTier requiredTier, boolean enabledByDefault, String messageKey) {
+        Mode(int networkId, GearTier requiredTier, boolean enabledByDefault, String name, String keyName) {
+            this.networkId = networkId;
             this.requiredTier = requiredTier;
             this.enabledByDefault = enabledByDefault;
-            this.messageKey = messageKey;
+            this.name = name;
+            this.keyName = keyName;
+        }
+
+        /** The {@code modeType} of {@link dev.nightmarehuy.cryonite.network.ToggleToolModePayload}: 0 = 3x3, 1 = auto-smelt. */
+        public int networkId() {
+            return networkId;
+        }
+
+        /** The mode behind a {@code modeType} received from a client, {@code null} for anything unknown. */
+        @Nullable
+        public static Mode byNetworkId(int networkId) {
+            for (Mode mode : values()) {
+                if (mode.networkId == networkId) {
+                    return mode;
+                }
+            }
+            return null;
         }
 
         public GearTier requiredTier() {
             return requiredTier;
         }
 
+        /** Name of the mode in the action bar, e.g. "Auto-smelt". */
         public String messageKey() {
-            return messageKey;
+            return "message.cryonite." + name;
+        }
+
+        /** The word for the new state in the action bar (it follows the grammatical gender of the mode name). */
+        public String stateKey(boolean enabled) {
+            return messageKey() + (enabled ? ".on" : ".off");
+        }
+
+        /** Tooltip line with two arguments: the state and the bound key. */
+        public String tooltipKey() {
+            return "tooltip.cryonite.mode." + name;
+        }
+
+        /** The short state shown in the tooltip: ON / OFF for auto-smelt, 3x3 / 1x1 for area mining. */
+        public String tooltipStateKey(boolean enabled) {
+            return tooltipKey() + (enabled ? ".on" : ".off");
+        }
+
+        /** Name of the key mapping that toggles the mode; resolved to the bound key on the client. */
+        public String keyName() {
+            return keyName;
         }
 
         private DataComponentType<Boolean> component() {
@@ -90,10 +134,26 @@ public final class ToolAbilities {
         }
         boolean enabled = !mode.isActive(stack);
         stack.set(mode.component(), enabled);
-        Component state = Component.translatable(enabled ? "message.cryonite.enabled" : "message.cryonite.disabled")
-                .withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.RED);
+        Component state = Component.translatable(mode.stateKey(enabled)).withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.RED);
         player.displayClientMessage(Component.translatable("message.cryonite.mode_state", Component.translatable(mode.messageKey()), state), true);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.4F, enabled ? 1.4F : 0.8F);
+    }
+
+    /**
+     * Tooltip lines of the modes the stack supports, e.g. "Auto-smelt: ON [Key: B]" and "Mining mode: 3x3 [Key: V]".
+     * The state is read from the stack every time the tooltip is drawn, and the key is a keybind component,
+     * so it follows whatever the player bound in the controls screen. Safe to call on a dedicated server.
+     */
+    public static void appendModeTooltip(ItemStack stack, List<Component> tooltip) {
+        for (Mode mode : Mode.values()) {
+            if (mode.isSupported(stack)) {
+                boolean active = mode.isActive(stack);
+                tooltip.add(Component.translatable(mode.tooltipKey(),
+                                Component.translatable(mode.tooltipStateKey(active)).withStyle(active ? ChatFormatting.GREEN : ChatFormatting.RED),
+                                Component.keybind(mode.keyName()).withStyle(ChatFormatting.YELLOW))
+                        .withStyle(ChatFormatting.GRAY));
+            }
+        }
     }
 
     // ------------------------------------------------------------------ tier 1: ice breaker
@@ -143,47 +203,72 @@ public final class ToolAbilities {
     // ------------------------------------------------------------------ tier 4: 3x3 mining
 
     /**
-     * Breaks the eight neighbours of {@code origin} in the plane of the face the player is looking at.
+     * Breaks the eight neighbours of {@code origin} in the plane of the face the player is mining.
      * Every extra block goes through the normal player break logic, so drops, auto-smelt, telekinesis,
      * experience and claim protection all behave exactly as for a hand-mined block.
+     *
+     * <p>A neighbour is only broken when the held tool is the correct tool for it and the block is
+     * breakable at all (hardness {@code >= 0}, so no bedrock, barriers or portal frames).</p>
      */
     public static void mineArea(ServerPlayer player, BlockPos origin, BlockState originState) {
+        if (IS_MINING_3X3.get()) {
+            return;
+        }
         ItemStack tool = player.getMainHandItem();
-        if (!Mode.AREA_MINING.isActive(tool) || player.isShiftKeyDown() || !tool.isCorrectToolForDrops(originState)) {
+        if (!Mode.AREA_MINING.isActive(tool) || !tool.isCorrectToolForDrops(originState)) {
             return;
         }
-        if (!AREA_MINERS.add(player.getUUID())) {
-            return;
-        }
+        IS_MINING_3X3.set(Boolean.TRUE);
         try {
             ServerLevel level = player.serverLevel();
             float originHardness = originState.getDestroySpeed(level, origin);
-            Direction.Axis normal = minedFace(player, origin).getAxis();
-            for (int a = -1; a <= 1; a++) {
-                for (int b = -1; b <= 1; b++) {
-                    if (a == 0 && b == 0) {
-                        continue;
-                    }
-                    BlockPos pos = switch (normal) {
-                        case X -> origin.offset(0, a, b);
-                        case Y -> origin.offset(a, 0, b);
-                        case Z -> origin.offset(a, b, 0);
-                    };
-                    BlockState state = level.getBlockState(pos);
-                    float hardness = state.getDestroySpeed(level, pos);
-                    if (state.isAir() || hardness < 0.0F || hardness > originHardness + AREA_HARDNESS_TOLERANCE
-                            || !tool.isCorrectToolForDrops(state) || level.getBlockEntity(pos) != null) {
-                        continue;
-                    }
-                    if (player.gameMode.destroyBlock(pos)) {
-                        // The breaking player is skipped by the vanilla break effect, so send it explicitly.
-                        player.connection.send(new ClientboundLevelEventPacket(BLOCK_BREAK_EVENT, pos, Block.getId(state), false));
-                    }
+            for (BlockPos pos : areaAround(origin, minedFace(player, origin))) {
+                BlockState state = level.getBlockState(pos);
+                if (!canMineInArea(level, pos, state, tool, originHardness)) {
+                    continue;
+                }
+                if (player.gameMode.destroyBlock(pos)) {
+                    // The breaking player is skipped by the vanilla break effect, so send it explicitly.
+                    player.connection.send(new ClientboundLevelEventPacket(BLOCK_BREAK_EVENT, pos, Block.getId(state), false));
                 }
             }
         } finally {
-            AREA_MINERS.remove(player.getUUID());
+            IS_MINING_3X3.set(Boolean.FALSE);
         }
+    }
+
+    /**
+     * The eight neighbours of {@code origin} in the plane of the mined face:
+     * UP / DOWN give the horizontal X/Z plane, NORTH / SOUTH the X/Y wall, WEST / EAST the Z/Y wall.
+     */
+    public static List<BlockPos> areaAround(BlockPos origin, Direction face) {
+        List<BlockPos> area = new ArrayList<>(8);
+        for (int a = -1; a <= 1; a++) {
+            for (int b = -1; b <= 1; b++) {
+                if (a == 0 && b == 0) {
+                    continue;
+                }
+                area.add(switch (face.getAxis()) {
+                    case Y -> origin.offset(a, 0, b);
+                    case Z -> origin.offset(a, b, 0);
+                    case X -> origin.offset(0, b, a);
+                });
+            }
+        }
+        return area;
+    }
+
+    private static boolean canMineInArea(ServerLevel level, BlockPos pos, BlockState state, ItemStack tool, float originHardness) {
+        if (state.isAir() || !tool.isCorrectToolForDrops(state)) {
+            return false;
+        }
+        float hardness = state.getDestroySpeed(level, pos);
+        if (hardness < 0.0F) {
+            return false;
+        }
+        // Two safety nets on top: chests and other block entities are never swept along, and a block much
+        // harder than the one actually mined (obsidian next to stone) has to be mined on purpose.
+        return hardness <= originHardness + AREA_HARDNESS_TOLERANCE && level.getBlockEntity(pos) == null;
     }
 
     /** The block face the player is mining: taken from a server side ray cast, falling back to the view direction. */

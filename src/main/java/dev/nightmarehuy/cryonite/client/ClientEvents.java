@@ -1,13 +1,11 @@
 package dev.nightmarehuy.cryonite.client;
 
 import dev.nightmarehuy.cryonite.ability.TierAbilityHandler;
-import dev.nightmarehuy.cryonite.ability.ToolAbilities;
-import dev.nightmarehuy.cryonite.network.ToggleModePayload;
+import dev.nightmarehuy.cryonite.network.ToggleToolModePayload;
 import dev.nightmarehuy.cryonite.tier.GearTier;
 import dev.nightmarehuy.cryonite.tier.TieredGear;
 import java.util.List;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
@@ -33,14 +31,12 @@ public final class ClientEvents {
         if (Minecraft.getInstance().player == null) {
             return;
         }
-        sendToggles(ClientSetup.TOGGLE_AUTO_SMELT, ToolAbilities.Mode.AUTO_SMELT);
-        sendToggles(ClientSetup.TOGGLE_AREA_MINING, ToolAbilities.Mode.AREA_MINING);
-    }
-
-    /** The server owns the data components, the client only asks for the switch. */
-    private static void sendToggles(KeyMapping key, ToolAbilities.Mode mode) {
-        while (key.consumeClick()) {
-            PacketDistributor.sendToServer(new ToggleModePayload(mode));
+        // The server owns the data components: the client only reports the key press.
+        while (ClientSetup.KEY_3X3.consumeClick()) {
+            PacketDistributor.sendToServer(new ToggleToolModePayload(ToggleToolModePayload.MODE_3X3));
+        }
+        while (ClientSetup.KEY_AUTOSMELT.consumeClick()) {
+            PacketDistributor.sendToServer(new ToggleToolModePayload(ToggleToolModePayload.MODE_AUTO_SMELT));
         }
     }
 
@@ -83,16 +79,7 @@ public final class ClientEvents {
         }
         List<Component> tooltip = event.getToolTip();
 
-        for (ToolAbilities.Mode mode : ToolAbilities.Mode.values()) {
-            if (mode.isSupported(stack)) {
-                boolean active = mode.isActive(stack);
-                tooltip.add(Component.translatable("message.cryonite.mode_state",
-                        Component.translatable(mode.messageKey()).withStyle(ChatFormatting.GRAY),
-                        Component.translatable(active ? "message.cryonite.enabled" : "message.cryonite.disabled")
-                                .withStyle(active ? ChatFormatting.GREEN : ChatFormatting.RED)));
-            }
-        }
-
+        // The state of auto-smelt and 3x3 is added by the items themselves (appendHoverText -> ToolAbilities).
         if (!Screen.hasShiftDown()) {
             tooltip.add(Component.translatable("tooltip.cryonite.hold_shift").withStyle(ChatFormatting.DARK_GRAY));
             return;

@@ -30,6 +30,9 @@ public enum GearTier {
     public static final float SHOVEL_SPEED = 1.0F;
     public static final float HOE_SPEED = 4.0F;
     public static final float HOE_DAMAGE = 1.0F;
+    public static final float MULTITOOL_SPEED = 1.2F;
+    /** A multitool hits one point harder than the sword of its tier. */
+    public static final float MULTITOOL_DAMAGE_BONUS = 1.0F;
 
     private final int level;
     private final String id;
@@ -111,6 +114,11 @@ public enum GearTier {
 
     public float shovelDamage() {
         return shovelDamage;
+    }
+
+    /** Final tooltip damage of the multitool: 11 / 14 / 18 / 25. */
+    public float multitoolDamage() {
+        return swordDamage + MULTITOOL_DAMAGE_BONUS;
     }
 
     public int helmetDefense() {
