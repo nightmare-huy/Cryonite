@@ -5,7 +5,9 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SmithingTemplateItem;
+import net.minecraft.world.item.TooltipFlag;
 
 /**
  * Smithing template that lifts the gear of the previous tier to {@code tier}
@@ -24,6 +26,9 @@ public class UpgradeTemplateItem extends SmithingTemplateItem {
             icon("empty_slot_shovel"));
     private static final List<ResourceLocation> INGOT_ICONS = List.of(icon("empty_slot_ingot"));
 
+    /** Where the template is found and how it is duplicated. */
+    private final ItemHints hints;
+
     public UpgradeTemplateItem(GearTier tier) {
         super(
                 Component.translatable(key(tier, "applies_to")).withStyle(ChatFormatting.BLUE),
@@ -33,6 +38,15 @@ public class UpgradeTemplateItem extends SmithingTemplateItem {
                 Component.translatable(key(tier, "additions_slot_description")),
                 EQUIPMENT_ICONS,
                 INGOT_ICONS);
+        this.hints = ItemHints.of(tier.id() + "_upgrade_smithing_template", ItemHints.accentOf(tier))
+                .accent("source")
+                .step("duplicate");
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
+        hints.appendTo(tooltip);
     }
 
     public static String key(GearTier tier, String suffix) {

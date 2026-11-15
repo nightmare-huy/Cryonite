@@ -20,6 +20,9 @@ import net.minecraft.world.item.TooltipFlag;
  */
 public class UnstableVoidShardItem extends Item {
     private static final int CHECK_INTERVAL = 5;
+    private static final ItemHints HINTS = ItemHints.of("unstable_void_shard", ChatFormatting.DARK_PURPLE)
+            .accent("source")
+            .step("next", "craft");
 
     public UnstableVoidShardItem(Properties properties) {
         super(properties);
@@ -50,6 +53,6 @@ public class UnstableVoidShardItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.cryonite.unstable_void_shard").withStyle(ChatFormatting.LIGHT_PURPLE));
+        HINTS.appendTo(tooltip);
     }
 }

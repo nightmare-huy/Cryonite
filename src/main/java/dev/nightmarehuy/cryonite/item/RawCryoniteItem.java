@@ -26,6 +26,9 @@ public class RawCryoniteItem extends Item {
     private static final int CREEP_INTERVAL = 4;
     private static final int EFFECT_INTERVAL = 20;
     private static final int EFFECT_DURATION = 60;
+    private static final ItemHints HINTS = ItemHints.of("raw_cryonite", ChatFormatting.AQUA)
+            .accent("source", "danger")
+            .step("next", "fuel");
 
     public RawCryoniteItem(Properties properties) {
         super(properties);
@@ -60,6 +63,6 @@ public class RawCryoniteItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.cryonite.raw_cryonite").withStyle(ChatFormatting.AQUA));
+        HINTS.appendTo(tooltip);
     }
 }

@@ -41,3 +41,7 @@ repo/
 
 ### CI logs ###
 *.log
+
+# Python caches of tools/
+__pycache__/
+*.pyc

@@ -6,6 +6,8 @@ import dev.nightmarehuy.cryonite.ability.ToolAbilities;
 import dev.nightmarehuy.cryonite.ability.WeaponAbilities;
 import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlock;
 import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlockEntity;
+import dev.nightmarehuy.cryonite.compat.jei.AcquisitionJeiRecipe;
+import dev.nightmarehuy.cryonite.compat.jei.WorldInteractionJeiRecipe;
 import dev.nightmarehuy.cryonite.recipe.PrimordialRecipeInput;
 import dev.nightmarehuy.cryonite.registry.ModBlocks;
 import dev.nightmarehuy.cryonite.registry.ModDataComponents;
@@ -14,6 +16,7 @@ import dev.nightmarehuy.cryonite.registry.ModItems;
 import dev.nightmarehuy.cryonite.registry.ModRecipes;
 import dev.nightmarehuy.cryonite.tier.GearTier;
 import dev.nightmarehuy.cryonite.worldgen.ModWorldgen;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -26,6 +29,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,12 +48,15 @@ import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Husk;
 import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
@@ -640,6 +649,73 @@ public final class CryoniteGameTests {
         check(!ModFeatures.INFERNITE_CLUSTER.get().place(NoneFeatureConfiguration.INSTANCE, level,
                 level.getChunkSource().getGenerator(), level.getRandom(), helper.absolutePos(air)), "the cluster must not generate in air");
         helper.succeed();
+    }
+
+    // ------------------------------------------------------------------ documentation: tooltips and JEI
+
+    /** Every material tells in its tooltip where it comes from and what to do next, and every line is translated. */
+    @GameTest(template = EMPTY)
+    public static void materialsCarryTranslatedHints(GameTestHelper helper) {
+        List<ItemLike> materials = List.of(
+                ModItems.CRYONITE_ORE, ModItems.INFERNITE_ORE, ModItems.VOID_ORE, ModItems.INFERNITE_BLOCK, ModItems.PRIMORDIAL_SMELTER,
+                ModItems.RAW_CRYONITE, ModItems.CRYONITE_CRYSTAL_DUST, ModItems.CRYONITE_INGOT,
+                ModItems.MOLTEN_INFERNITE_SHARD, ModItems.COOLED_INFERNITE_BLANK, ModItems.INFERNITE_INGOT,
+                ModItems.UNSTABLE_VOID_SHARD, ModItems.STABILIZED_VOID_CLUSTER, ModItems.MOLTEN_VOID_BLANK, ModItems.VOID_INGOT,
+                ModItems.INACTIVE_AETHER, ModItems.AETHER_INGOT,
+                ModItems.CRYONITE_UPGRADE_SMITHING_TEMPLATE, ModItems.INFERNITE_UPGRADE_SMITHING_TEMPLATE, ModItems.VOID_UPGRADE_SMITHING_TEMPLATE);
+        for (ItemLike material : materials) {
+            ItemStack stack = new ItemStack(material);
+            List<Component> lines = new ArrayList<>();
+            stack.getItem().appendHoverText(stack, Item.TooltipContext.EMPTY, lines, TooltipFlag.NORMAL);
+
+            long hints = lines.stream()
+                    .filter(line -> line.getContents() instanceof TranslatableContents contents && contents.getKey().startsWith("tooltip.cryonite."))
+                    .count();
+            check(hints >= 2, stack.getItem() + " must carry at least two hint lines, found " + hints);
+            lines.forEach(CryoniteGameTests::assertTranslated);
+        }
+        helper.succeed();
+    }
+
+    /** The JEI documentation recipes are complete, translated and agree with the mining tiers. */
+    @GameTest(template = EMPTY)
+    public static void jeiDocumentationMatchesTheMechanics(GameTestHelper helper) {
+        List<WorldInteractionJeiRecipe> interactions = WorldInteractionJeiRecipe.all();
+        check(interactions.size() == 4, "expected 4 world interactions, found " + interactions.size());
+        for (WorldInteractionJeiRecipe recipe : interactions) {
+            assertTranslated(recipe.description());
+            check(!recipe.input().isEmpty() && !recipe.output().isEmpty(), recipe.id() + " has an empty input or output");
+            check(!recipe.medium().isEmpty() && recipe.medium().stream().noneMatch(ItemStack::isEmpty), recipe.id() + " has no medium");
+            check(recipe.ticks() > 0, recipe.id() + " needs a positive arrow cycle");
+        }
+
+        List<AcquisitionJeiRecipe> acquisitions = AcquisitionJeiRecipe.all();
+        check(acquisitions.size() == 6, "expected 6 acquisition entries, found " + acquisitions.size());
+        int ores = 0;
+        for (AcquisitionJeiRecipe recipe : acquisitions) {
+            assertTranslated(recipe.description());
+            check(!recipe.result().isEmpty(), recipe.id() + " has no result");
+            check(!recipe.means().isEmpty() && recipe.means().stream().noneMatch(ItemStack::isEmpty), recipe.id() + " has no tool or chest");
+            check(!recipe.surroundings().isEmpty() && recipe.surroundings().stream().noneMatch(ItemStack::isEmpty), recipe.id() + " has no surroundings");
+
+            // Every pickaxe an ore entry shows must really harvest that ore.
+            if (recipe.silkTouch().getItem() instanceof BlockItem ore) {
+                ores++;
+                for (ItemStack pickaxe : recipe.means()) {
+                    harvest(pickaxe.getItem(), ore.getBlock().defaultBlockState(), true);
+                }
+            }
+        }
+        check(ores == 3, "expected 3 ore entries, found " + ores);
+        helper.succeed();
+    }
+
+    /** Fails when {@code text} or one of its siblings is a translatable component without an {@code en_us} entry. */
+    private static void assertTranslated(Component text) {
+        if (text.getContents() instanceof TranslatableContents contents) {
+            check(Language.getInstance().has(contents.getKey()), "no en_us translation for " + contents.getKey());
+        }
+        text.getSiblings().forEach(CryoniteGameTests::assertTranslated);
     }
 
     // ------------------------------------------------------------------ helpers

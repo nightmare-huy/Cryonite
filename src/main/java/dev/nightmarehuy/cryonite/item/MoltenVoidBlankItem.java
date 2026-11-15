@@ -21,6 +21,9 @@ import net.minecraft.world.level.block.Blocks;
  */
 public class MoltenVoidBlankItem extends Item {
     public static final int QUENCH_TICKS = 100;
+    private static final ItemHints HINTS = ItemHints.of("molten_void_blank", ChatFormatting.DARK_PURPLE)
+            .accent("source")
+            .step("next", "craft");
 
     public MoltenVoidBlankItem(Properties properties) {
         super(properties);
@@ -56,6 +59,6 @@ public class MoltenVoidBlankItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.cryonite.molten_void_blank").withStyle(ChatFormatting.LIGHT_PURPLE));
+        HINTS.appendTo(tooltip);
     }
 }

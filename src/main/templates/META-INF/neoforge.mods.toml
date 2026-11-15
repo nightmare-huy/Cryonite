@@ -25,3 +25,11 @@ forged in the Primordial Smelter.
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+
+# Optional: adds the "World processing" and "Ore mining" categories and the info pages (compat/jei).
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    versionRange="${jei_version_range}"
+    ordering="NONE"
+    side="CLIENT"

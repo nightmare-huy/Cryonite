@@ -40,6 +40,9 @@ public class MoltenInferniteShardItem extends Item {
     private static final float IGNITE_SECONDS = 3.0F;
     /** Shards quenched by one cauldron layer / one block of Blue Ice. */
     public static final int QUENCH_BATCH = 16;
+    private static final ItemHints HINTS = ItemHints.of("molten_infernite_shard", ChatFormatting.GOLD)
+            .accent("source", "danger")
+            .step("coolant", "next");
 
     public MoltenInferniteShardItem(Properties properties) {
         super(properties);
@@ -128,7 +131,6 @@ public class MoltenInferniteShardItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.cryonite.molten_infernite_shard").withStyle(ChatFormatting.GOLD));
-        tooltip.add(Component.translatable("tooltip.cryonite.molten_infernite_shard.quench").withStyle(ChatFormatting.GRAY));
+        HINTS.appendTo(tooltip);
     }
 }

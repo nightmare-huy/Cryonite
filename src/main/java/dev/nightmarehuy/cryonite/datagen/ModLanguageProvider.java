@@ -49,11 +49,7 @@ public final class ModLanguageProvider {
             template(GearTier.INFERNITE, "Infernite", "Cryonite Equipment", "Add a piece of Cryonite armor, a weapon or a tool");
             template(GearTier.VOID, "Void", "Infernite Equipment", "Add a piece of Infernite armor, a weapon or a tool");
 
-            add("tooltip.cryonite.raw_cryonite", "Freezing cold: carrying it slows and freezes you");
-            add("tooltip.cryonite.molten_infernite_shard", "Scorching: sets you on fire and burns wooden and stone items unless you carry snow or ice");
-            add("tooltip.cryonite.molten_infernite_shard.quench", "Right-click a Powder Snow Cauldron or Blue Ice to cool it");
-            add("tooltip.cryonite.unstable_void_shard", "Unstable: stabilize it in a cloud of Dragon's Breath");
-            add("tooltip.cryonite.molten_void_blank", "Quench it on Crying Obsidian or with Blue Ice");
+            guide();
             add("tooltip.cryonite.hold_shift", "Hold Shift for abilities");
             add("tooltip.cryonite.full_set", "Full set:");
             add("tooltip.cryonite.on_hit", "On hit:");
@@ -92,6 +88,103 @@ public final class ModLanguageProvider {
             add("death.attack.cryonite.aether_burst", "%1$s was erased by Aether");
             add("death.attack.cryonite.aether_burst.player", "%1$s was erased by the Aether of %2$s");
             add("death.attack.cryonite.aether_burst.item", "%1$s was erased by %2$s using %3$s");
+        }
+
+        /** Inventory hints and the JEI documentation; the Russian class fills the same keys. */
+        private void guide() {
+            // Inventory hints (item/ItemHints): accent lines describe the item, gray lines the next step.
+            add("tooltip.cryonite.cryonite_ore.source", "Overworld: deepslate and tuff, Y -64 to 0");
+            add("tooltip.cryonite.cryonite_ore.tool", "Pickaxe: Netherite or better");
+            add("tooltip.cryonite.cryonite_ore.biomes", "More common in the Deep Dark and frozen biomes");
+            add("tooltip.cryonite.raw_cryonite.source", "From Cryonite Ore (Netherite pickaxe)");
+            add("tooltip.cryonite.raw_cryonite.danger", "Freezing cold: carrying it slows and freezes you");
+            add("tooltip.cryonite.raw_cryonite.next", "Smelt it into dust in the Primordial Smelter");
+            add("tooltip.cryonite.raw_cryonite.fuel", "Fuel: Blaze Rod or Magma Block");
+            add("tooltip.cryonite.cryonite_crystal_dust.source", "Raw Cryonite out of the Primordial Smelter");
+            add("tooltip.cryonite.cryonite_crystal_dust.next", "With Netherite Scrap or an Echo Shard: an ingot");
+            add("tooltip.cryonite.cryonite_crystal_dust.also", "Cools a Molten Infernite Shard on the crafting table");
+            add("tooltip.cryonite.cryonite_ingot.source", "Cryonite dust + Netherite Scrap or an Echo Shard");
+            add("tooltip.cryonite.cryonite_ingot.next", "Smithing table: upgrades Netherite gear");
+            add("tooltip.cryonite.cryonite_ingot.also", "Needed for Inactive Aether");
+            add("tooltip.cryonite.cryonite_upgrade_smithing_template.source", "Ancient City chests (25% chance)");
+            add("tooltip.cryonite.cryonite_upgrade_smithing_template.duplicate", "Duplicate with 7 Netherite Ingots + Deepslate");
+
+            add("tooltip.cryonite.infernite_ore.source", "Nether: Basalt Deltas, Y 8 to 96");
+            add("tooltip.cryonite.infernite_ore.tool", "Pickaxe: Cryonite or better");
+            add("tooltip.cryonite.infernite_ore.shell", "Veins hide inside a shell of magma and blackstone");
+            add("tooltip.cryonite.molten_infernite_shard.source", "From Infernite Ore (Cryonite pickaxe)");
+            add("tooltip.cryonite.molten_infernite_shard.danger", "Scorching: sets you on fire, burns wooden and stone items");
+            add("tooltip.cryonite.molten_infernite_shard.coolant", "Snowballs or ice in the inventory keep it in check");
+            add("tooltip.cryonite.molten_infernite_shard.next", "Cool it in a Powder Snow Cauldron, on Blue Ice or with Cryonite dust");
+            add("tooltip.cryonite.cooled_infernite_blank.source", "A quenched Molten Infernite Shard");
+            add("tooltip.cryonite.cooled_infernite_blank.next", "Smelter: with a Block of Gold and a Ghast Tear: an ingot");
+            add("tooltip.cryonite.cooled_infernite_blank.fuel", "Fuel: Blaze Powder, Blaze Rod or Lava Bucket");
+            add("tooltip.cryonite.infernite_ingot.source", "A Cooled Blank out of the Primordial Smelter");
+            add("tooltip.cryonite.infernite_ingot.next", "Smithing table: upgrades Cryonite gear");
+            add("tooltip.cryonite.infernite_ingot.also", "Needed for the Void blank, Inactive Aether and the Block of Infernite");
+            add("tooltip.cryonite.infernite_block.source", "Storage block: 9 Infernite Ingots");
+            add("tooltip.cryonite.infernite_block.next", "The only fuel hot enough to awaken Inactive Aether");
+            add("tooltip.cryonite.infernite_upgrade_smithing_template.source", "Bastion treasure chests (7.5% chance)");
+            add("tooltip.cryonite.infernite_upgrade_smithing_template.duplicate", "Duplicate with 7 Cryonite Ingots + Basalt");
+
+            add("tooltip.cryonite.void_ore.source", "The End: outer islands, Y 0 to 12");
+            add("tooltip.cryonite.void_ore.tool", "Pickaxe: Infernite or better");
+            add("tooltip.cryonite.void_ore.danger", "Danger: breaking it drags you down and blinds you for 3 s");
+            add("tooltip.cryonite.unstable_void_shard.source", "From Void Ore (Infernite pickaxe)");
+            add("tooltip.cryonite.unstable_void_shard.next", "Drop it into a cloud of Dragon's Breath");
+            add("tooltip.cryonite.unstable_void_shard.craft", "or craft 8 shards around a bottle of Dragon's Breath");
+            add("tooltip.cryonite.stabilized_void_cluster.source", "A Void shard tamed by Dragon's Breath");
+            add("tooltip.cryonite.stabilized_void_cluster.next", "4 clusters + 4 Infernite Ingots + a Shulker Shell");
+            add("tooltip.cryonite.stabilized_void_cluster.where", "Crafting table or the Smelter (Blaze Rod, Lava Bucket)");
+            add("tooltip.cryonite.molten_void_blank.source", "An alloy of Void clusters, Infernite and a Shulker Shell");
+            add("tooltip.cryonite.molten_void_blank.next", "Drop it onto Crying Obsidian for 5 seconds");
+            add("tooltip.cryonite.molten_void_blank.craft", "or combine it with Blue Ice on the crafting table");
+            add("tooltip.cryonite.void_ingot.source", "A Void blank quenched on Crying Obsidian");
+            add("tooltip.cryonite.void_ingot.next", "Smithing table: upgrades Infernite gear");
+            add("tooltip.cryonite.void_ingot.also", "Needed for Inactive Aether");
+            add("tooltip.cryonite.void_upgrade_smithing_template.source", "End City treasure chests (17.5% chance)");
+            add("tooltip.cryonite.void_upgrade_smithing_template.duplicate", "Duplicate with 7 Infernite Ingots + Dragon's Breath");
+
+            add("tooltip.cryonite.inactive_aether.source", "Netherite, Cryonite, Infernite and Void ingots");
+            add("tooltip.cryonite.inactive_aether.next", "Smelt it in the Primordial Smelter with a Block of Infernite as fuel");
+            add("tooltip.cryonite.aether_ingot.source", "Aether awakened in the Primordial Smelter");
+            add("tooltip.cryonite.aether_ingot.next", "Aether gear is crafted on the crafting table, no template");
+            add("tooltip.cryonite.primordial_smelter.purpose", "Smelts the materials of all four tiers");
+            add("tooltip.cryonite.primordial_smelter.slots", "Slots: input, up to two catalysts, fuel");
+            add("tooltip.cryonite.primordial_smelter.fuel", "Every recipe burns its own fuel");
+
+            // JEI (compat/jei): the two documentation categories.
+            add("jei.cryonite.category.world_interaction", "World Processing (Quenching & Stabilizing)");
+            add("jei.cryonite.world_interaction.powder_snow_cauldron", "Right-click a Powder Snow Cauldron with the molten shard. One layer of snow quenches up to 16 shards.");
+            add("jei.cryonite.world_interaction.blue_ice", "Right-click a block of Blue Ice with the molten shard (the ice thaws into regular Ice). One block quenches up to 16 shards.");
+            add("jei.cryonite.world_interaction.dragon_breath", "Drop the shards (Q) straight into a cloud of the Ender Dragon's breath during the fight.");
+            add("jei.cryonite.world_interaction.crying_obsidian", "Drop the blank (Q) onto a block of Crying Obsidian and wait 5 seconds.");
+
+            add("jei.cryonite.category.acquisition", "Ore Mining & Artifact Hunting");
+            add("jei.cryonite.acquisition.silk_touch", "The ore itself drops with Silk Touch");
+            add("jei.cryonite.acquisition.cryonite_ore", "Overworld: Deepslate and Tuff (Y -64 to 0), more common in the Deep Dark and frozen biomes. Freezes you while in the inventory!");
+            add("jei.cryonite.acquisition.infernite_ore", "Nether: Basalt Deltas (Y 8 to 96), wrapped in magma and blackstone. Burns the player and melts wood and stone in the inventory unless ice or snowballs are carried!");
+            add("jei.cryonite.acquisition.void_ore", "The End: outer islands, the lowest layer above the void (Y = 0..12). DANGER: breaking it drags you down into the void and blinds you for 3 seconds!");
+            add("jei.cryonite.acquisition.cryonite_template", "Structure: Ancient City, 25% chance per chest. Duplicated on the crafting table with 7 Netherite Ingots and Deepslate.");
+            add("jei.cryonite.acquisition.infernite_template", "Structure: treasure rooms of Piglin Bastions (low chance: 7.5% per chest). Duplicated with 7 Cryonite Ingots and Basalt.");
+            add("jei.cryonite.acquisition.void_template", "Structure: End City treasure chests, End Ships included (17.5% chance per chest). Duplicated with 7 Infernite Ingots and Dragon's Breath.");
+
+            // JEI info pages: what the categories cannot show.
+            add("jei.cryonite.info.raw_cryonite", "Raw Cryonite radiates cold: while you carry it you are slowed and slowly freeze. Leather or Cryonite armor and the Nether keep you warm.\n\nSmelt it in the Primordial Smelter (fuel: Blaze Rod or Magma Block) into Cryonite Crystal Dust.");
+            add("jei.cryonite.info.cryonite_crystal_dust", "Smelted from Raw Cryonite in the Primordial Smelter (fuel: Blaze Rod or Magma Block).\n\nDust + Netherite Scrap or an Echo Shard = Cryonite Ingot, either on the crafting table or in the Smelter (scrap or shard in a catalyst slot).\n\nOn the crafting table the dust also cools a Molten Infernite Shard.");
+            add("jei.cryonite.info.cryonite_ingot", "Cryonite Crystal Dust + Netherite Scrap or an Echo Shard (crafting table or Primordial Smelter).\n\nSmithing table: Cryonite Upgrade template + a Netherite item + the ingot. 7 ingots duplicate the Infernite Upgrade template. Also needed for Inactive Aether.");
+            add("jei.cryonite.info.molten_infernite_shard", "Third way: combine the shard with Cryonite Crystal Dust on the crafting table.\n\nSnowballs, Ice, Packed Ice or Blue Ice in the inventory stop the shard from burning you and your items.");
+            add("jei.cryonite.info.cooled_infernite_blank", "A Molten Infernite Shard cooled in a Powder Snow Cauldron, on Blue Ice or with Cryonite Crystal Dust.\n\nPrimordial Smelter: the blank + a Block of Gold and a Ghast Tear (catalysts), fuel: Blaze Powder, Blaze Rod or Lava Bucket. The result is an Infernite Ingot.");
+            add("jei.cryonite.info.infernite_ingot", "Smelted from a Cooled Infernite Blank in the Primordial Smelter (Block of Gold + Ghast Tear).\n\nSmithing table: Infernite Upgrade template + a Cryonite item + the ingot. 9 ingots make a Block of Infernite. Also needed for the Molten Void Blank, Inactive Aether and to duplicate the Void Upgrade template.");
+            add("jei.cryonite.info.infernite_block", "9 Infernite Ingots on the crafting table (and back).\n\nThe only fuel of the Primordial Smelter that is hot enough to awaken Inactive Aether.");
+            add("jei.cryonite.info.unstable_void_shard", "Without a dragon: 8 shards around a bottle of Dragon's Breath on the crafting table give 8 Stabilized Void Clusters.");
+            add("jei.cryonite.info.stabilized_void_cluster", "An Unstable Void Shard stabilized in a cloud of Dragon's Breath or on the crafting table.\n\n4 clusters + 4 Infernite Ingots + a Shulker Shell = Molten Void Blank, either on the crafting table or in the Primordial Smelter (fuel: Blaze Rod or Lava Bucket).");
+            add("jei.cryonite.info.molten_void_blank", "Made of 4 Stabilized Void Clusters, 4 Infernite Ingots and a Shulker Shell (crafting table or Primordial Smelter).");
+            add("jei.cryonite.info.molten_void_blank.craft", "Without obsidian: combine the blank with Blue Ice on the crafting table.");
+            add("jei.cryonite.info.void_ingot", "A Molten Void Blank quenched on Crying Obsidian or with Blue Ice.\n\nSmithing table: Void Upgrade template + an Infernite item + the ingot. Also needed for Inactive Aether.");
+            add("jei.cryonite.info.inactive_aether", "Crafting table: Netherite Ingot + Cryonite Ingot + Infernite Ingot + Void Ingot.\n\nSmelt it in the Primordial Smelter with a Block of Infernite as fuel to get an Aether Ingot.");
+            add("jei.cryonite.info.aether_ingot", "Inactive Aether smelted in the Primordial Smelter on a Block of Infernite.\n\nAether weapons, tools and armor are crafted on the crafting table in the usual shapes (ingots and sticks), no template needed.");
+            add("jei.cryonite.info.primordial_smelter", "Crafting: 4 Obsidian, 2 Blaze Rods, 2 Netherite Scrap and a Blast Furnace.\n\nSlots: main ingredient, up to two catalysts, fuel and result. Catalyst slots a recipe does not use must stay empty. Every recipe burns its own fuel, ordinary fuel does not work:\n- Raw Cryonite, Cryonite dust: Blaze Rod or Magma Block\n- Cooled Infernite Blank: Blaze Powder, Blaze Rod or Lava Bucket\n- Stabilized Void Clusters: Blaze Rod or Lava Bucket\n- Inactive Aether: Block of Infernite");
         }
 
         private void gear(GearTier tier, String name) {
@@ -158,11 +251,7 @@ public final class ModLanguageProvider {
             template(GearTier.VOID, "Улучшение Войда", "Инфернитовое снаряжение", "Слиток Войда",
                     "Поместите инфернитовую броню, оружие или инструмент", "Добавьте слиток Войда");
 
-            add("tooltip.cryonite.raw_cryonite", "Ледяной холод: в инвентаре замедляет и замораживает");
-            add("tooltip.cryonite.molten_infernite_shard", "Раскалён: поджигает и сжигает деревянные и каменные предметы, если рядом нет снега или льда");
-            add("tooltip.cryonite.molten_infernite_shard.quench", "ПКМ по котлу с рыхлым снегом или синему льду — охладить");
-            add("tooltip.cryonite.unstable_void_shard", "Нестабилен: стабилизируйте в облаке драконьего дыхания");
-            add("tooltip.cryonite.molten_void_blank", "Закалите на плачущем обсидиане или синим льдом");
+            guide();
             add("tooltip.cryonite.hold_shift", "Зажмите Shift — способности");
             add("tooltip.cryonite.full_set", "Полный комплект:");
             add("tooltip.cryonite.on_hit", "При ударе:");
@@ -201,6 +290,103 @@ public final class ModLanguageProvider {
             add("death.attack.cryonite.aether_burst", "%1$s стёрт Эфиром");
             add("death.attack.cryonite.aether_burst.player", "%1$s стёрт Эфиром игрока %2$s");
             add("death.attack.cryonite.aether_burst.item", "%1$s стёрт игроком %2$s с помощью %3$s");
+        }
+
+        /** Inventory hints and the JEI documentation; same keys as in the English class. */
+        private void guide() {
+            // Inventory hints (item/ItemHints): accent lines describe the item, gray lines the next step.
+            add("tooltip.cryonite.cryonite_ore.source", "Обычный мир: глубинный сланец и туф, Y от -64 до 0");
+            add("tooltip.cryonite.cryonite_ore.tool", "Кирка: незеритовая или лучше");
+            add("tooltip.cryonite.cryonite_ore.biomes", "Чаще в Тёмных глубинах и ледяных биомах");
+            add("tooltip.cryonite.raw_cryonite.source", "Из крионитовой руды (незеритовая кирка)");
+            add("tooltip.cryonite.raw_cryonite.danger", "Ледяной холод: в инвентаре замедляет и замораживает");
+            add("tooltip.cryonite.raw_cryonite.next", "Переплавьте в пыль в Первородной Плавильне");
+            add("tooltip.cryonite.raw_cryonite.fuel", "Топливо: огненный стержень или блок магмы");
+            add("tooltip.cryonite.cryonite_crystal_dust.source", "Сырой крионит из Первородной Плавильни");
+            add("tooltip.cryonite.cryonite_crystal_dust.next", "С незеритовым ломом или осколком эха — слиток");
+            add("tooltip.cryonite.cryonite_crystal_dust.also", "На верстаке остужает раскалённый осколок инфернита");
+            add("tooltip.cryonite.cryonite_ingot.source", "Пыль крионита + незеритовый лом или осколок эха");
+            add("tooltip.cryonite.cryonite_ingot.next", "Кузнечный стол: улучшает незеритовое снаряжение");
+            add("tooltip.cryonite.cryonite_ingot.also", "Нужен для Неактивного Эфира");
+            add("tooltip.cryonite.cryonite_upgrade_smithing_template.source", "Древний город: сундуки (шанс 25%)");
+            add("tooltip.cryonite.cryonite_upgrade_smithing_template.duplicate", "Дублируется: 7 незеритовых слитков + глубинный сланец");
+
+            add("tooltip.cryonite.infernite_ore.source", "Незер: Базальтовые дельты, Y от 8 до 96");
+            add("tooltip.cryonite.infernite_ore.tool", "Кирка: крионитовая или лучше");
+            add("tooltip.cryonite.infernite_ore.shell", "Жилы спрятаны в оболочке из магмы и чернита");
+            add("tooltip.cryonite.molten_infernite_shard.source", "Из инфернитовой руды (крионитовая кирка)");
+            add("tooltip.cryonite.molten_infernite_shard.danger", "Раскалён: поджигает вас, сжигает дерево и камень в инвентаре");
+            add("tooltip.cryonite.molten_infernite_shard.coolant", "Снежки или лёд в инвентаре сдерживают жар");
+            add("tooltip.cryonite.molten_infernite_shard.next", "Охладите в котле с рыхлым снегом, о Синий лёд или с Крионитовой пылью");
+            add("tooltip.cryonite.cooled_infernite_blank.source", "Остуженный раскалённый осколок инфернита");
+            add("tooltip.cryonite.cooled_infernite_blank.next", "Плавильня: с блоком золота и слезой гаста — слиток");
+            add("tooltip.cryonite.cooled_infernite_blank.fuel", "Топливо: огненный порошок, огненный стержень или ведро лавы");
+            add("tooltip.cryonite.infernite_ingot.source", "Охлаждённая заготовка из Первородной Плавильни");
+            add("tooltip.cryonite.infernite_ingot.next", "Кузнечный стол: улучшает крионитовое снаряжение");
+            add("tooltip.cryonite.infernite_ingot.also", "Нужен для заготовки Войда, Неактивного Эфира и блока инфернита");
+            add("tooltip.cryonite.infernite_block.source", "Блок хранения: 9 инфернитовых слитков");
+            add("tooltip.cryonite.infernite_block.next", "Единственное топливо, способное пробудить Неактивный Эфир");
+            add("tooltip.cryonite.infernite_upgrade_smithing_template.source", "Бастион: сундуки сокровищницы (шанс 7,5%)");
+            add("tooltip.cryonite.infernite_upgrade_smithing_template.duplicate", "Дублируется: 7 крионитовых слитков + базальт");
+
+            add("tooltip.cryonite.void_ore.source", "Энд: внешние острова, Y от 0 до 12");
+            add("tooltip.cryonite.void_ore.tool", "Кирка: инфернитовая или лучше");
+            add("tooltip.cryonite.void_ore.danger", "Опасно: при ломке тянет в бездну и ослепляет на 3 с");
+            add("tooltip.cryonite.unstable_void_shard.source", "Из руды Войда (инфернитовая кирка)");
+            add("tooltip.cryonite.unstable_void_shard.next", "Бросьте в облако дыхания дракона");
+            add("tooltip.cryonite.unstable_void_shard.craft", "или 8 осколков вокруг драконьего дыхания на верстаке");
+            add("tooltip.cryonite.stabilized_void_cluster.source", "Осколок Войда, усмирённый дыханием дракона");
+            add("tooltip.cryonite.stabilized_void_cluster.next", "4 кластера + 4 инфернитовых слитка + панцирь шалкера");
+            add("tooltip.cryonite.stabilized_void_cluster.where", "Верстак или Плавильня (огненный стержень, ведро лавы)");
+            add("tooltip.cryonite.molten_void_blank.source", "Сплав кластеров Войда, инфернита и панциря шалкера");
+            add("tooltip.cryonite.molten_void_blank.next", "Бросьте на плачущий обсидиан на 5 секунд");
+            add("tooltip.cryonite.molten_void_blank.craft", "или соедините с синим льдом на верстаке");
+            add("tooltip.cryonite.void_ingot.source", "Заготовка Войда, закалённая на плачущем обсидиане");
+            add("tooltip.cryonite.void_ingot.next", "Кузнечный стол: улучшает инфернитовое снаряжение");
+            add("tooltip.cryonite.void_ingot.also", "Нужен для Неактивного Эфира");
+            add("tooltip.cryonite.void_upgrade_smithing_template.source", "Город Края: сундуки с сокровищами (шанс 17,5%)");
+            add("tooltip.cryonite.void_upgrade_smithing_template.duplicate", "Дублируется: 7 инфернитовых слитков + драконье дыхание");
+
+            add("tooltip.cryonite.inactive_aether.source", "Слитки незерита, крионита, инфернита и Войда");
+            add("tooltip.cryonite.inactive_aether.next", "Переплавьте в Первородной Плавильне, используя Блок инфернита как топливо");
+            add("tooltip.cryonite.aether_ingot.source", "Эфир, пробуждённый в Первородной Плавильне");
+            add("tooltip.cryonite.aether_ingot.next", "Эфирное снаряжение крафтится на верстаке, без шаблона");
+            add("tooltip.cryonite.primordial_smelter.purpose", "Плавит материалы всех четырёх тиров");
+            add("tooltip.cryonite.primordial_smelter.slots", "Слоты: сырьё, до двух катализаторов, топливо");
+            add("tooltip.cryonite.primordial_smelter.fuel", "У каждого рецепта своё топливо");
+
+            // JEI (compat/jei): the two documentation categories.
+            add("jei.cryonite.category.world_interaction", "Мировая переработка (закалка и стабилизация)");
+            add("jei.cryonite.world_interaction.powder_snow_cauldron", "Нажмите ПКМ раскалённым осколком по котлу с рыхлым снегом. Один слой снега остужает до 16 осколков.");
+            add("jei.cryonite.world_interaction.blue_ice", "Нажмите ПКМ раскалённым осколком по блоку Синего льда (лёд подтает до обычного). Один блок остужает до 16 осколков.");
+            add("jei.cryonite.world_interaction.dragon_breath", "Бросьте осколки (Q) прямо в облако дыхания Дракона Края во время битвы.");
+            add("jei.cryonite.world_interaction.crying_obsidian", "Бросьте заготовку (Q) на блок Плачущего обсидиана и подождите 5 секунд.");
+
+            add("jei.cryonite.category.acquisition", "Добыча руд и поиск артефактов");
+            add("jei.cryonite.acquisition.silk_touch", "Сама руда выпадает с Шёлковым касанием");
+            add("jei.cryonite.acquisition.cryonite_ore", "Обычный мир: Глубинный сланец и туф (Y от -64 до 0), чаще в Тёмных глубинах и ледяных биомах. Замораживает в инвентаре!");
+            add("jei.cryonite.acquisition.infernite_ore", "Незер: Базальтовые дельты (Y от 8 до 96), в окружении магмы и чернита. Жжёт игрока и плавит дерево/камень в инвентаре без льда или снежков рядом!");
+            add("jei.cryonite.acquisition.void_ore", "Энд: Внешние острова, самый нижний слой над бездной (Y = 0..12). ОПАСНО: при ломке тянет вниз в пустоту и ослепляет на 3 сек!");
+            add("jei.cryonite.acquisition.cryonite_template", "Структура: Древний город (Ancient City), шанс 25% на сундук. Дублируется на верстаке с помощью 7 слитков Незерита и Глубинного сланца.");
+            add("jei.cryonite.acquisition.infernite_template", "Структура: Сокровищницы Бастионов пиглинов (низкий шанс: 7,5% на сундук). Дублируется с помощью 7 Слитков крионита и Базальта.");
+            add("jei.cryonite.acquisition.void_template", "Структура: сундуки с сокровищами Городов Края, включая Корабли (шанс 17,5% на сундук). Дублируется с помощью 7 Слитков инфернита и Дыхания дракона.");
+
+            // JEI info pages: what the categories cannot show.
+            add("jei.cryonite.info.raw_cryonite", "Сырой крионит излучает холод: пока он в инвентаре, вас замедляет и постепенно замораживает. Спасают кожаная или крионитовая броня и Незер.\n\nПереплавьте его в Первородной Плавильне (топливо: огненный стержень или блок магмы) в Кристаллическую пыль крионита.");
+            add("jei.cryonite.info.cryonite_crystal_dust", "Выплавляется из Сырого крионита в Первородной Плавильне (топливо: огненный стержень или блок магмы).\n\nПыль + незеритовый лом или осколок эха = Крионитовый слиток: на верстаке либо в Плавильне (лом или осколок в слот катализатора).\n\nНа верстаке пыль также остужает Раскалённый осколок инфернита.");
+            add("jei.cryonite.info.cryonite_ingot", "Кристаллическая пыль крионита + незеритовый лом или осколок эха (верстак или Первородная Плавильня).\n\nКузнечный стол: шаблон «Крионитовое улучшение» + незеритовый предмет + слиток. 7 слитков дублируют шаблон «Инфернитовое улучшение». Также нужен для Неактивного Эфира.");
+            add("jei.cryonite.info.molten_infernite_shard", "Третий способ: соедините осколок с Кристаллической пылью крионита на верстаке.\n\nСнежки, лёд, плотный или синий лёд в инвентаре не дают осколку жечь вас и ваши вещи.");
+            add("jei.cryonite.info.cooled_infernite_blank", "Раскалённый осколок инфернита, остуженный в котле с рыхлым снегом, о Синий лёд или Кристаллической пылью крионита.\n\nПервородная Плавильня: заготовка + блок золота и слеза гаста (катализаторы), топливо: огненный порошок, огненный стержень или ведро лавы. Получается Инфернитовый слиток.");
+            add("jei.cryonite.info.infernite_ingot", "Выплавляется из Охлаждённой инфернитовой заготовки в Первородной Плавильне (блок золота + слеза гаста).\n\nКузнечный стол: шаблон «Инфернитовое улучшение» + крионитовый предмет + слиток. 9 слитков дают Блок инфернита. Также нужен для Расплавленной заготовки Войда, Неактивного Эфира и дублирования шаблона «Улучшение Войда».");
+            add("jei.cryonite.info.infernite_block", "9 Инфернитовых слитков на верстаке (разбирается обратно).\n\nЕдинственное топливо Первородной Плавильни, достаточно жаркое, чтобы пробудить Неактивный Эфир.");
+            add("jei.cryonite.info.unstable_void_shard", "Без дракона: 8 осколков вокруг бутылки драконьего дыхания на верстаке дают 8 Стабилизированных кластеров Войда.");
+            add("jei.cryonite.info.stabilized_void_cluster", "Нестабильный осколок Войда, стабилизированный в облаке дыхания дракона или на верстаке.\n\n4 кластера + 4 Инфернитовых слитка + панцирь шалкера = Расплавленная заготовка Войда: на верстаке либо в Первородной Плавильне (топливо: огненный стержень или ведро лавы).");
+            add("jei.cryonite.info.molten_void_blank", "Получается из 4 Стабилизированных кластеров Войда, 4 Инфернитовых слитков и панциря шалкера (верстак или Первородная Плавильня).");
+            add("jei.cryonite.info.molten_void_blank.craft", "Без обсидиана: соедините заготовку с синим льдом на верстаке.");
+            add("jei.cryonite.info.void_ingot", "Расплавленная заготовка Войда, закалённая на плачущем обсидиане или синим льдом.\n\nКузнечный стол: шаблон «Улучшение Войда» + инфернитовый предмет + слиток. Также нужен для Неактивного Эфира.");
+            add("jei.cryonite.info.inactive_aether", "Верстак: незеритовый слиток + Крионитовый слиток + Инфернитовый слиток + Слиток Войда.\n\nПереплавьте в Первородной Плавильне, используя Блок инфернита как топливо, и получите Эфирный слиток.");
+            add("jei.cryonite.info.aether_ingot", "Неактивный Эфир, переплавленный в Первородной Плавильне на Блоке инфернита.\n\nЭфирное оружие, инструменты и броня крафтятся на верстаке по обычным схемам (слитки и палки), шаблон не нужен.");
+            add("jei.cryonite.info.primordial_smelter", "Крафт: 4 обсидиана, 2 огненных стержня, 2 незеритовых лома и плавильная печь.\n\nСлоты: основной ингредиент, до двух катализаторов, топливо и результат. Слоты катализаторов, не занятые рецептом, должны быть пустыми. У каждого рецепта своё топливо, обычное не подходит:\n- Сырой крионит, пыль крионита: огненный стержень или блок магмы\n- Охлаждённая инфернитовая заготовка: огненный порошок, огненный стержень или ведро лавы\n- Стабилизированные кластеры Войда: огненный стержень или ведро лавы\n- Неактивный Эфир: Блок инфернита");
         }
 
         private void gear(GearTier tier, String masculine, String feminine, String plural) {
