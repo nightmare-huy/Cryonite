@@ -1,6 +1,7 @@
 # Gradle build/cache output
 .gradle/
 build/
+.ci-logs/
 out/
 
 # Runtime and IDE state
