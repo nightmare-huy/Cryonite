@@ -10,7 +10,7 @@ Requires a Java 21 JDK and Gradle 8.10.2 or newer:
 gradle --no-daemon build
 ```
 
-The GitHub Actions workflow builds on pushes, pull requests, and manual dispatch. Successful runs publish the compiled mod JAR as a downloadable `cryonite-<commit>` artifact for 30 days. Open **Actions → Build Minecraft mod → latest successful run → Artifacts** to download it.
+The GitHub Actions workflow builds on pushes, pull requests, and manual dispatch. Successful runs publish the compiled mod JAR as a downloadable `cryonite-<commit>` artifact for 30 days. To publish a prerelease, manually dispatch the workflow with `publish_release=true`; the built JAR is attached to a GitHub Release. Open **Actions → Build Minecraft mod → latest successful run → Artifacts** for CI downloads, or **Releases** for published builds.
 
 ## Build output and screenshots
 
