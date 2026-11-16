@@ -1,7 +1,6 @@
 package dev.nightmarehuy.cryonite.worldgen;
 
 import com.mojang.serialization.Codec;
-import dev.nightmarehuy.cryonite.Cryonite;
 import dev.nightmarehuy.cryonite.registry.ModBlocks;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +9,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.core.TagKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
@@ -32,7 +31,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 public class UniversalModpackOreFeature extends Feature<NoneFeatureConfiguration> {
 
     private static final TagKey<Block> ORES_TAG = TagKey.create(Registries.BLOCK,
-            new ResourceLocation("c", "ores"));
+            ResourceLocation.fromNamespaceAndPath("c", "ores"));
 
     public UniversalModpackOreFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -92,7 +91,7 @@ public class UniversalModpackOreFeature extends Feature<NoneFeatureConfiguration
         HolderSet<Block> allOres = registry.getTags().getTag(ORES_TAG).orElse(HolderSet.empty());
         List<Holder<Block>> layerOres = new ArrayList<>();
         for (Holder<Block> ore : allOres) {
-            if (layer.matches(registry.getKey(ore.value()).location())) {
+            if (layer.matches(registry.getKey(ore.value()))) {
                 layerOres.add(ore);
             }
         }
@@ -102,12 +101,12 @@ public class UniversalModpackOreFeature extends Feature<NoneFeatureConfiguration
 
         // Наши руды — повышенная частота.
         List<Holder<Block>> boosted = new ArrayList<>();
-        boosted.add(holder(registry, ModBlocks.CRYONITE_ORE.get()));
+        boosted.add(Holder.direct(ModBlocks.CRYONITE_ORE.get()));
         if (y < 0) {
-            boosted.add(holder(registry, ModBlocks.INFERNITE_ORE.get()));
+            boosted.add(Holder.direct(ModBlocks.INFERNITE_ORE.get()));
         }
         if (y < -48) {
-            boosted.add(holder(registry, ModBlocks.VOID_ORE.get()));
+            boosted.add(Holder.direct(ModBlocks.VOID_ORE.get()));
         }
 
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
@@ -134,14 +133,5 @@ public class UniversalModpackOreFeature extends Feature<NoneFeatureConfiguration
     private static boolean canReplace(Layer layer, WorldGenLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return state.is(layer.baseBlock) || (layer.replaceables != null && state.is(layer.replaceables));
-    }
-
-    private static Holder<Block> holder(Registry<Block> registry, Block block) {
-        return registry.getHolder(block).orElseGet(() -> Holder.direct(block));
-    }
-
-    @Override
-    public boolean isOpaque() {
-        return false;
     }
 }
