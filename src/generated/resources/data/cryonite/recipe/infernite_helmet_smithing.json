@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "cryonite:infernite_ingot"
+  },
+  "base": {
+    "item": "cryonite:cryonite_helmet"
+  },
+  "result": {
+    "count": 1,
+    "id": "cryonite:infernite_helmet"
+  },
+  "template": {
+    "item": "cryonite:infernite_upgrade_smithing_template"
+  }
+}

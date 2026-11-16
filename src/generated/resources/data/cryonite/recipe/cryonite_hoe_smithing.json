@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "cryonite:cryonite_ingot"
+  },
+  "base": {
+    "item": "minecraft:netherite_hoe"
+  },
+  "result": {
+    "count": 1,
+    "id": "cryonite:cryonite_hoe"
+  },
+  "template": {
+    "item": "cryonite:cryonite_upgrade_smithing_template"
+  }
+}

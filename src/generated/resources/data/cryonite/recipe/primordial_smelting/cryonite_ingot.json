@@ -1,0 +1,33 @@
+{
+  "type": "cryonite:primordial_smelting",
+  "catalysts": [
+    {
+      "type": "neoforge:compound",
+      "children": [
+        {
+          "item": "minecraft:netherite_scrap"
+        },
+        {
+          "item": "minecraft:echo_shard"
+        }
+      ],
+      "count": 1
+    }
+  ],
+  "fuel": [
+    {
+      "item": "minecraft:blaze_rod"
+    },
+    {
+      "item": "minecraft:magma_block"
+    }
+  ],
+  "input": {
+    "count": 1,
+    "item": "cryonite:cryonite_crystal_dust"
+  },
+  "result": {
+    "count": 1,
+    "id": "cryonite:cryonite_ingot"
+  }
+}

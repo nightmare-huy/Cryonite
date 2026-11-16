@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "cryonite:block/kinetic_energy_converter",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "cryonite:block/kinetic_energy_converter",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "cryonite:block/kinetic_energy_converter",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "cryonite:block/kinetic_energy_converter",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "cryonite:block/kinetic_energy_converter"
+    },
+    "facing=west": {
+      "model": "cryonite:block/kinetic_energy_converter",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

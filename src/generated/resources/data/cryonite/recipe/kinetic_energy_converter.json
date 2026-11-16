@@ -1,0 +1,48 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "cryonite:aether_ingot"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "C": {
+      "item": "cryonite:cryonite_ingot"
+    },
+    "E": {
+      "item": "create:electron_tube"
+    },
+    "I": {
+      "item": "cryonite:infernite_ingot"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "S": {
+      "item": "create:shaft"
+    },
+    "V": {
+      "item": "cryonite:void_ingot"
+    }
+  },
+  "pattern": [
+    "CRI",
+    "EBS",
+    "VPA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cryonite:kinetic_energy_converter"
+  }
+}

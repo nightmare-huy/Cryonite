@@ -1,0 +1,9 @@
+{
+  "entries": [
+    "cryonite:auto_smelt",
+    "cryonite:cryonite_template_in_ancient_city",
+    "cryonite:infernite_template_in_bastion_treasure",
+    "cryonite:void_template_in_end_city_treasure"
+  ],
+  "replace": false
+}

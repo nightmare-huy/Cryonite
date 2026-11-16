@@ -1,0 +1,11 @@
+{
+  "type": "cryonite:add_item",
+  "chance": 0.175,
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/end_city_treasure"
+    }
+  ],
+  "item": "cryonite:void_upgrade_smithing_template"
+}
