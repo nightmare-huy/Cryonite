@@ -1,19 +1,20 @@
 package dev.nightmarehuy.cryonite.client;
 
 import dev.nightmarehuy.cryonite.Cryonite;
+import dev.nightmarehuy.cryonite.menu.DimensionTerminalMenu;
 import dev.nightmarehuy.cryonite.network.ListDimensionsRequestPayload;
 import dev.nightmarehuy.cryonite.network.TeleportDimensionPayload;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
@@ -24,15 +25,13 @@ import org.lwjgl.glfw.GLFW;
  * Карусель карточек с плавной инерцией скролла, настоящим 3D-поворотом центральной карточки
  * вокруг оси Y и зеркальным отражением на глянцевом полу.
  */
-public class DimensionTerminalScreen extends Screen {
+public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTerminalMenu> {
 
     private static final ResourceLocation BG_TEXTURE = Cryonite.id("textures/gui/container/dimension_terminal.png");
 
     /** Размер одной карточки измерения. */
     private static final int CARD_W = 110;
     private static final int CARD_H = 150;
-    /** Расстояние между центрами соседних карточек. */
-    private static final int CARD_SPACING = 130;
     /** По умолчанию 4 главных измерения + модовые. */
     private static final int VIEW_W = 260;
     private static final int VIEW_H = 200;
@@ -55,8 +54,10 @@ public class DimensionTerminalScreen extends Screen {
     private Button leftArrow;
     private Button rightArrow;
 
-    public DimensionTerminalScreen() {
-        super(Component.translatable("block.cryonite.dimension_terminal"));
+    public DimensionTerminalScreen(DimensionTerminalMenu menu, net.minecraft.world.entity.player.Inventory playerInventory, Component title) {
+        super(menu, playerInventory, title);
+        this.imageWidth = 256;
+        this.imageHeight = 200;
     }
 
     @Override
@@ -175,14 +176,10 @@ public class DimensionTerminalScreen extends Screen {
         if (button != 0 || cards.isEmpty()) {
             return super.mouseClicked(mouseX, mouseY, button);
         }
-        // Клик по карточке: определить, какая карточка подошла под курсор.
         int cx = width / 2;
         int cy = height / 2 - 20;
-        float delta = getDeltaTime();
-        float scroll = currentScroll;
-        // Приблизительная позиция карточек: перебираем все и проверяем попадание в их экранную область.
         for (int i = 0; i < cards.size(); i++) {
-            float offset = i - scroll;
+            float offset = i - currentScroll;
             float xOffset = (float) (Math.signum(offset) * Math.pow(Math.abs(offset), 0.78) * 95.0);
             int cardX = cx + Math.round(xOffset) - CARD_W / 2;
             int cardY = cy - CARD_H / 2;
@@ -220,7 +217,7 @@ public class DimensionTerminalScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        renderBackground(graphics);
+        renderBg(graphics, mouseX, mouseY, partialTick);
         int cx = width / 2;
         int cy = height / 2 - 20;
 
@@ -232,7 +229,7 @@ public class DimensionTerminalScreen extends Screen {
 
         // Рисуем карточки от краёв к центру, чтобы центральная была поверх боковых.
         int count = cards.size();
-        int[] order = new int[count];
+        Integer[] order = new Integer[count];
         for (int i = 0; i < count; i++) {
             order[i] = i;
         }
@@ -250,7 +247,6 @@ public class DimensionTerminalScreen extends Screen {
         }
 
         super.render(graphics, mouseX, mouseY, partialTick);
-        renderTooltip(graphics, mouseX, mouseY);
     }
 
     private void renderCard(GuiGraphics graphics, int index, int cx, int cy, int mouseX, int mouseY, float partialTick) {
@@ -289,33 +285,31 @@ public class DimensionTerminalScreen extends Screen {
     private void drawCardContent(GuiGraphics graphics, int index, int x, int y, float alpha, boolean selected) {
         DimensionTerminalClient.DimensionEntry entry = cards.get(index);
 
-        // Фон карточки: тёмный неоновый фон с цветной рамкой.
-        int bgColor = 0x222222 | ((int) (alpha * 255) << 24);
+        // Фон карточки.
+        int bgColor = 0x222222;
         graphics.fill(x + 2, y + 2, x + CARD_W - 2, y + CARD_H - 2, bgColor);
 
         // Цвет рамки зависит от измерения.
         int borderColor = borderColor(entry.key());
         if (selected) {
-            // Пульсация выбранной карточки.
             float pulse = 0.6f + 0.4f * Mth.sin((float) (System.nanoTime() / 1e9) * 3.0f);
             borderColor = blend(borderColor, 0xFFFFFF, pulse);
         }
-        int a = Math.min(255, (int) (alpha * 255));
-        drawRectOutline(graphics, x, y, CARD_W, CARD_H, (a << 24) | (borderColor & 0xFFFFFF));
+        drawRectOutline(graphics, x, y, CARD_W, CARD_H, borderColor);
 
-        // Заглушка пейзажа измерения (процедурный пиксель-арт).
-        drawDimensionPreview(graphics, entry.key(), x + CARD_W / 2 - 32, y + 20, 64, 64);
+        // Заглушка пейзажа измерения.
+        drawDimensionPreview(graphics, entry.key(), x + CARD_W / 2 - 32, y + 20, 64, 8);
 
         // Название измерения.
         Component name = DimensionTerminalClient.formattedName(entry.name());
         int nameWidth = font.width(name.getString());
-        graphics.drawString(font, name, x + CARD_W / 2 - nameWidth / 2, y + 96, 0xFFFFFF | (a << 24), false);
+        graphics.drawString(font, name, x + CARD_W / 2 - nameWidth / 2, y + 96, 0xFFFFFF, false);
 
         // Статус.
         Component status = index == getCurrentDimensionIndex()
                 ? Component.translatable("gui.cryonite.terminal.status.current")
                 : Component.translatable("gui.cryonite.terminal.status.available");
-        graphics.drawString(font, status, x + CARD_W / 2 - font.width(status.getString()) / 2, y + 112, 0xA9A5B4 | (a << 24), false);
+        graphics.drawString(font, status, x + CARD_W / 2 - font.width(status.getString()) / 2, y + 112, 0xA9A5B4, false);
 
         // Парящие иконки руд под названием.
         renderOreIcons(graphics, entry.key(), x + CARD_W / 2 - 40, y + 128);
@@ -328,25 +322,25 @@ public class DimensionTerminalScreen extends Screen {
     private int borderColor(ResourceLocation key) {
         String path = key.getPath();
         if (path.equals("mining_dimension")) {
-            return 0xFFD700; // Золото-эфирный для Шахтерского измерения
+            return 0xFFD700;
         }
         if (path.equals("overworld")) {
-            return 0x00BFFF; // Голубой для Обычного мира
+            return 0x00BFFF;
         }
         if (path.equals("the_nether")) {
-            return 0xFF4500; // Огненный для Незера
+            return 0xFF4500;
         }
         if (path.equals("the_end")) {
-            return 0x8B00FF; // Пурпурный для Энда
+            return 0x8B00FF;
         }
-        return 0xAAAAAA; // Универсальный серый для модовых измерений
+        return 0xAAAAAA;
     }
 
     private void drawRectOutline(GuiGraphics graphics, int x, int y, int w, int h, int color) {
-        graphics.fill(x, y, x + w, y + 1, color);           // верх
-        graphics.fill(x, y + h - 1, x + w, y + h, color);   // низ
-        graphics.fill(x, y, x + 1, y + h, color);           // лево
-        graphics.fill(x + w - 1, y, x + w, y + h, color);   // право
+        graphics.fill(x, y, x + w, y + 1, color);
+        graphics.fill(x, y + h - 1, x + w, y + h, color);
+        graphics.fill(x, y, x + 1, y + h, color);
+        graphics.fill(x + w - 1, y, x + w, y + h, color);
     }
 
     private int blend(int color1, int color2, float factor) {
@@ -358,7 +352,7 @@ public class DimensionTerminalScreen extends Screen {
         return (r << 16) | (g << 8) | b;
     }
 
-    /** Процедурный пиксель-арт превью измерения (заглушка до готовых текстур баннеров). */
+    /** Процедурный пиксель-арт превью измерения. */
     private void drawDimensionPreview(GuiGraphics graphics, ResourceLocation key, int x, int y, int size, int cell) {
         String path = key.getPath();
         boolean overworld = path.equals("overworld");
@@ -404,20 +398,15 @@ public class DimensionTerminalScreen extends Screen {
         } else if (path.equals("mining_dimension")) {
             ores = List.of(new ItemStack(Items.COAL_ORE), new ItemStack(Items.IRON_ORE), new ItemStack(Items.GOLD_ORE));
         } else if (path.equals("the_nether")) {
-            ores = List.of(new ItemStack(Items.QUARTZ_ORE), new ItemStack(Items.ANCIENT_DEBRIS), new ItemStack(Items.GOLD_ORE));
+            ores = List.of(new ItemStack(Blocks.QUARTZ_ORE), new ItemStack(Blocks.ANCIENT_DEBRIS), new ItemStack(Blocks.GOLD_ORE));
         } else if (path.equals("the_end")) {
-            ores = List.of(new ItemStack(Items.END_STONE), new ItemStack(Items.END_CRYSTAL), new ItemStack(Items.ELYTRA));
+            ores = List.of(new ItemStack(Blocks.END_STONE), new ItemStack(Items.END_CRYSTAL), new ItemStack(Items.ELYTRA));
         } else {
-            ores = List.of(new ItemStack(Items.STONE), new ItemStack(Items.DIRT), new ItemStack(Items.GRASS_BLOCK));
+            ores = List.of(new ItemStack(Blocks.STONE), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.GRASS_BLOCK));
         }
         for (int i = 0; i < ores.size(); i++) {
             graphics.renderItem(ores.get(i), x + i * 22, y);
         }
-    }
-
-    /** Добавить иконку предмета в реестр Item для превью карточки (заглушка). */
-    private static Item previewItem(ResourceLocation key) {
-        return Items.CHEST;
     }
 
     @Override
