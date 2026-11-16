@@ -9,7 +9,7 @@
 ./gradlew build              # jar в build/libs/
 ./gradlew runClient          # клиент с модом
 ./gradlew runData            # перегенерация src/generated/resources
-./gradlew runGameTestServer  # 34 серверных GameTest-а (вместе с Create)
+./gradlew runGameTestServer  # 35 серверных GameTest-ов (вместе с Create)
 ```
 
 Готовый jar можно не собирать, а скачать со страницы [Releases](https://github.com/nightmare-huy/Cryonite/releases/latest).
