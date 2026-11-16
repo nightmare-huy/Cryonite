@@ -88,7 +88,7 @@ public class UniversalModpackOreFeature extends Feature<NoneFeatureConfiguration
 
         // Все руды сборки из тега #c:ores.
         Registry<Block> registry = level.registryAccess().registryOrThrow(Registries.BLOCK);
-        HolderSet<Block> allOres = registry.getTags().getTag(ORES_TAG).orElse(HolderSet.empty());
+        HolderSet<Block> allOres = registry.getTags().getTagOrEmpty(ORES_TAG);
         List<Holder<Block>> layerOres = new ArrayList<>();
         for (Holder<Block> ore : allOres) {
             if (layer.matches(registry.getKey(ore.value()))) {
