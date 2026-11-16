@@ -216,7 +216,7 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        super.renderBg(graphics, partialTick, mouseX, mouseY);
+        graphics.blit(BG_TEXTURE, left, top, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
