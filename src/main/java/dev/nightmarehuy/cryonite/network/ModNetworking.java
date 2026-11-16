@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -70,8 +69,7 @@ public final class ModNetworking {
 
         BlockPos spot = findSafeSpot(targetLevel);
         player.teleportTo(targetLevel, spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5,
-                player.getYRot(), player.getXRot(),
-                java.util.EnumSet.allOf(Entity.RelativeMovement.class));
+                player.getYRot(), player.getXRot(), true, true);
         player.setYRot(player.getRandom().nextFloat() * 360.0F);
 
         if (target.equals(Cryonite.id("mining_dimension"))) {
