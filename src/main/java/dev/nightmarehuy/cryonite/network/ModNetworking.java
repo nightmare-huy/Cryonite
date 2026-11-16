@@ -4,7 +4,6 @@ import dev.nightmarehuy.cryonite.Cryonite;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -38,17 +37,16 @@ public final class ModNetworking {
         Registry<Level> levels = registryAccess.registryOrThrow(Registries.DIMENSION);
         List<ListDimensionsResponsePayload.Entry> entries = new ArrayList<>();
         for (Level level : levels) {
-            ResourceKey<Level> key = levels.getKey(level);
+            ResourceLocation key = levels.getKey(level);
             if (key == null) {
                 continue;
             }
-            ResourceLocation location = key.location();
-            String name = Component.translatable("dimension." + location.getNamespace() + "." + location.getPath())
+            String name = Component.translatable("dimension." + key.getNamespace() + "." + key.getPath())
                     .getString();
-            if (name.equals("dimension." + location.getNamespace() + "." + location.getPath())) {
-                name = location.getPath();
+            if (name.equals("dimension." + key.getNamespace() + "." + key.getPath())) {
+                name = key.getPath();
             }
-            entries.add(new ListDimensionsResponsePayload.Entry(location, name));
+            entries.add(new ListDimensionsResponsePayload.Entry(key, name));
         }
         player.connection.send(new ListDimensionsResponsePayload(entries));
     }
@@ -70,7 +68,7 @@ public final class ModNetworking {
         }
 
         BlockPos spot = findSafeSpot(targetLevel);
-        player.changeLevel(targetKey);
+        player.changeLevel(targetLevel);
         player.teleportTo(spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5);
         player.setYRot(player.getRandom().nextFloat() * 360.0F);
 
