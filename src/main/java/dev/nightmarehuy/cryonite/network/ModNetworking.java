@@ -1,6 +1,7 @@
 package dev.nightmarehuy.cryonite.network;
 
 import dev.nightmarehuy.cryonite.Cryonite;
+import dev.nightmarehuy.cryonite.registry.ModBlocks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -12,9 +13,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -52,11 +55,10 @@ public final class ModNetworking {
     }
 
     /**
-     * Server -> server: teleport the player to the target dimension, safely.
+     * Server -> server: teleport the player to the target dimension at the SAME X, Z coordinates.
      * <p>
-     * Finds a safe landing spot (top block with three air blocks above, or builds a 3×3 obsidian platform
-     * on the surface), teleports the player there and, on the first visit of the mining dimension, places a
-     * return terminal next to the player.
+     * Preserves the player's exact X and Z (no Nether scaling), finds a safe Y on the same column,
+     * ensures the landing spot is safe, and places a return terminal next to the player.
      */
     public static void teleportPlayer(ServerPlayer player, ResourceLocation target) {
         ServerLevel source = player.serverLevel();
@@ -67,53 +69,168 @@ public final class ModNetworking {
             return;
         }
 
-        // Teleport to a safe spot in the current dimension (dimension switch itself is handled by the
-        // client-bound teleport packet in DimensionTerminalScreen; the server prepares the landing).
-        BlockPos spot = findSafeSpot(source);
-        player.teleportTo(spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5);
-        player.setYRot(player.getRandom().nextFloat() * 360.0F);
+        // 1. Сохраняем точные координаты игрока 1:1 (нет сброса в 0,0, нет деления на 8 для Незера)
+        int targetX = player.getBlockX();
+        int targetZ = player.getBlockZ();
+        int currentY = player.getBlockY();
+        float yaw = player.getYRot();
+        float pitch = player.getXRot();
 
-        if (target.equals(Cryonite.id("mining_dimension"))) {
-            // First visit: leave a return terminal next to the player so they can always come back.
-            targetLevel.setBlock(spot.above(2), Blocks.OBSIDIAN.defaultBlockState(), 3);
-            player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
+        // 2. Принудительно прогружаем целевой чанк для корректных проверок блоков и Heightmap
+        targetLevel.getChunk(targetX >> 4, targetZ >> 4);
+
+        // 3. Проверяем, есть ли уже блок Пространственного Терминала рядом на тех же X, Z
+        BlockPos existingTerminal = findExistingTerminal(targetLevel, targetX, targetZ);
+        int targetY;
+        if (existingTerminal != null) {
+            // Терминал уже есть — телепортируем игрока прямо рядом с ним
+            targetX = existingTerminal.getX() + 1;
+            targetZ = existingTerminal.getZ();
+            targetY = existingTerminal.getY();
         } else {
-            player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
+            // 4. Терминала нет — ищем безопасную высоту Y на тех же X, Z
+            targetY = findSafeY(targetLevel, targetX, targetZ, currentY);
+
+            // 5. Обеспечиваем безопасность точки прибытия
+            ensureSafeLanding(targetLevel, targetX, targetY, targetZ);
+
+            // 6. Ставим ответный терминал рядом для обратного телепорта
+            placeReturnTerminal(targetLevel, targetX, targetY, targetZ);
         }
+
+        // 7. Перемещаем игрока в целевое измерение и телепортируем на точные координаты
+        player.changeDimension(targetKey);
+        player.teleportTo(targetX + 0.5, targetY, targetZ + 0.5);
+        player.setYRot(yaw);
+        player.setXRot(pitch);
+
+        player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
     }
 
-    private static BlockPos findSafeSpot(ServerLevel level) {
-        BlockPos spawn = level.getSharedSpawnPos();
-        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, spawn.getX(), spawn.getZ());
-        for (int radius = 0; radius <= 64; radius += 4) {
-            for (int dx = -radius; dx <= radius; dx += 4) {
-                for (int dz = -radius; dz <= radius; dz += 4) {
-                    BlockPos candidate = spawn.offset(dx, surfaceY, dz);
-                    if (isSafeLanding(level, candidate)) {
-                        return candidate;
+    /**
+     * Находит безопасную высоту Y на заданных X, Z в целевом измерении.
+     * Для измерений с открытым небом (Overworld, Шахтёрское, Энд) — поверхность.
+     * Для пустоты или потолка бедрока (Незер, пустота Энда) — clamping текущей Y игрока.
+     */
+    private static int findSafeY(ServerLevel level, int x, int z, int currentY) {
+        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        int minY = level.getMinBuildHeight() + 8;
+        int maxY = level.getMaxBuildHeight() - 8;
+
+        boolean isSkyAccessible = targetIsSkyAccessible(level, x, z);
+
+        if (isSkyAccessible && surfaceY > level.getMinBuildHeight()) {
+            return surfaceY;
+        }
+
+        // Пустота или потолок бедрока: используем clamping текущей высоты игрока
+        return Mth.clamp(currentY, minY, maxY);
+    }
+
+    private static boolean targetIsSkyAccessible(ServerLevel level, int x, int z) {
+        // Проверяем, есть ли небо над точкой (открытое небо или пустота над ней)
+        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        for (int y = surfaceY + 1; y < level.getMaxBuildHeight(); y++) {
+            if (!level.getBlockState(new BlockPos(x, y, z)).isAir()) {
+                return false; // Есть сплошной потолок над поверхностью (Незер)
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Ищет блок Пространственного Терминала в радиусе 8 блоков по горизонтали
+     * и по всей высоте колонки на заданных X, Z.
+     */
+    private static BlockPos findExistingTerminal(ServerLevel level, int centerX, int centerZ) {
+        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, centerX, centerZ);
+        int minY = Math.max(level.getMinBuildHeight(), surfaceY - 16);
+        int maxY = Math.min(level.getMaxBuildHeight(), surfaceY + 16);
+
+        for (int dx = -8; dx <= 8; dx++) {
+            for (int dz = -8; dz <= 8; dz++) {
+                for (int y = minY; y <= maxY; y++) {
+                    BlockPos pos = new BlockPos(centerX + dx, y, centerZ + dz);
+                    BlockState state = level.getBlockState(pos);
+                    if (state.is(ModBlocks.DIMENSION_TERMINAL.get())) {
+                        return pos;
                     }
                 }
             }
         }
-        BlockPos platform = spawn.offset(0, surfaceY + 1, 0);
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                level.setBlock(platform.offset(dx, 0, dz), Blocks.OBSIDIAN.defaultBlockState(), 3);
-            }
-        }
-        return platform;
+        return null;
     }
 
-    private static boolean isSafeLanding(ServerLevel level, BlockPos pos) {
-        BlockPos feet = pos;
-        BlockPos head = pos.above(1);
-        BlockPos aboveHead = pos.above(2);
-        BlockPos below = pos.below();
-        return level.getBlockState(feet).isAir()
-                && level.getBlockState(head).isAir()
-                && level.getBlockState(aboveHead).isAir()
-                && !level.getBlockState(below).isAir()
-                && !level.getBlockState(below).is(Blocks.LAVA);
+    /**
+     * Обеспечивает безопасность точки прибытия:
+     * - Если под ногами воздух, лава или пустота — строит площадку 3×3 обсидиана под игроком.
+     * - Если игрок оказался внутри блоков — расчищает пространство 3×3×3 воздуха
+     *   вокруг точки прибытия (не ломая бедрок и блок терминала).
+     */
+    private static void ensureSafeLanding(ServerLevel level, int x, int y, int z) {
+        BlockPos feet = new BlockPos(x, y, z);
+        BlockPos below = feet.below();
+
+        BlockState feetState = level.getBlockState(feet);
+        BlockState belowState = level.getBlockState(below);
+
+        // Если игрок в воздухе/лаве или под ним пустота/лава — строим площадку 3×3 под ногами
+        if (feetState.isAir() || feetState.is(Blocks.LAVA) || belowState.isAir() || belowState.is(Blocks.LAVA)) {
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    BlockPos platformPos = feet.offset(dx, -1, dz);
+                    if (!level.getBlockState(platformPos).is(Blocks.BEDROCK)) {
+                        level.setBlock(platformPos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+                    }
+                }
+            }
+        }
+
+        // Очищаем пространство над головой (3×3 на уровнях Y+1 и Y+2)
+        clearAirAbove(level, x, y + 1, z);
+        clearAirAbove(level, x, y + 2, z);
+
+        // Если игрок находится внутри блоков — расчищаем 3×3×3 вокруг точки прибытия
+        if (!feetState.isAir() && !feetState.is(Blocks.LAVA)) {
+            clearSpaceAround(level, x, y, z);
+        }
+    }
+
+    private static void clearAirAbove(ServerLevel level, int x, int y, int z) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                BlockPos pos = new BlockPos(x + dx, y, z + dz);
+                BlockState state = level.getBlockState(pos);
+                if (!state.is(Blocks.BEDROCK) && !state.is(ModBlocks.DIMENSION_TERMINAL.get())) {
+                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                }
+            }
+        }
+    }
+
+    private static void clearSpaceAround(ServerLevel level, int x, int y, int z) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    BlockPos pos = new BlockPos(x + dx, y + dy, z + dz);
+                    BlockState state = level.getBlockState(pos);
+                    if (!state.is(Blocks.BEDROCK) && !state.is(ModBlocks.DIMENSION_TERMINAL.get())) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Ставит ответный блок Пространственного Терминала рядом с игроком
+     * на (targetX + 1, targetY, targetZ), если его там ещё нет.
+     */
+    private static void placeReturnTerminal(ServerLevel level, int x, int y, int z) {
+        BlockPos terminalPos = new BlockPos(x + 1, y, z);
+        if (!level.getBlockState(terminalPos).is(ModBlocks.DIMENSION_TERMINAL.get())) {
+            level.setBlock(terminalPos, ModBlocks.DIMENSION_TERMINAL.get().defaultBlockState(), 3);
+        }
     }
 
     private ModNetworking() {}
