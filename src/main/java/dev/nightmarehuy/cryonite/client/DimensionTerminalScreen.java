@@ -202,9 +202,8 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         return Mth.clamp(delta, 0.0f, 0.1f);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
+    /** Плавная инерция скролла — вызывается из render(), так как tick() final в AbstractContainerScreen. */
+    private void updateScroll() {
         if (cards.isEmpty()) {
             return;
         }
@@ -216,8 +215,14 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
     }
 
     @Override
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTick, mouseX, mouseY);
+    }
+
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        renderBg(graphics, mouseX, mouseY, partialTick);
+        updateScroll();
+        renderBg(graphics, partialTick, mouseX, mouseY);
         int cx = width / 2;
         int cy = height / 2 - 20;
 
@@ -394,11 +399,11 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         String path = key.getPath();
         List<ItemStack> ores;
         if (path.equals("overworld")) {
-            ores = List.of(new ItemStack(Items.COAL_ORE), new ItemStack(Items.IRON_ORE), new ItemStack(Items.DIAMOND_ORE));
+            ores = List.of(new ItemStack(Blocks.COAL_ORE), new ItemStack(Blocks.IRON_ORE), new ItemStack(Blocks.DIAMOND_ORE));
         } else if (path.equals("mining_dimension")) {
-            ores = List.of(new ItemStack(Items.COAL_ORE), new ItemStack(Items.IRON_ORE), new ItemStack(Items.GOLD_ORE));
+            ores = List.of(new ItemStack(Blocks.COAL_ORE), new ItemStack(Blocks.IRON_ORE), new ItemStack(Blocks.GOLD_ORE));
         } else if (path.equals("the_nether")) {
-            ores = List.of(new ItemStack(Blocks.QUARTZ_ORE), new ItemStack(Blocks.ANCIENT_DEBRIS), new ItemStack(Blocks.GOLD_ORE));
+            ores = List.of(new ItemStack(Blocks.NETHER_QUARTZ_ORE), new ItemStack(Blocks.ANCIENT_DEBRIS), new ItemStack(Blocks.GOLD_ORE));
         } else if (path.equals("the_end")) {
             ores = List.of(new ItemStack(Blocks.END_STONE), new ItemStack(Items.END_CRYSTAL), new ItemStack(Items.ELYTRA));
         } else {

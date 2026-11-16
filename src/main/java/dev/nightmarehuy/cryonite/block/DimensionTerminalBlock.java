@@ -76,7 +76,7 @@ public class DimensionTerminalBlock extends Block {
     }
 
     @Override
-    protected int getLightLevel(BlockState state, BlockGetter level, BlockPos pos) {
+    protected int getLightLevel(BlockState state) {
         return 12;
     }
 }
