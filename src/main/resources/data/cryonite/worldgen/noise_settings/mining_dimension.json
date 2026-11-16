@@ -3,6 +3,7 @@
   "default_fluid": "minecraft:water",
   "sea_level": 64,
   "legacy_random_source": false,
+  "ore_veins_enabled": true,
   "noise": {
     "min_y": -64,
     "height": 384,
