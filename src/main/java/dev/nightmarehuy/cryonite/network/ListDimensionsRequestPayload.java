@@ -17,7 +17,7 @@ public record ListDimensionsRequestPayload() implements CustomPacketPayload {
     public static final Type<ListDimensionsRequestPayload> TYPE = new Type<>(Cryonite.id("list_dimensions_request"));
 
     public static final StreamCodec<ByteBuf, ListDimensionsRequestPayload> STREAM_CODEC =
-            StreamCodec.unit(ListDimensionsRequestPayload::new);
+            StreamCodec.unit(() -> new ListDimensionsRequestPayload());
 
     @Override
     public Type<ListDimensionsRequestPayload> type() {

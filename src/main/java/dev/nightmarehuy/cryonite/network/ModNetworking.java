@@ -37,8 +37,8 @@ public final class ModNetworking {
         RegistryAccess registryAccess = source.registryAccess();
         Registry<Level> levels = registryAccess.registryOrThrow(Registries.DIMENSION);
         List<ListDimensionsResponsePayload.Entry> entries = new ArrayList<>();
-        for (Holder<Level> holder : levels) {
-            ResourceKey<Level> key = levels.getKey(holder);
+        for (Level level : levels) {
+            ResourceKey<Level> key = levels.getKey(level);
             if (key == null) {
                 continue;
             }
@@ -114,7 +114,7 @@ public final class ModNetworking {
                 && level.getBlockState(head).isAir()
                 && level.getBlockState(aboveHead).isAir()
                 && !level.getBlockState(below).isAir()
-                && !level.getBlockState(below).is(net.minecraft.tags.BlockTags.LAVA);
+                && !level.getBlockState(below).is(Blocks.LAVA);
     }
 
     private ModNetworking() {}
