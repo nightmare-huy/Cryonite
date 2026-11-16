@@ -33,7 +33,6 @@ public final class ModLanguageProvider {
             addBlock(ModBlocks.RAW_INFERNITE_BLOCK, "Raw Infernite Block");
             addBlock(ModBlocks.RAW_VOID_BLOCK, "Raw Void Block");
             addBlock(ModBlocks.DIMENSION_TERMINAL, "Dimension Terminal");
-
             addItem(ModItems.RAW_CRYONITE, "Raw Cryonite");
             addItem(ModItems.CRYONITE_NUGGET, "Cryonite Nugget");
             addItem(ModItems.INFERNITE_NUGGET, "Infernite Nugget");
@@ -138,8 +137,6 @@ public final class ModLanguageProvider {
 
             add("death.attack.cryonite.aether_burst", "%1$s was erased by Aether");
 
-            // Dimension Terminal
-            add("block.cryonite.dimension_terminal", "Dimension Terminal");
             add("message.cryonite.terminal.teleporting", "Opening a rift to %s...");
             add("message.cryonite.terminal.teleported", "You have arrived.");
             add("death.attack.cryonite.aether_burst.player", "%1$s was erased by the Aether of %2$s");
@@ -294,7 +291,6 @@ public final class ModLanguageProvider {
             addBlock(ModBlocks.RAW_INFERNITE_BLOCK, "Блок раскалённого инфернита");
             addBlock(ModBlocks.RAW_VOID_BLOCK, "Блок нестабильного войда");
             addBlock(ModBlocks.DIMENSION_TERMINAL, "Пространственный Терминал");
-
             addItem(ModItems.RAW_CRYONITE, "Сырой крионит");
             addItem(ModItems.CRYONITE_NUGGET, "Кусочек крионита");
             addItem(ModItems.INFERNITE_NUGGET, "Кусочек инфернита");
@@ -404,8 +400,6 @@ public final class ModLanguageProvider {
             add("death.attack.cryonite.aether_burst.player", "%1$s стёрт Эфиром игрока %2$s");
             add("death.attack.cryonite.aether_burst.item", "%1$s стёрт игроком %2$s с помощью %3$s");
 
-            // Dimension Terminal
-            add("block.cryonite.dimension_terminal", "Пространственный Терминал");
             add("message.cryonite.terminal.teleporting", "Открываю разлом в %s...");
             add("message.cryonite.terminal.teleported", "Вы прибыли.");
         }
