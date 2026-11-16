@@ -17,5 +17,5 @@
   "monster_spawn_block_light_limit": 0,
   "monster_spawn_light_level": 0,
   "piglin_safe": false,
-  "bed_works": "minecraft:overworld"
+  "bed_works": true
 }
