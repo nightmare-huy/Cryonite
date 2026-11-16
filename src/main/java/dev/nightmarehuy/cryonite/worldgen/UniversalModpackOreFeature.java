@@ -86,13 +86,16 @@ public class UniversalModpackOreFeature extends Feature<NoneFeatureConfiguration
         int y = origin.getY();
         Layer layer = Layer.of(y);
 
-        // Все руды сборки из тега #c:ores.
+        // Все руды сборки: перебираем зарегистрированные блоки и берём те, у которых в пути есть "ore".
         Registry<Block> registry = level.registryAccess().registryOrThrow(Registries.BLOCK);
-        HolderSet<Block> allOres = registry.getTags().getTagOrEmpty(ORES_TAG);
         List<Holder<Block>> layerOres = new ArrayList<>();
-        for (Holder<Block> ore : allOres) {
-            if (layer.matches(registry.getKey(ore.value()))) {
-                layerOres.add(ore);
+        for (Holder<Block> holder : registry) {
+            ResourceLocation id = registry.getKey(holder.value());
+            if (!id.getPath().contains("ore")) {
+                continue;
+            }
+            if (layer.matches(id)) {
+                layerOres.add(holder);
             }
         }
         if (layerOres.isEmpty()) {
