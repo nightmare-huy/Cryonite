@@ -1,0 +1,40 @@
+{
+  "temperature": 0.8,
+  "downfall": 0.4,
+  "temperature_modifier": "none",
+  "has_precipitation": false,
+  "effects": {
+    "sky_color": 11184640,
+    "water_color": 4159205,
+    "water_fog_color": 329011,
+    "fog_color": 13434587,
+    "foliage_color": 9919245,
+    "grass_color": 9155420
+  },
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "axolotls": []
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "cryonite:universal_ore_stone",
+      "cryonite:universal_ore_deepslate",
+      "cryonite:universal_ore_nether",
+      "cryonite:universal_ore_end"
+    ],
+    []
+  ]
+}
