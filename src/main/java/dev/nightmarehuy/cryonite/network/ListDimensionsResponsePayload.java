@@ -18,17 +18,19 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  */
 public record ListDimensionsResponsePayload(List<Entry> entries) implements CustomPacketPayload {
 
-    public record Entry(ResourceLocation key, String name) {}
+    public record Entry(ResourceLocation key, String name) {
+        public static final StreamCodec<ByteBuf, Entry> STREAM_CODEC = StreamCodec.composite(
+                ResourceLocation.STREAM_CODEC, Entry::key,
+                ByteBufCodecs.STRING_UTF8, Entry::name,
+                Entry::new);
+    }
 
     public static final Type<ListDimensionsResponsePayload> TYPE =
             new Type<>(Cryonite.id("list_dimensions_response"));
 
     public static final StreamCodec<ByteBuf, ListDimensionsResponsePayload> STREAM_CODEC =
             StreamCodec.composite(
-                    ByteBufCodecs.listOf(StreamCodec.composite(
-                            ResourceLocation.STREAM_CODEC, ListDimensionsResponsePayload.Entry::key,
-                            ByteBufCodecs.STRING_UTF8, ListDimensionsResponsePayload.Entry::name,
-                            ListDimensionsResponsePayload.Entry::new)),
+                    ByteBufCodecs.collection(ArrayList::new, Entry.STREAM_CODEC),
                     ListDimensionsResponsePayload::entries,
                     ListDimensionsResponsePayload::new);
 

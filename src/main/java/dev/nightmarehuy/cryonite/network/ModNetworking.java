@@ -3,6 +3,7 @@ package dev.nightmarehuy.cryonite.network;
 import dev.nightmarehuy.cryonite.Cryonite;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -13,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.Heightmap;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -32,12 +33,12 @@ public final class ModNetworking {
 
     /** Server -> client: the full list of dimensions the server knows, so the terminal can build its carousel. */
     public static void sendDimensionsList(ServerPlayer player) {
-        ServerLevel level = player.serverLevel();
-        RegistryAccess registryAccess = level.registryAccess();
-        Registry<Level> levels = registryAccess.registryOrThrow(Registries.LEVEL);
+        ServerLevel source = player.serverLevel();
+        RegistryAccess registryAccess = source.registryAccess();
+        Registry<Level> levels = registryAccess.registryOrThrow(Registries.DIMENSION);
         List<ListDimensionsResponsePayload.Entry> entries = new ArrayList<>();
         for (Holder<Level> holder : levels) {
-            ResourceKey<Level> key = levels.getKey(holder.value());
+            ResourceKey<Level> key = levels.getKey(holder);
             if (key == null) {
                 continue;
             }
@@ -61,18 +62,19 @@ public final class ModNetworking {
      */
     public static void teleportPlayer(ServerPlayer player, ResourceLocation target) {
         ServerLevel source = player.serverLevel();
-        ServerLevel targetLevel = source.getServer().getLevel(ResourceKey.create(Registries.LEVEL, target));
+        ResourceKey<Level> targetKey = ResourceKey.create(Registries.DIMENSION, target);
+        ServerLevel targetLevel = source.getServer().getLevel(targetKey);
         if (targetLevel == null) {
             player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
             return;
         }
 
         BlockPos spot = findSafeSpot(targetLevel);
-        player.changeLevel(ResourceKey.create(Registries.LEVEL, target));
+        player.changeLevel(targetKey);
         player.teleportTo(spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5);
         player.setYRot(player.getRandom().nextFloat() * 360.0F);
 
-        if (target.location().equals(Cryonite.id("mining_dimension"))) {
+        if (target.equals(Cryonite.id("mining_dimension"))) {
             // First visit: leave a return terminal next to the player so they can always come back.
             targetLevel.setBlock(spot.above(2), Blocks.OBSIDIAN.defaultBlockState(), 3);
             player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
@@ -84,7 +86,6 @@ public final class ModNetworking {
     private static BlockPos findSafeSpot(ServerLevel level) {
         BlockPos spawn = level.getSharedSpawnPos();
         int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, spawn.getX(), spawn.getZ());
-        // Search outward from the world spawn for a solid block with 3 air blocks above it.
         for (int radius = 0; radius <= 64; radius += 4) {
             for (int dx = -radius; dx <= radius; dx += 4) {
                 for (int dz = -radius; dz <= radius; dz += 4) {
@@ -95,7 +96,6 @@ public final class ModNetworking {
                 }
             }
         }
-        // Fallback: build a 3x3 obsidian platform at the surface above spawn.
         BlockPos platform = spawn.offset(0, surfaceY + 1, 0);
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {

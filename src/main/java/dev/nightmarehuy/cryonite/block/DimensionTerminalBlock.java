@@ -2,15 +2,12 @@ package dev.nightmarehuy.cryonite.block;
 
 import dev.nightmarehuy.cryonite.network.ModNetworking;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -61,12 +58,4 @@ public class DimensionTerminalBlock extends Block {
         builder.add(ACTIVE);
     }
 
-    @Override
-    protected int getLightLevel(BlockState state, BlockGetter level, BlockPos pos) {
-        return 12;
-    }
-
-    public static Component teleportingMessage() {
-        return Component.translatable("message.cryonite.terminal.teleporting");
-    }
 }
