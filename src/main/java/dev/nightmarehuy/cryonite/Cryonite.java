@@ -17,6 +17,7 @@ import dev.nightmarehuy.cryonite.registry.ModItems;
 import dev.nightmarehuy.cryonite.registry.ModLootModifiers;
 import dev.nightmarehuy.cryonite.registry.ModMenuTypes;
 import dev.nightmarehuy.cryonite.registry.ModRecipes;
+import dev.nightmarehuy.cryonite.tier.AttributeLimits;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -40,6 +41,9 @@ public final class Cryonite {
     public static final ResourceLocation KINETIC_ENERGY_CONVERTER = id("kinetic_energy_converter");
 
     public Cryonite(IEventBus modBus) {
+        // The doubled armor of the mod needs more room than the vanilla caps of 30 armor points and 20 toughness.
+        AttributeLimits.raise();
+
         // Step 1: base registries (components and attachments first, they are referenced by everything else).
         ModDataComponents.REGISTER.register(modBus);
         ModAttachments.REGISTER.register(modBus);

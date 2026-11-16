@@ -791,74 +791,75 @@ def voidify(grid: list[str], seed: int, stars: float = 0.16) -> list[str]:
 
 # ============================================================================================ multitools
 #
-# One head, three tools: the pick point reaches to the left, a spear-like shovel tip continues the handle
-# to the top right, and a broad battle-axe blade hangs on the right. The silhouette is shared by all four
-# tiers; each tier then dresses it the way it dresses its other tools.
+# A paxel: a broad triangular axe blade on the top left, a pick arm that curves down on the right and
+# the diagonal handle of every vanilla tool. Silhouette and shading follow the reference sprite the icon
+# was redrawn from (light from the top left, a dark underside below the blade, a bright ridge inside it).
+# The silhouette is shared by all four tiers; each tier then dresses it the way it dresses its other tools.
 
 MULTITOOL_BASE = [
-    "................",
-    ".............11.",
-    "............1771",
-    "....1111...17651",
-    "..1176665411650.",
-    "..10000345564...",
-    "..1......a3455..",
-    "........ac03561.",
-    ".......ada034671",
-    "......aca.045671",
-    ".....aba..035671",
-    "....aba....1661.",
-    "...aba......11..",
-    "..ada...........",
-    "..aa............",
-    "................",
+    ".........43.....",
+    "........473.....",
+    ".......3752.....",
+    "......375452....",
+    ".....36544342...",
+    "....2652212352..",
+    "....222...b051..",
+    ".........bca151.",
+    "........bda.042.",
+    ".......bca...11.",
+    "......bda....01.",
+    ".....bca......1.",
+    "....bda.......0.",
+    "...bca..........",
+    "..bda...........",
+    "..ca............",
 ]
 
 
 def multitool_grids() -> dict[str, list[str]]:
     return {
-        # ice spikes on every tip and three frost sparkles
-        "cryonite": patch(MULTITOOL_BASE, "13,0:1 5,2:1 1,3:1 15,7:1 9,4:R 13,9:R 14,2:R"),
-        # magma veins through the pick arm and the blade, soul fire on the spear tip and the cutting edge
+        # an icicle on the blade tip, frozen edges and three frost sparkles
+        "cryonite": patch(MULTITOOL_BASE, "9,0:57 8,1:5 3,5:1 3,6:1 14,13:1 8,3:R 12,6:R 5,5:R"),
+        # magma veins through the blade and the pick arm, soul fire on the cutting edge and the pick point
         "infernite": [
-            "................",
-            ".............PR.",
-            "............1SQ0",
-            "....1111...15D30",
-            "..114C45B4115C0.",
-            "..10000345D43...",
-            "..1......a3C54..",
-            "........ac03D41.",
-            ".......ada03C5Q0",
-            "......aca.04D5R0",
-            ".....aba..03C5Q0",
-            "....aba....14P0.",
-            "...aba......00..",
-            "..ada...........",
-            "..aa............",
-            "................",
+            ".........43.....",
+            "........4D3.....",
+            ".......3C52.....",
+            "......3D5452....",
+            ".....3C544C42...",
+            "....S652212D52..",
+            "....RQP...b0C1..",
+            ".........bca1D1.",
+            "........bda.0C2.",
+            ".......bca...B1.",
+            "......bda....01.",
+            ".....bca......Q.",
+            "....bda.......R.",
+            "...bca..........",
+            "..bda...........",
+            "..ca............",
         ],
-        # black starry core in a neon rim, shards drifting away from the three tips
+        # black starry core in a neon rim, shards drifting away from the blade and the pick point
         "void": patch(voidify(MULTITOOL_BASE, seed_of("void_multitool"), stars=0.2),
-                      "0,2:D 10,1:C 15,5:B 9,12:B 15,12:D 5,7:C"),
-        # pearl and sky-gold frame, the astral wave runs through the arm, the tip and the blade
+                      "7,0:D 3,3:C 2,7:B 12,2:C 15,6:B 14,14:D 12,11:B"),
+        # pearl and sky-gold frame, the astral wave runs through the blade and down the pick arm
         "aether": [
-            ".............1..",
-            "............171.",
-            "............1E61",
-            "....1111...17C51",
-            "..117C6E54116E0.",
-            "..10000345T54...",
-            "..1......a4C55..",
-            "........ad04E61.",
-            ".......ada04C671",
-            "......ada.04E671",
-            ".....ada..14C661",
-            "....ada....1661.",
-            "...ada......11..",
-            "..ada...........",
-            "..aa............",
-            "................",
+            ".........54.....",
+            "........575.....",
+            ".......47E3.....",
+            "......47C563....",
+            ".....47E5T453...",
+            "....3763323C63..",
+            "....232...b2E3..",
+            ".........bda2C2.",
+            "........bda.2E3.",
+            ".......bda...C2.",
+            "......bda....23.",
+            ".....bda......2.",
+            "....bda.......2.",
+            "...bda..........",
+            "..bda...........",
+            "..da............",
         ],
     }
 
@@ -926,6 +927,10 @@ def to_tokens(grid, mapping):
 
 def build_items(sprites):
     multitools = multitool_grids()
+    for tier_name, grid in multitools.items():      # tiers may add spikes and shards, never cut the shared silhouette
+        check_grid(grid, f"{tier_name}_multitool")
+        missing = [(x, y) for y, row in enumerate(MULTITOOL_BASE) for x, token in enumerate(row) if token != "." and grid[y][x] == "."]
+        assert not missing, f"{tier_name}_multitool lost pixels of the shared silhouette: {missing}"
     for tier_name, tools in TOOLS.items():
         tier = TIERS[tier_name]
         for tool, grid in {**tools, "multitool": multitools[tier_name]}.items():

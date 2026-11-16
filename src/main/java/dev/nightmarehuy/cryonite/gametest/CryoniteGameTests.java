@@ -16,6 +16,7 @@ import dev.nightmarehuy.cryonite.registry.ModDataComponents;
 import dev.nightmarehuy.cryonite.registry.ModFeatures;
 import dev.nightmarehuy.cryonite.registry.ModItems;
 import dev.nightmarehuy.cryonite.registry.ModRecipes;
+import dev.nightmarehuy.cryonite.tier.AttributeLimits;
 import dev.nightmarehuy.cryonite.tier.GearTier;
 import dev.nightmarehuy.cryonite.worldgen.ModWorldgen;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -51,6 +52,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Husk;
@@ -165,9 +167,53 @@ public final class CryoniteGameTests {
             near(toughness, tier.toughness() * 4.0, tier + " armor toughness");
             near(knockback, tier.knockbackResistance() * 4.0, tier + " knockback resistance");
         }
-        near(ModItems.gear(GearTier.CRYONITE).pickaxe().get().getTier().getSpeed(), 11.0, "cryonite dig speed");
-        near(ModItems.gear(GearTier.AETHER).pickaxe().get().getTier().getSpeed(), 25.0, "aether dig speed");
+        near(ModItems.gear(GearTier.CRYONITE).pickaxe().get().getTier().getSpeed(), 22.0, "cryonite dig speed");
+        near(ModItems.gear(GearTier.AETHER).pickaxe().get().getTier().getSpeed(), 50.0, "aether dig speed");
+
+        // The 2x rebalance, spelled out: tooltip damage and attack speed of the Aether sword, hoe and axe ...
+        stats(ModItems.gear(GearTier.AETHER).sword().get(), 48.0, 3.2);
+        stats(ModItems.gear(GearTier.AETHER).axe().get(), 56.0, 2.0);
+        stats(ModItems.gear(GearTier.AETHER).hoe().get(), 2.0, 8.0);
+        stats(ModItems.gear(GearTier.CRYONITE).sword().get(), 20.0, 3.2);
+        stats(ModItems.gear(GearTier.CRYONITE).pickaxe().get(), 14.0, 2.4);
+        // ... and the armor points of a full set of every tier.
+        int[] sets = {44, 48, 54, 60};
+        for (GearTier tier : GearTier.values()) {
+            int points = tier.helmetDefense() + tier.chestplateDefense() + tier.leggingsDefense() + tier.bootsDefense();
+            check(points == sets[tier.level() - 1], tier + " set must give " + sets[tier.level() - 1] + " armor points but gives " + points);
+        }
         helper.succeed();
+    }
+
+    /**
+     * Doubled armor only counts if the entity really gets it: vanilla caps armor at 30 and toughness at 20,
+     * {@link AttributeLimits} lifts both caps. Knockback resistance is a chance and stays capped at 100%.
+     */
+    @GameTest(template = EMPTY)
+    public static void doubledArmorIsNotCutOffByTheVanillaCaps(GameTestHelper helper) {
+        check(Attributes.ARMOR.value() instanceof RangedAttribute armor && armor.getMaxValue() >= 60.0, "the cap of armor must leave room for 60 points");
+        check(Attributes.ARMOR_TOUGHNESS.value() instanceof RangedAttribute toughness && toughness.getMaxValue() >= 64.0, "the cap of toughness must leave room for 64 points");
+
+        double[] armor = {44.0, 48.0, 54.0, 60.0};
+        double[] toughness = {32.0, 40.0, 52.0, 64.0};
+        List<Pillager> wearers = new ArrayList<>();
+        for (GearTier tier : GearTier.values()) {
+            // Pillagers have no armor of their own (zombies and husks start with 2 points).
+            Pillager wearer = helper.spawnWithNoFreeWill(EntityType.PILLAGER, new BlockPos(1 + 2 * (tier.level() - 1), 2, 4));
+            equip(wearer, tier);
+            wearers.add(wearer);
+        }
+        // Equipment turns into attribute modifiers when the entity ticks.
+        helper.runAfterDelay(3, () -> {
+            for (GearTier tier : GearTier.values()) {
+                Pillager wearer = wearers.get(tier.level() - 1);
+                near(wearer.getAttributeValue(Attributes.ARMOR), armor[tier.level() - 1], "armor of a mob in a full " + tier + " set");
+                near(wearer.getAttributeValue(Attributes.ARMOR_TOUGHNESS), toughness[tier.level() - 1], "toughness of a mob in a full " + tier + " set");
+                near(wearer.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 1.0, "knockback resistance of a mob in a full " + tier + " set");
+                wearer.discard();
+            }
+            helper.succeed();
+        });
     }
 
     private static void stats(Item item, double damage, double speed) {
@@ -596,15 +642,15 @@ public final class CryoniteGameTests {
                 Blocks.OAK_LEAVES.defaultBlockState());
         BlockState cobweb = Blocks.COBWEB.defaultBlockState();
         BlockState glass = Blocks.GLASS.defaultBlockState();
-        double[] expected = {11.0, 14.0, 18.0, 25.0};   // damage and dig speed happen to be the same numbers
+        double[] expected = {22.0, 28.0, 36.0, 50.0};   // damage and dig speed happen to be the same numbers
 
         for (GearTier tier : GearTier.values()) {
             Item multitool = ModItems.gear(tier).multitool().get();
             ItemStack stack = new ItemStack(multitool);
             double value = expected[tier.level() - 1];
 
-            stats(multitool, value, 1.2);
-            near(tier.multitoolDamage(), tier.swordDamage() + 1.0, tier + " multitool damage is the sword + 1");
+            stats(multitool, value, 2.4);
+            near(tier.multitoolDamage(), tier.swordDamage() + 2.0, tier + " multitool damage is the sword + 2");
             for (BlockState state : diggable) {
                 harvest(multitool, state, true);
                 near(stack.getDestroySpeed(state), value, tier + " multitool speed on " + state.getBlock());

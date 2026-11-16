@@ -11,6 +11,11 @@ import net.minecraft.world.level.block.Block;
 /**
  * Single source of truth for the numbers of the four tiers.
  *
+ * <p>Every number below is twice its original value (the "2x" rebalance): damage, attack speed, dig speed,
+ * durability, enchantability, armor points, toughness and knockback resistance. Full sets now add up to
+ * 44 / 48 / 54 / 60 armor points and 32 / 40 / 52 / 64 toughness, far above the vanilla caps of 30 and 20,
+ * so {@link AttributeLimits} raises those caps; knockback resistance cannot exceed 100% and stays capped.</p>
+ *
  * <p>Damage values are the FINAL tooltip values (1.0 hand damage included); the attribute modifiers
  * handed to the vanilla item constructors are derived from them in {@code ModItems}.
  * Tiers are ordered: a tier of level N owns every ability of the levels 1..N
@@ -18,21 +23,21 @@ import net.minecraft.world.level.block.Block;
  */
 public enum GearTier {
     //         lvl  id           rarity            speed  bonus  uses  ench  sword  axe    pick   shovel  helmet/chest/legs/boots   tough  kbRes   armor durability
-    CRYONITE(1, "cryonite", Rarity.RARE, 11.0F, 5.0F, 3072, 18, 10.0F, 12.0F, 7.0F, 7.5F, new int[] {4, 8, 7, 3}, 4.0F, 0.125F, 44),
-    INFERNITE(2, "infernite", Rarity.UNCOMMON, 14.0F, 7.0F, 4096, 20, 13.0F, 15.5F, 8.5F, 9.0F, new int[] {4, 9, 7, 4}, 5.0F, 0.15F, 50),
-    VOID(3, "void", Rarity.EPIC, 18.0F, 9.0F, 6144, 22, 17.0F, 20.0F, 10.0F, 10.5F, new int[] {5, 10, 8, 4}, 6.5F, 0.20F, 58),
-    AETHER(4, "aether", Rarity.EPIC, 25.0F, 12.0F, 8192, 25, 24.0F, 28.0F, 13.0F, 13.5F, new int[] {5, 11, 9, 5}, 8.0F, 0.25F, 66);
+    CRYONITE(1, "cryonite", Rarity.RARE, 22.0F, 10.0F, 6144, 36, 20.0F, 24.0F, 14.0F, 15.0F, new int[] {8, 16, 14, 6}, 8.0F, 0.25F, 88),
+    INFERNITE(2, "infernite", Rarity.UNCOMMON, 28.0F, 14.0F, 8192, 40, 26.0F, 31.0F, 17.0F, 18.0F, new int[] {8, 18, 14, 8}, 10.0F, 0.30F, 100),
+    VOID(3, "void", Rarity.EPIC, 36.0F, 18.0F, 12288, 44, 34.0F, 40.0F, 20.0F, 21.0F, new int[] {10, 20, 16, 8}, 13.0F, 0.40F, 116),
+    AETHER(4, "aether", Rarity.EPIC, 50.0F, 24.0F, 16384, 50, 48.0F, 56.0F, 26.0F, 27.0F, new int[] {10, 22, 18, 10}, 16.0F, 0.50F, 132);
 
     /** Final attack speeds, identical for all tiers. */
-    public static final float SWORD_SPEED = 1.6F;
-    public static final float AXE_SPEED = 1.0F;
-    public static final float PICKAXE_SPEED = 1.2F;
-    public static final float SHOVEL_SPEED = 1.0F;
-    public static final float HOE_SPEED = 4.0F;
-    public static final float HOE_DAMAGE = 1.0F;
-    public static final float MULTITOOL_SPEED = 1.2F;
-    /** A multitool hits one point harder than the sword of its tier. */
-    public static final float MULTITOOL_DAMAGE_BONUS = 1.0F;
+    public static final float SWORD_SPEED = 3.2F;
+    public static final float AXE_SPEED = 2.0F;
+    public static final float PICKAXE_SPEED = 2.4F;
+    public static final float SHOVEL_SPEED = 2.0F;
+    public static final float HOE_SPEED = 8.0F;
+    public static final float HOE_DAMAGE = 2.0F;
+    public static final float MULTITOOL_SPEED = 2.4F;
+    /** A multitool hits two points harder than the sword of its tier. */
+    public static final float MULTITOOL_DAMAGE_BONUS = 2.0F;
 
     private final int level;
     private final String id;
@@ -116,7 +121,7 @@ public enum GearTier {
         return shovelDamage;
     }
 
-    /** Final tooltip damage of the multitool: 11 / 14 / 18 / 25. */
+    /** Final tooltip damage of the multitool: 22 / 28 / 36 / 50. */
     public float multitoolDamage() {
         return swordDamage + MULTITOOL_DAMAGE_BONUS;
     }
@@ -141,7 +146,7 @@ public enum GearTier {
         return toughness;
     }
 
-    /** Knockback resistance granted by every single armor piece. */
+    /** Knockback resistance granted by every single armor piece; a full set is immune to knockback in every tier. */
     public float knockbackResistance() {
         return knockbackResistance;
     }
