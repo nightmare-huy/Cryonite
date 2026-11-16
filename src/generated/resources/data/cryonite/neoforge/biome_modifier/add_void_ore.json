@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#cryonite:outer_end_islands",
+  "features": "cryonite:void_ore",
+  "step": "underground_ores"
+}

@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "cryonite:cryonite_ingot"
+    },
+    "/": [
+      {
+        "item": "minecraft:stick"
+      },
+      {
+        "item": "minecraft:blaze_rod"
+      }
+    ],
+    "A": {
+      "item": "cryonite:cryonite_axe"
+    },
+    "P": {
+      "item": "cryonite:cryonite_pickaxe"
+    },
+    "S": {
+      "item": "cryonite:cryonite_shovel"
+    }
+  },
+  "pattern": [
+    "ASP",
+    "#/#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cryonite:cryonite_multitool"
+  }
+}

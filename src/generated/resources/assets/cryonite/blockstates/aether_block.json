@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "cryonite:block/aether_block"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cryonite:void_raw_block_from_raw"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_void_raw": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cryonite:unstable_void_shard"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_void_raw"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cryonite:void_raw_block_from_raw"
+    ]
+  }
+}

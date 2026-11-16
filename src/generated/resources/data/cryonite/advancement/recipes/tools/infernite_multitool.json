@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_infernite_pickaxe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cryonite:infernite_pickaxe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cryonite:infernite_multitool"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_infernite_pickaxe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cryonite:infernite_multitool"
+    ]
+  }
+}

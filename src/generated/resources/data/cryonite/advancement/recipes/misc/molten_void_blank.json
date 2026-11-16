@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_stabilized_void_cluster": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cryonite:stabilized_void_cluster"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cryonite:molten_void_blank"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_stabilized_void_cluster"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cryonite:molten_void_blank"
+    ]
+  }
+}

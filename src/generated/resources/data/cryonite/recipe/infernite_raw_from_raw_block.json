@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "cryonite:raw_infernite_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "cryonite:cooled_infernite_blank"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "cryonite:add_item",
+  "chance": 0.25,
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/ancient_city"
+    }
+  ],
+  "item": "cryonite:cryonite_upgrade_smithing_template"
+}

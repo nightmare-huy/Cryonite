@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "cryonite:molten_infernite_shard"
+    },
+    {
+      "item": "cryonite:cryonite_crystal_dust"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "cryonite:cooled_infernite_blank"
+  }
+}

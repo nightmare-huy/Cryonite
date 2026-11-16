@@ -1,0 +1,20 @@
+{
+  "values": [
+    "cryonite:cryonite_helmet",
+    "cryonite:cryonite_chestplate",
+    "cryonite:cryonite_leggings",
+    "cryonite:cryonite_boots",
+    "cryonite:infernite_helmet",
+    "cryonite:infernite_chestplate",
+    "cryonite:infernite_leggings",
+    "cryonite:infernite_boots",
+    "cryonite:void_helmet",
+    "cryonite:void_chestplate",
+    "cryonite:void_leggings",
+    "cryonite:void_boots",
+    "cryonite:aether_helmet",
+    "cryonite:aether_chestplate",
+    "cryonite:aether_leggings",
+    "cryonite:aether_boots"
+  ]
+}
