@@ -101,7 +101,7 @@ public final class ModBlocks {
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops()
                     .strength(5.0F, 6.0F)
-                    .sound(SoundType.SNOW_BLOCK)
+                    .sound(SoundType.STONE)
                     .lightLevel(state -> 4));
 
     /** Compact storage of raw Infernite: glows and burns everything that stands on it. */
