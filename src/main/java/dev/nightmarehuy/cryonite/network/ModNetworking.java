@@ -68,8 +68,8 @@ public final class ModNetworking {
         }
 
         BlockPos spot = findSafeSpot(targetLevel);
-        player.changeLevel(targetKey);
-        player.teleportTo(spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5);
+        player.teleportTo(targetLevel, spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5,
+                player.getYRot(), player.getXRot(), 0);
         player.setYRot(player.getRandom().nextFloat() * 360.0F);
 
         if (target.equals(Cryonite.id("mining_dimension"))) {
