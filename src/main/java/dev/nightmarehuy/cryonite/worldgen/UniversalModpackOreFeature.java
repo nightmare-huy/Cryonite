@@ -89,13 +89,13 @@ public class UniversalModpackOreFeature extends Feature<NoneFeatureConfiguration
         // Все руды сборки: перебираем зарегистрированные блоки и берём те, у которых в пути есть "ore".
         Registry<Block> registry = level.registryAccess().registryOrThrow(Registries.BLOCK);
         List<Holder<Block>> layerOres = new ArrayList<>();
-        for (Holder<Block> holder : registry) {
-            ResourceLocation id = registry.getKey(holder.value());
+        for (Block block : registry) {
+            ResourceLocation id = registry.getKey(block);
             if (!id.getPath().contains("ore")) {
                 continue;
             }
             if (layer.matches(id)) {
-                layerOres.add(holder);
+                layerOres.add(Holder.direct(block));
             }
         }
         if (layerOres.isEmpty()) {
