@@ -1687,6 +1687,22 @@ def save_png(path: Path, pixels: np.ndarray):
     Image.fromarray(pixels, "RGBA").save(path, optimize=True)
 
 
+def preview_multitools(sprites, path: Path):
+    """The four multitool icons side by side, three frames of the animation each."""
+    scale, pad = 10, 8
+    cell = 16 * scale
+    names = list(TIERS)
+    sheet = Image.new("RGBA", (len(names) * (cell + pad) + pad, 3 * (cell + pad) + pad), (139, 139, 139, 255))
+    for column, tier_name in enumerate(names):
+        frames = sprites[f"item/{tier_name}_multitool"][0]
+        for row in range(3):
+            frame = frames[row * len(frames) // 3]
+            sheet.alpha_composite(Image.fromarray(frame, "RGBA").resize((cell, cell), Image.NEAREST),
+                                  (pad + column * (cell + pad), pad + row * (cell + pad)))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sheet.convert("RGB").save(path)
+
+
 def write_sprite(name: str, frames: list[np.ndarray], tier: Tier) -> bool:
     """Writes a still image, or a vertical sprite sheet plus .png.mcmeta. Returns True when animated."""
     path = OUT / (name + ".png")
@@ -1790,7 +1806,9 @@ def main():
         preview(sprites, images, Path(args.preview))
         converter = Path(args.preview).with_name("kinetic_converter.png")
         preview_converter(sprites, images, converter)
-        print(f"preview: {args.preview}, {converter}")
+        multitools = Path(args.preview).with_name("multitools.png")
+        preview_multitools(sprites, multitools)
+        print(f"preview: {args.preview}, {converter}, {multitools}")
     return 1 if problems else 0
 
 
