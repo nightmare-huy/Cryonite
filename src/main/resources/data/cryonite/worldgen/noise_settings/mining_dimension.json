@@ -3,7 +3,6 @@
   "default_fluid": "minecraft:water",
   "sea_level": 64,
   "legacy_random_source": false,
-  "ore_veins_enabled": true,
   "noise": {
     "min_y": -64,
     "height": 384,
@@ -35,12 +34,8 @@
       }
     ],
     "slab": true,
-    "aquifers": {
-      "enabled": true
-    },
-    "ore_veins": {
-      "enabled": true
-    },
+    "aquifers_enabled": true,
+    "ore_veins_enabled": true,
     "deepslate": {
       "enabled": true,
       "starting_block": "minecraft:deepslate",
