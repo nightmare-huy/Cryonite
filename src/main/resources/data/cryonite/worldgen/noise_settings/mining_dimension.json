@@ -1,0 +1,234 @@
+{
+  "default_block": "minecraft:stone",
+  "default_fluid": "minecraft:water",
+  "sea_level": 64,
+  "noise": {
+    "min_y": -64,
+    "height": 384,
+    "size_horizontal": 1,
+    "size_vertical": 1,
+    "noise": [
+      {
+        "type": "minecraft:offset",
+        "noise": {
+          "type": "minecraft:jitter",
+          "noise1": {
+            "type": "minecraft:value",
+            "noise": [
+              {
+                "type": "minecraft:jittered",
+                "noise": {
+                  "type": "minecraft:gradient",
+                  "seed": 1729
+                },
+                "amplitude": 0.02
+              }
+            ]
+          },
+          "x_factor": 0,
+          "z_factor": 0
+        },
+        "offset": 112,
+        "factor": 0
+      }
+    ],
+    "slab": true,
+    "aquifers": {
+      "enabled": true
+    },
+    "ore_veins": {
+      "enabled": true
+    },
+    "deepslate": {
+      "enabled": true,
+      "starting_block": "minecraft:deepslate",
+      "starting_blend": "minecraft:tuff",
+      "min_y": -64,
+      "size_vertical": 16,
+      "offset": 0,
+      "scales": [1]
+    },
+    "mountains": true,
+    "caves": {
+      "nesting_rocks": {
+        "type": "minecraft:noise",
+        "noise1": {
+          "type": "minecraft:value",
+          "noise": [
+            {
+              "type": "minecraft:jittered",
+              "noise": {
+                "type": "minecraft:gradient",
+                "seed": 1730
+              },
+              "amplitude": 1
+            }
+          ]
+        }
+      },
+      "cave_carvers": {
+        "type": "minecraft:noise",
+        "noise1": {
+          "type": "minecraft:value",
+          "noise": [
+            {
+              "type": "minecraft:jittered",
+              "noise": {
+                "type": "minecraft:gradient",
+                "seed": 1731
+              },
+              "amplitude": 1
+            }
+          ]
+        }
+      },
+      "cave_air_probability": 0,
+      "cave_fluid_probability": 0,
+      "cave_cauldron_probability": 0,
+      "cave_vanilla_probability": 0,
+      "cheese_avoidance_range": 0,
+      "cheese_water_limit": 0,
+      "cheese_lava_limit": 0,
+      "cheese_fake_edges": false,
+      "noise_cube": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_slab": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_upper": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_lower": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_position": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_thickness": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_top_offset": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_bottom_offset": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_horizontality": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_horizontality_transition": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_open_factor": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_slope": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_upper_transition": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_lower_transition": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_vertical_stretch": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_lower_cutoff": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_upper_cutoff": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_lower_interpolation": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      },
+      "noise_blob_upper_interpolation": {
+        "xz_scale": 1,
+        "y_scale": 1,
+        "xz_factor": 0,
+        "y_factor": 0
+      }
+    },
+    "lava": {
+      "enabled": true,
+      "xz_scale": 1,
+      "y_scale": 1,
+      "y_factor": 4
+    }
+  },
+  "surface_rule": {
+    "type": "minecraft:surface_rule",
+    "rule": {
+      "type": "minecraft:condition",
+      "condition": {
+        "type": "minecraft:depth",
+        "above": -64,
+        "below": 64,
+        "true": "minecraft:stone",
+        "false": "minecraft:stone"
+      }
+    }
+  }
+}

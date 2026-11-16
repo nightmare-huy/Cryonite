@@ -43,6 +43,8 @@ public final class ModWorldgen {
     public static final ResourceKey<ConfiguredFeature<?, ?>> CRYONITE_ORE = configured("cryonite_ore");
     public static final ResourceKey<ConfiguredFeature<?, ?>> INFERNITE_CLUSTER = configured("infernite_cluster");
     public static final ResourceKey<ConfiguredFeature<?, ?>> VOID_ORE = configured("void_ore");
+    /** Universal ore feature for the mining dimension: none configuration, layer is chosen at placement time. */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> UNIVERSAL_ORE = configured("universal_ore");
 
     /** Thin veins anywhere in the deepslate layers of the Overworld. */
     public static final ResourceKey<PlacedFeature> CRYONITE_ORE_PLACED = placed("cryonite_ore");
@@ -50,6 +52,12 @@ public final class ModWorldgen {
     public static final ResourceKey<PlacedFeature> CRYONITE_ORE_RICH_PLACED = placed("cryonite_ore_rich");
     public static final ResourceKey<PlacedFeature> INFERNITE_CLUSTER_PLACED = placed("infernite_cluster");
     public static final ResourceKey<PlacedFeature> VOID_ORE_PLACED = placed("void_ore");
+
+    /** All ores of the modpack, one placement per geological layer of the mining dimension. */
+    public static final ResourceKey<PlacedFeature> UNIVERSAL_ORE_STONE = placed("universal_ore_stone");
+    public static final ResourceKey<PlacedFeature> UNIVERSAL_ORE_DEEPSLATE = placed("universal_ore_deepslate");
+    public static final ResourceKey<PlacedFeature> UNIVERSAL_ORE_NETHER = placed("universal_ore_nether");
+    public static final ResourceKey<PlacedFeature> UNIVERSAL_ORE_END = placed("universal_ore_end");
 
     public static final ResourceKey<BiomeModifier> ADD_CRYONITE_ORE = modifier("add_cryonite_ore");
     public static final ResourceKey<BiomeModifier> ADD_CRYONITE_ORE_RICH = modifier("add_cryonite_ore_rich");
@@ -70,6 +78,7 @@ public final class ModWorldgen {
         context.register(VOID_ORE, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(
                 List.of(OreConfiguration.target(new BlockMatchTest(Blocks.END_STONE), ModBlocks.VOID_ORE.get().defaultBlockState())),
                 5, 0.0F)));
+        context.register(UNIVERSAL_ORE, new ConfiguredFeature<>(ModFeatures.UNIVERSAL_ORE.get(), NoneFeatureConfiguration.INSTANCE));
     }
 
     public static void placedFeatures(BootstrapContext<PlacedFeature> context) {
@@ -94,6 +103,28 @@ public final class ModWorldgen {
                 CountPlacement.of(24),
                 InSquarePlacement.spread(),
                 HeightRangePlacement.uniform(VerticalAnchor.absolute(VOID_ORE_MIN_Y), VerticalAnchor.absolute(VOID_ORE_MAX_Y)),
+                BiomeFilter.biome())));
+
+        Holder<ConfiguredFeature<?, ?>> universal = features.getOrThrow(UNIVERSAL_ORE);
+        context.register(UNIVERSAL_ORE_STONE, new PlacedFeature(universal, List.of(
+                CountPlacement.of(6),
+                InSquarePlacement.spread(),
+                HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(64), VerticalAnchor.absolute(128)),
+                BiomeFilter.biome())));
+        context.register(UNIVERSAL_ORE_DEEPSLATE, new PlacedFeature(universal, List.of(
+                CountPlacement.of(8),
+                InSquarePlacement.spread(),
+                HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(0), VerticalAnchor.absolute(64)),
+                BiomeFilter.biome())));
+        context.register(UNIVERSAL_ORE_NETHER, new PlacedFeature(universal, List.of(
+                CountPlacement.of(10),
+                InSquarePlacement.spread(),
+                HeightRangePlacement.triangle(VerticalAnchor.absolute(-48), VerticalAnchor.absolute(0)),
+                BiomeFilter.biome())));
+        context.register(UNIVERSAL_ORE_END, new PlacedFeature(universal, List.of(
+                CountPlacement.of(12),
+                InSquarePlacement.spread(),
+                HeightRangePlacement.triangle(VerticalAnchor.absolute(-63), VerticalAnchor.absolute(-48)),
                 BiomeFilter.biome())));
     }
 
