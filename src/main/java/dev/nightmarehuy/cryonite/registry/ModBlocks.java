@@ -88,7 +88,7 @@ public final class ModBlocks {
     /** Compact storage of Aether ingots. */
     public static final DeferredBlock<Block> AETHER_BLOCK = REGISTER.registerSimpleBlock("aether_block",
             BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.DIAMOND_BLOCK)
+                    .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.CHIME)
                     .requiresCorrectToolForDrops()
                     .strength(12.0F, 1200.0F)
@@ -101,7 +101,7 @@ public final class ModBlocks {
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops()
                     .strength(5.0F, 6.0F)
-                    .sound(SoundType.ICE)
+                    .sound(SoundType.SNOW_BLOCK)
                     .lightLevel(state -> 4));
 
     /** Compact storage of raw Infernite: glows and burns everything that stands on it. */

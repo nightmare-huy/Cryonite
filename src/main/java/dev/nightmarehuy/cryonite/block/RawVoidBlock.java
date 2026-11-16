@@ -23,7 +23,7 @@ public class RawVoidBlock extends Block {
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (!level.isClientSide && entity instanceof LivingEntity living && living.isAlive() && living.tickCount % 40 == 0) {
-            living.hurt(level.damageSources().inVoid(), 1.0F);
+            living.hurt(level.damageSources().magic(), 1.0F);
         }
     }
 
