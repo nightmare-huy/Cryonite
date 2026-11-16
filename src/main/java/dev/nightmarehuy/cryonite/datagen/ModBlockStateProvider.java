@@ -23,6 +23,12 @@ public class ModBlockStateProvider extends BlockStateProvider {
         cube(ModBlocks.INFERNITE_ORE);
         cube(ModBlocks.VOID_ORE);
         cube(ModBlocks.INFERNITE_BLOCK);
+        cube(ModBlocks.CRYONITE_BLOCK);
+        cube(ModBlocks.VOID_BLOCK);
+        cube(ModBlocks.AETHER_BLOCK);
+        cube(ModBlocks.RAW_CRYONITE_BLOCK);
+        cube(ModBlocks.RAW_INFERNITE_BLOCK);
+        cube(ModBlocks.RAW_VOID_BLOCK);
         smelter();
         kineticEnergyConverter();
     }

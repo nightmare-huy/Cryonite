@@ -989,6 +989,12 @@ def build_items(sprites):
         name = f"{tier_name}_upgrade_smithing_template"
         sprites[f"item/{name}"] = (animate(grid, TIERS[tier_name], name, frames=1), TIERS[tier_name])
 
+    # --- Nuggets: small shiny chunks of metal, one per tier
+    nugget = levels_of("item/gold_nugget", top=7)
+    for tier_name in ("cryonite", "infernite", "void", "aether"):
+        sprites[f"item/{tier_name}_nugget"] = (animate(nugget, TIERS[tier_name], f"{tier_name}_nugget", frames=1),
+                                               TIERS[tier_name])
+
 # ============================================================================================ blocks
 
 # Ores: tokens are painted over the vanilla stone, '#' is the drop shadow under a crystal.
@@ -1113,6 +1119,22 @@ def build_blocks(sprites):
 
     block = patch(levels_of("block/netherite_block"), INFERNITE_BLOCK_CRACKS)
     sprites["block/infernite_block"] = (animate(block, infernite, "infernite_block"), infernite)
+
+    cryonite, infernite, void, aether = (TIERS[n] for n in ("cryonite", "infernite", "void", "aether"))
+
+    # Metal storage blocks: netherite block shading in the colour of each tier
+    metal_block = levels_of("block/netherite_block", top=7)
+    for tier_name, tier in (("cryonite", cryonite), ("void", void), ("aether", aether)):
+        sprites[f"block/{tier_name}_block"] = (animate(metal_block, tier, f"{tier_name}_block", frames=1), tier)
+
+    # Raw ore blocks: compact raw material
+    raw_cryonite = patch(levels_of("block/ice", top=6), "5,4:7 10,8:7 2,2:6 13,13:6")
+    sprites["block/raw_cryonite_block"] = (animate(raw_cryonite, cryonite, "raw_cryonite_block", frames=1), cryonite)
+    raw_infernite = patch(levels_of("block/netherrack", top=6), "5,4:D 10,8:D 2,2:C 13,13:C")
+    sprites["block/raw_infernite_block"] = (animate(raw_infernite, infernite, "raw_infernite_block", frames=4),
+                                             infernite)
+    raw_void = patch(levels_of("block/end_stone", top=6), "5,4:E 10,8:E 2,2:D 13,13:D")
+    sprites["block/raw_void_block"] = (animate(raw_void, void, "raw_void_block", frames=4), void)
 
     # Primordial Smelter: dark deepslate tiles behind netherite bands, copper pipes with gold couplings.
     wall = darker(VANILLA.frame("block/deepslate_tiles"), 0.85)

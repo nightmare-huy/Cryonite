@@ -22,25 +22,34 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.CRYONITE_ORE);
                 output.accept(ModItems.RAW_CRYONITE);
                 output.accept(ModItems.CRYONITE_CRYSTAL_DUST);
+                output.accept(ModItems.CRYONITE_NUGGET);
                 output.accept(ModItems.CRYONITE_INGOT);
+                output.accept(ModItems.CRYONITE_BLOCK);
+                output.accept(ModItems.RAW_CRYONITE_BLOCK);
                 output.accept(ModItems.CRYONITE_UPGRADE_SMITHING_TEMPLATE);
 
                 output.accept(ModItems.INFERNITE_ORE);
                 output.accept(ModItems.MOLTEN_INFERNITE_SHARD);
                 output.accept(ModItems.COOLED_INFERNITE_BLANK);
+                output.accept(ModItems.INFERNITE_NUGGET);
                 output.accept(ModItems.INFERNITE_INGOT);
                 output.accept(ModItems.INFERNITE_BLOCK);
+                output.accept(ModItems.RAW_INFERNITE_BLOCK);
                 output.accept(ModItems.INFERNITE_UPGRADE_SMITHING_TEMPLATE);
 
                 output.accept(ModItems.VOID_ORE);
                 output.accept(ModItems.UNSTABLE_VOID_SHARD);
                 output.accept(ModItems.STABILIZED_VOID_CLUSTER);
-                output.accept(ModItems.MOLTEN_VOID_BLANK);
+                output.accept(ModItems.VOID_NUGGET);
                 output.accept(ModItems.VOID_INGOT);
+                output.accept(ModItems.VOID_BLOCK);
+                output.accept(ModItems.RAW_VOID_BLOCK);
                 output.accept(ModItems.VOID_UPGRADE_SMITHING_TEMPLATE);
 
                 output.accept(ModItems.INACTIVE_AETHER);
+                output.accept(ModItems.AETHER_NUGGET);
                 output.accept(ModItems.AETHER_INGOT);
+                output.accept(ModItems.AETHER_BLOCK);
 
                 for (GearTier tier : GearTier.values()) {
                     ModItems.gear(tier).all().forEach(output::accept);

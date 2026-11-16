@@ -2,6 +2,8 @@ package dev.nightmarehuy.cryonite.registry;
 
 import dev.nightmarehuy.cryonite.Cryonite;
 import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlock;
+import dev.nightmarehuy.cryonite.block.RawInferniteBlock;
+import dev.nightmarehuy.cryonite.block.RawVoidBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DropExperienceBlock;
@@ -64,6 +66,66 @@ public final class ModBlocks {
                     .strength(12.0F, 1200.0F)
                     .sound(SoundType.NETHERITE_BLOCK)
                     .lightLevel(state -> 9));
+
+    /** Compact storage of Cryonite ingots. */
+    public static final DeferredBlock<Block> CRYONITE_BLOCK = REGISTER.registerSimpleBlock("cryonite_block",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(12.0F, 1200.0F)
+                    .sound(SoundType.NETHERITE_BLOCK));
+
+    /** Compact storage of Void ingots. */
+    public static final DeferredBlock<Block> VOID_BLOCK = REGISTER.registerSimpleBlock("void_block",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(14.0F, 1200.0F)
+                    .sound(SoundType.NETHERITE_BLOCK));
+
+    /** Compact storage of Aether ingots. */
+    public static final DeferredBlock<Block> AETHER_BLOCK = REGISTER.registerSimpleBlock("aether_block",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DIAMOND_BLOCK)
+                    .instrument(NoteBlockInstrument.CHIME)
+                    .requiresCorrectToolForDrops()
+                    .strength(12.0F, 1200.0F)
+                    .sound(SoundType.NETHERITE_BLOCK));
+
+    /** Compact storage of raw Cryonite. */
+    public static final DeferredBlock<Block> RAW_CRYONITE_BLOCK = REGISTER.registerSimpleBlock("raw_cryonite_block",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(5.0F, 6.0F)
+                    .sound(SoundType.ICE)
+                    .lightLevel(state -> 4));
+
+    /** Compact storage of raw Infernite: glows and burns everything that stands on it. */
+    public static final DeferredBlock<RawInferniteBlock> RAW_INFERNITE_BLOCK = REGISTER.registerBlock("raw_infernite_block",
+            RawInferniteBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NETHER)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(8.0F, 12.0F)
+                    .sound(SoundType.NETHERITE_BLOCK)
+                    .lightLevel(state -> 12)
+                    .randomTicks());
+
+    /** Compact storage of raw Void: unstable, slowly damages anything that touches it. */
+    public static final DeferredBlock<RawVoidBlock> RAW_VOID_BLOCK = REGISTER.registerBlock("raw_void_block",
+            RawVoidBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(10.0F, 1200.0F)
+                    .sound(SoundType.SCULK)
+                    .randomTicks());
 
     private ModBlocks() {}
 }

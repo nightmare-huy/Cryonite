@@ -97,6 +97,9 @@ public final class ModTagProviders {
                     net.minecraft.world.level.block.Blocks.MAGMA_BLOCK);
 
             tag(Tags.Blocks.ORES).add(ModBlocks.CRYONITE_ORE.get(), ModBlocks.INFERNITE_ORE.get(), ModBlocks.VOID_ORE.get());
+            tag(Tags.Blocks.STORAGE_BLOCKS).add(
+                    ModBlocks.INFERNITE_BLOCK.get(), ModBlocks.CRYONITE_BLOCK.get(), ModBlocks.VOID_BLOCK.get(), ModBlocks.AETHER_BLOCK.get(),
+                    ModBlocks.RAW_CRYONITE_BLOCK.get(), ModBlocks.RAW_INFERNITE_BLOCK.get(), ModBlocks.RAW_VOID_BLOCK.get());
             tag(BlockTags.BEACON_BASE_BLOCKS).add(ModBlocks.INFERNITE_BLOCK.get());
             tag(BlockTags.DRAGON_IMMUNE).add(ModBlocks.VOID_ORE.get());
         }
@@ -189,10 +192,14 @@ public final class ModTagProviders {
                     ModItems.CRYONITE_INGOT.get(), ModItems.INFERNITE_INGOT.get(), ModItems.VOID_INGOT.get(), ModItems.AETHER_INGOT.get());
             tag(Tags.Items.INGOTS).add(
                     ModItems.CRYONITE_INGOT.get(), ModItems.INFERNITE_INGOT.get(), ModItems.VOID_INGOT.get(), ModItems.AETHER_INGOT.get());
+            tag(Tags.Items.NUGGETS).add(
+                    ModItems.CRYONITE_NUGGET.get(), ModItems.INFERNITE_NUGGET.get(), ModItems.VOID_NUGGET.get(), ModItems.AETHER_NUGGET.get());
             tag(Tags.Items.RAW_MATERIALS).add(ModItems.RAW_CRYONITE.get());
             tag(Tags.Items.DUSTS).add(ModItems.CRYONITE_CRYSTAL_DUST.get());
             tag(Tags.Items.ORES).add(ModItems.CRYONITE_ORE.get(), ModItems.INFERNITE_ORE.get(), ModItems.VOID_ORE.get());
-            tag(Tags.Items.STORAGE_BLOCKS).add(ModItems.INFERNITE_BLOCK.get());
+            tag(Tags.Items.STORAGE_BLOCKS).add(
+                    ModItems.INFERNITE_BLOCK.get(), ModItems.CRYONITE_BLOCK.get(), ModItems.VOID_BLOCK.get(), ModItems.AETHER_BLOCK.get(),
+                    ModItems.RAW_CRYONITE_BLOCK.get(), ModItems.RAW_INFERNITE_BLOCK.get(), ModItems.RAW_VOID_BLOCK.get());
         }
     }
 

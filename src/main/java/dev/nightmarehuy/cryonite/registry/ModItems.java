@@ -53,12 +53,28 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> INFERNITE_BLOCK = hintedBlock(ModBlocks.INFERNITE_BLOCK,
             ItemHints.of("infernite_block", ChatFormatting.GOLD).accent("source").step("next"));
 
+    /** Storage blocks of the metals and of raw ore. */
+    public static final DeferredItem<BlockItem> CRYONITE_BLOCK = hintedBlock(ModBlocks.CRYONITE_BLOCK,
+            ItemHints.of("cryonite_block", ChatFormatting.AQUA).accent("storage"));
+    public static final DeferredItem<BlockItem> VOID_BLOCK = hintedBlock(ModBlocks.VOID_BLOCK,
+            ItemHints.of("void_block", ChatFormatting.DARK_PURPLE).accent("storage"));
+    public static final DeferredItem<BlockItem> AETHER_BLOCK = hintedBlock(ModBlocks.AETHER_BLOCK,
+            ItemHints.of("aether_block", ChatFormatting.GOLD).accent("storage"));
+    public static final DeferredItem<BlockItem> RAW_CRYONITE_BLOCK = hintedBlock(ModBlocks.RAW_CRYONITE_BLOCK,
+            ItemHints.of("raw_cryonite_block", ChatFormatting.AQUA).accent("storage"));
+    public static final DeferredItem<BlockItem> RAW_INFERNITE_BLOCK = hintedBlock(ModBlocks.RAW_INFERNITE_BLOCK,
+            ItemHints.of("raw_infernite_block", ChatFormatting.GOLD).accent("storage"));
+    public static final DeferredItem<BlockItem> RAW_VOID_BLOCK = hintedBlock(ModBlocks.RAW_VOID_BLOCK,
+            ItemHints.of("raw_void_block", ChatFormatting.DARK_PURPLE).accent("storage"));
+
     // ------------------------------------------------------------------ tier 1: Cryonite
     public static final DeferredItem<RawCryoniteItem> RAW_CRYONITE = REGISTER.registerItem("raw_cryonite", RawCryoniteItem::new, material());
     public static final DeferredItem<Item> CRYONITE_CRYSTAL_DUST = hinted("cryonite_crystal_dust", material(),
             ItemHints.of("cryonite_crystal_dust", ChatFormatting.AQUA).accent("source").step("next", "also"));
     public static final DeferredItem<Item> CRYONITE_INGOT = hinted("cryonite_ingot", material().rarity(Rarity.RARE),
             ItemHints.of("cryonite_ingot", ChatFormatting.AQUA).accent("source").step("next", "also"));
+    public static final DeferredItem<Item> CRYONITE_NUGGET = hinted("cryonite_nugget", material(),
+            ItemHints.of("cryonite_nugget", ChatFormatting.AQUA).accent("source").step("next"));
     public static final DeferredItem<UpgradeTemplateItem> CRYONITE_UPGRADE_SMITHING_TEMPLATE =
             REGISTER.register("cryonite_upgrade_smithing_template", () -> new UpgradeTemplateItem(GearTier.CRYONITE));
 
@@ -68,6 +84,8 @@ public final class ModItems {
             ItemHints.of("cooled_infernite_blank", ChatFormatting.GOLD).accent("source").step("next", "fuel"));
     public static final DeferredItem<Item> INFERNITE_INGOT = hinted("infernite_ingot", material().rarity(Rarity.UNCOMMON),
             ItemHints.of("infernite_ingot", ChatFormatting.GOLD).accent("source").step("next", "also"));
+    public static final DeferredItem<Item> INFERNITE_NUGGET = hinted("infernite_nugget", material(),
+            ItemHints.of("infernite_nugget", ChatFormatting.GOLD).accent("source").step("next"));
     public static final DeferredItem<UpgradeTemplateItem> INFERNITE_UPGRADE_SMITHING_TEMPLATE =
             REGISTER.register("infernite_upgrade_smithing_template", () -> new UpgradeTemplateItem(GearTier.INFERNITE));
 
@@ -78,6 +96,8 @@ public final class ModItems {
     public static final DeferredItem<MoltenVoidBlankItem> MOLTEN_VOID_BLANK = REGISTER.registerItem("molten_void_blank", MoltenVoidBlankItem::new, material());
     public static final DeferredItem<Item> VOID_INGOT = hinted("void_ingot", material().rarity(Rarity.EPIC),
             ItemHints.of("void_ingot", ChatFormatting.DARK_PURPLE).accent("source").step("next", "also"));
+    public static final DeferredItem<Item> VOID_NUGGET = hinted("void_nugget", material(),
+            ItemHints.of("void_nugget", ChatFormatting.DARK_PURPLE).accent("source").step("next"));
     public static final DeferredItem<UpgradeTemplateItem> VOID_UPGRADE_SMITHING_TEMPLATE =
             REGISTER.register("void_upgrade_smithing_template", () -> new UpgradeTemplateItem(GearTier.VOID));
 
@@ -86,6 +106,8 @@ public final class ModItems {
             ItemHints.of("inactive_aether", ChatFormatting.GOLD).accent("source").step("next"));
     public static final DeferredItem<Item> AETHER_INGOT = hinted("aether_ingot", material().rarity(Rarity.EPIC),
             ItemHints.of("aether_ingot", ChatFormatting.GOLD).accent("source").step("next"));
+    public static final DeferredItem<Item> AETHER_NUGGET = hinted("aether_nugget", material(),
+            ItemHints.of("aether_nugget", ChatFormatting.GOLD).accent("source").step("next"));
 
     // ------------------------------------------------------------------ equipment of all four tiers
     private static final Map<GearTier, GearSet> GEAR = new EnumMap<>(GearTier.class);

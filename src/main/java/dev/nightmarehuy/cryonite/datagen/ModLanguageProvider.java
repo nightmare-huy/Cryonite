@@ -26,8 +26,18 @@ public final class ModLanguageProvider {
             addBlock(ModBlocks.INFERNITE_ORE, "Infernite Ore");
             addBlock(ModBlocks.VOID_ORE, "Void Ore");
             addBlock(ModBlocks.INFERNITE_BLOCK, "Block of Infernite");
+            addBlock(ModBlocks.CRYONITE_BLOCK, "Block of Cryonite");
+            addBlock(ModBlocks.VOID_BLOCK, "Block of Void");
+            addBlock(ModBlocks.AETHER_BLOCK, "Block of Aether");
+            addBlock(ModBlocks.RAW_CRYONITE_BLOCK, "Raw Cryonite Block");
+            addBlock(ModBlocks.RAW_INFERNITE_BLOCK, "Raw Infernite Block");
+            addBlock(ModBlocks.RAW_VOID_BLOCK, "Raw Void Block");
 
             addItem(ModItems.RAW_CRYONITE, "Raw Cryonite");
+            addItem(ModItems.CRYONITE_NUGGET, "Cryonite Nugget");
+            addItem(ModItems.INFERNITE_NUGGET, "Infernite Nugget");
+            addItem(ModItems.VOID_NUGGET, "Void Nugget");
+            addItem(ModItems.AETHER_NUGGET, "Aether Nugget");
             addItem(ModItems.CRYONITE_CRYSTAL_DUST, "Cryonite Crystal Dust");
             addItem(ModItems.CRYONITE_INGOT, "Cryonite Ingot");
             addItem(ModItems.MOLTEN_INFERNITE_SHARD, "Molten Infernite Shard");
@@ -80,6 +90,14 @@ public final class ModLanguageProvider {
             add("message.cryonite.area_mining", "3×3 mining mode");
             add("message.cryonite.area_mining.on", "ENABLED");
             add("message.cryonite.area_mining.off", "DISABLED");
+
+            add("tooltip.cryonite.cryonite_block.storage", "Compact storage of Cryonite ingots");
+            add("tooltip.cryonite.infernite_block.storage", "Compact storage of Infernite ingots");
+            add("tooltip.cryonite.void_block.storage", "Compact storage of Void ingots");
+            add("tooltip.cryonite.aether_block.storage", "Compact storage of Aether ingots");
+            add("tooltip.cryonite.raw_cryonite_block.storage", "Compact storage of raw Cryonite");
+            add("tooltip.cryonite.raw_infernite_block.storage", "Compact storage of raw Infernite; burns what stands on it");
+            add("tooltip.cryonite.raw_void_block.storage", "Compact storage of raw Void; unstable and damaging");
             add("message.cryonite.mode_state", "%s: %s");
             add("message.cryonite.mode_unsupported", "The held item does not support %s");
             add("message.cryonite.item_burned", "The Molten Infernite Shard burned %s!");
@@ -263,8 +281,18 @@ public final class ModLanguageProvider {
             addBlock(ModBlocks.INFERNITE_ORE, "Инфернитовая руда");
             addBlock(ModBlocks.VOID_ORE, "Руда Войда");
             addBlock(ModBlocks.INFERNITE_BLOCK, "Блок инфернита");
+            addBlock(ModBlocks.CRYONITE_BLOCK, "Блок крионита");
+            addBlock(ModBlocks.VOID_BLOCK, "Блок войда");
+            addBlock(ModBlocks.AETHER_BLOCK, "Блок эфира");
+            addBlock(ModBlocks.RAW_CRYONITE_BLOCK, "Блок сырого крионита");
+            addBlock(ModBlocks.RAW_INFERNITE_BLOCK, "Блок раскалённого инфернита");
+            addBlock(ModBlocks.RAW_VOID_BLOCK, "Блок нестабильного войда");
 
             addItem(ModItems.RAW_CRYONITE, "Сырой крионит");
+            addItem(ModItems.CRYONITE_NUGGET, "Кусочек крионита");
+            addItem(ModItems.INFERNITE_NUGGET, "Кусочек инфернита");
+            addItem(ModItems.VOID_NUGGET, "Кусочек войда");
+            addItem(ModItems.AETHER_NUGGET, "Кусочек эфира");
             addItem(ModItems.CRYONITE_CRYSTAL_DUST, "Кристаллическая пыль крионита");
             addItem(ModItems.CRYONITE_INGOT, "Крионитовый слиток");
             addItem(ModItems.MOLTEN_INFERNITE_SHARD, "Раскалённый осколок инфернита");
@@ -321,6 +349,14 @@ public final class ModLanguageProvider {
             add("message.cryonite.area_mining.on", "ВКЛЮЧЕН");
             add("message.cryonite.area_mining.off", "ВЫКЛЮЧЕН");
             add("message.cryonite.mode_state", "%s: %s");
+
+            add("tooltip.cryonite.cryonite_block.storage", "Компактное хранение крионитовых слитков");
+            add("tooltip.cryonite.infernite_block.storage", "Компактное хранение инфернитовых слитков");
+            add("tooltip.cryonite.void_block.storage", "Компактное хранение слитков Войда");
+            add("tooltip.cryonite.aether_block.storage", "Компактное хранение эфирных слитков");
+            add("tooltip.cryonite.raw_cryonite_block.storage", "Компактное хранение сырого крионита");
+            add("tooltip.cryonite.raw_infernite_block.storage", "Компактное хранение раскалённого инфернита; жжёт стоящих на нём");
+            add("tooltip.cryonite.raw_void_block.storage", "Компактное хранение нестабильного войда; повреждает при касании");
             add("message.cryonite.mode_unsupported", "Предмет в руке не поддерживает режим «%s»");
             add("message.cryonite.item_burned", "Раскалённый осколок инфернита сжёг: %s!");
             add("message.cryonite.void_rescue", "Броня Войда вернула вас обратно");

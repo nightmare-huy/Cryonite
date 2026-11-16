@@ -42,6 +42,7 @@ public class ModRecipeProvider extends RecipeProvider {
         infernite(output);
         voidTier(output);
         aether(output);
+        nuggetsAndBlocks(output);
         upgrades(output);
         multitools(output);
         kineticEnergyConverter(output);
@@ -230,6 +231,65 @@ public class ModRecipeProvider extends RecipeProvider {
             builder.pattern(row);
         }
         builder.unlockedBy("has_aether_ingot", has(ModItems.AETHER_INGOT)).save(output);
+    }
+
+    // ------------------------------------------------------------------ nuggets and storage blocks
+
+    /** Full reversible cycle: 1 ingot <-> 9 nuggets, 9 ingots <-> 1 block, 9 raw <-> 1 raw block. */
+    private void nuggetsAndBlocks(RecipeOutput output) {
+        nuggetCycle(output, GearTier.CRYONITE, ModItems.CRYONITE_NUGGET, ModItems.CRYONITE_INGOT, ModItems.CRYONITE_BLOCK,
+                ModItems.RAW_CRYONITE, ModItems.RAW_CRYONITE_BLOCK);
+        nuggetCycle(output, GearTier.INFERNITE, ModItems.INFERNITE_NUGGET, ModItems.INFERNITE_INGOT, ModItems.INFERNITE_BLOCK,
+                ModItems.COOLED_INFERNITE_BLANK, ModItems.RAW_INFERNITE_BLOCK);
+        nuggetCycle(output, GearTier.VOID, ModItems.VOID_NUGGET, ModItems.VOID_INGOT, ModItems.VOID_BLOCK,
+                ModItems.UNSTABLE_VOID_SHARD, ModItems.RAW_VOID_BLOCK);
+        nuggetCycle(output, GearTier.AETHER, ModItems.AETHER_NUGGET, ModItems.AETHER_INGOT, ModItems.AETHER_BLOCK,
+                null, null);
+    }
+
+    private void nuggetCycle(RecipeOutput output, GearTier tier, DeferredItem<Item> nugget, DeferredItem<Item> ingot,
+            DeferredItem<BlockItem> block, DeferredItem<?> raw, DeferredItem<BlockItem> rawBlock) {
+        String id = tier.id();
+        // 9 nuggets -> 1 ingot
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ingot)
+                .pattern("NNN")
+                .pattern("NNN")
+                .pattern("NNN")
+                .define('N', nugget)
+                .unlockedBy("has_" + id + "_nugget", has(nugget))
+                .save(output, Cryonite.id(id + "_ingot_from_nuggets"));
+        // 1 ingot -> 9 nuggets
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, nugget, 9)
+                .requires(ingot)
+                .unlockedBy("has_" + id + "_ingot", has(ingot))
+                .save(output, Cryonite.id(id + "_nuggets_from_ingot"));
+        // 9 ingots -> 1 block
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, block)
+                .pattern("###")
+                .pattern("###")
+                .pattern("###")
+                .define('#', ingot)
+                .unlockedBy("has_" + id + "_ingot", has(ingot))
+                .save(output, Cryonite.id(id + "_block_from_ingots"));
+        // 1 block -> 9 ingots
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ingot, 9)
+                .requires(block)
+                .unlockedBy("has_" + id + "_block", has(block))
+                .save(output, Cryonite.id(id + "_ingots_from_block"));
+        // 9 raw -> 1 raw block, and back
+        if (raw != null && rawBlock != null) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, rawBlock)
+                    .pattern("###")
+                    .pattern("###")
+                    .pattern("###")
+                    .define('#', raw)
+                    .unlockedBy("has_" + id + "_raw", has(raw))
+                    .save(output, Cryonite.id(id + "_raw_block_from_raw"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, raw, 9)
+                    .requires(rawBlock)
+                    .unlockedBy("has_" + id + "_raw_block", has(rawBlock))
+                    .save(output, Cryonite.id(id + "_raw_from_raw_block"));
+        }
     }
 
     // ------------------------------------------------------------------ templates and smithing
