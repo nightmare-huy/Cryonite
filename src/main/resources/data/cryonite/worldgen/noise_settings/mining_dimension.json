@@ -3,6 +3,8 @@
   "default_fluid": "minecraft:water",
   "sea_level": 64,
   "legacy_random_source": false,
+  "aquifers_enabled": true,
+  "ore_veins_enabled": true,
   "noise": {
     "min_y": -64,
     "height": 384,
@@ -33,8 +35,6 @@
         "factor": 0
       }
     ],
-    "slab": true,
-    "aquifers_enabled": true,
-    "ore_veins_enabled": true
+    "slab": true
   }
 }
