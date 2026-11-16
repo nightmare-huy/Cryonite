@@ -29,6 +29,12 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
 
     private static final ResourceLocation BG_TEXTURE = Cryonite.id("textures/gui/container/dimension_terminal.png");
 
+    /** Баннеры карт измерений для обложек карточек. */
+    private static final ResourceLocation MAP_OVERWORLD = Cryonite.id("textures/gui/container/dimension_map_overworld.png");
+    private static final ResourceLocation MAP_MINING = Cryonite.id("textures/gui/container/dimension_map_mining_dimension.png");
+    private static final ResourceLocation MAP_NETHER = Cryonite.id("textures/gui/container/dimension_map_the_nether.png");
+    private static final ResourceLocation MAP_END = Cryonite.id("textures/gui/container/dimension_map_the_end.png");
+
     /** Размер одной карточки измерения. */
     private static final int CARD_W = 110;
     private static final int CARD_H = 150;
@@ -304,8 +310,8 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         }
         drawRectOutline(graphics, x, y, CARD_W, CARD_H, borderColor);
 
-        // Заглушка пейзажа измерения.
-        drawDimensionPreview(graphics, entry.key(), x + CARD_W / 2 - 32, y + 20, 64, 8);
+        // Баннер карты измерения.
+        drawDimensionMap(graphics, entry.key(), x + CARD_W / 2 - 32, y + 20, 64, 64);
 
         // Название измерения.
         Component name = DimensionTerminalClient.formattedName(entry.name());
@@ -359,42 +365,17 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         return (r << 16) | (g << 8) | b;
     }
 
-    /** Процедурный пиксель-арт превью измерения. */
-    private void drawDimensionPreview(GuiGraphics graphics, ResourceLocation key, int x, int y, int size, int cell) {
+    /** Баннер карты измерения: текстура в стиле Jappa. */
+    private void drawDimensionMap(GuiGraphics graphics, ResourceLocation key, int x, int y, int w, int h) {
         String path = key.getPath();
-        boolean overworld = path.equals("overworld");
-        boolean mining = path.equals("mining_dimension");
-        boolean nether = path.equals("the_nether");
-        boolean end = path.equals("the_end");
-
-        for (int dy = 0; dy < size; dy += cell) {
-            for (int dx = 0; dx < size; dx += cell) {
-                boolean fill;
-                if (overworld) {
-                    fill = (dx / cell + dy / cell) % 2 == 0;
-                } else if (mining) {
-                    fill = dx < size / 2 || dy > size / 2;
-                } else if (nether) {
-                    fill = (dx / cell) % 2 == 0;
-                } else if (end) {
-                    fill = dx == 0 || dx == size - cell || dy == 0 || dy == size - cell;
-                } else {
-                    fill = (dx + dy) % (cell * 2) == 0;
-                }
-                if (fill) {
-                    graphics.fill(x + dx, y + dy, x + dx + cell, y + dy + cell, previewColor(key));
-                }
-            }
-        }
-    }
-
-    private int previewColor(ResourceLocation key) {
-        String path = key.getPath();
-        if (path.equals("mining_dimension")) return 0xFFD700;
-        if (path.equals("overworld")) return 0x00BFFF;
-        if (path.equals("the_nether")) return 0xFF4500;
-        if (path.equals("the_end")) return 0x8B00FF;
-        return 0xAAAAAA;
+        ResourceLocation map = switch (path) {
+            case "overworld" -> MAP_OVERWORLD;
+            case "mining_dimension" -> MAP_MINING;
+            case "the_nether" -> MAP_NETHER;
+            case "the_end" -> MAP_END;
+            default -> MAP_OVERWORLD;
+        };
+        graphics.blit(map, x, y, 0, 0, w, h);
     }
 
     private void renderOreIcons(GuiGraphics graphics, ResourceLocation key, int x, int y) {

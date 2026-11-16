@@ -144,6 +144,9 @@ public final class ModLanguageProvider {
             add("gui.cryonite.terminal.status.available", "AVAILABLE");
             add("death.attack.cryonite.aether_burst.player", "%1$s was erased by the Aether of %2$s");
             add("death.attack.cryonite.aether_burst.item", "%1$s was erased by %2$s using %3$s");
+
+            // Dimension names shown in the terminal carousel.
+            add("dimension.cryonite.mining_dimension", "Mining Dimension");
         }
 
         /** Inventory hints and the JEI documentation; the Russian class fills the same keys. */
@@ -232,17 +235,21 @@ public final class ModLanguageProvider {
             // JEI info pages: what the categories cannot show.
             add("jei.cryonite.info.raw_cryonite", "Raw Cryonite radiates cold: while you carry it you are slowed and slowly freeze. Leather or Cryonite armor and the Nether keep you warm.\n\nSmelt it in the Primordial Smelter (fuel: Blaze Rod or Magma Block) into Cryonite Crystal Dust.");
             add("jei.cryonite.info.cryonite_crystal_dust", "Smelted from Raw Cryonite in the Primordial Smelter (fuel: Blaze Rod or Magma Block).\n\nDust + Netherite Scrap or an Echo Shard = Cryonite Ingot, either on the crafting table or in the Smelter (scrap or shard in a catalyst slot).\n\nOn the crafting table the dust also cools a Molten Infernite Shard.");
+            add("jei.cryonite.info.cryonite_nugget", "One ninth of a Cryonite Ingot. Craft 9 nuggets into an ingot on the crafting table (and back).");
             add("jei.cryonite.info.cryonite_ingot", "Cryonite Crystal Dust + Netherite Scrap or an Echo Shard (crafting table or Primordial Smelter).\n\nSmithing table: Cryonite Upgrade template + a Netherite item + the ingot. 7 ingots duplicate the Infernite Upgrade template. Also needed for Inactive Aether.");
             add("jei.cryonite.info.molten_infernite_shard", "Third way: combine the shard with Cryonite Crystal Dust on the crafting table.\n\nSnowballs, Ice, Packed Ice or Blue Ice in the inventory stop the shard from burning you and your items.");
             add("jei.cryonite.info.cooled_infernite_blank", "A Molten Infernite Shard cooled in a Powder Snow Cauldron, on Blue Ice or with Cryonite Crystal Dust.\n\nPrimordial Smelter: the blank + a Block of Gold and a Ghast Tear (catalysts), fuel: Blaze Powder, Blaze Rod or Lava Bucket. The result is an Infernite Ingot.");
+            add("jei.cryonite.info.infernite_nugget", "One ninth of an Infernite Ingot. Craft 9 nuggets into an ingot on the crafting table (and back).");
             add("jei.cryonite.info.infernite_ingot", "Smelted from a Cooled Infernite Blank in the Primordial Smelter (Block of Gold + Ghast Tear).\n\nSmithing table: Infernite Upgrade template + a Cryonite item + the ingot. 9 ingots make a Block of Infernite. Also needed for the Molten Void Blank, Inactive Aether and to duplicate the Void Upgrade template.");
             add("jei.cryonite.info.infernite_block", "9 Infernite Ingots on the crafting table (and back).\n\nThe only fuel of the Primordial Smelter that is hot enough to awaken Inactive Aether.");
             add("jei.cryonite.info.unstable_void_shard", "Without a dragon: 8 shards around a bottle of Dragon's Breath on the crafting table give 8 Stabilized Void Clusters.");
             add("jei.cryonite.info.stabilized_void_cluster", "An Unstable Void Shard stabilized in a cloud of Dragon's Breath or on the crafting table.\n\n4 clusters + 4 Infernite Ingots + a Shulker Shell = Molten Void Blank, either on the crafting table or in the Primordial Smelter (fuel: Blaze Rod or Lava Bucket).");
             add("jei.cryonite.info.molten_void_blank", "Made of 4 Stabilized Void Clusters, 4 Infernite Ingots and a Shulker Shell (crafting table or Primordial Smelter).");
             add("jei.cryonite.info.molten_void_blank.craft", "Without obsidian: combine the blank with Blue Ice on the crafting table.");
+            add("jei.cryonite.info.void_nugget", "One ninth of a Void Ingot. Craft 9 nuggets into an ingot on the crafting table (and back).");
             add("jei.cryonite.info.void_ingot", "A Molten Void Blank quenched on Crying Obsidian or with Blue Ice.\n\nSmithing table: Void Upgrade template + an Infernite item + the ingot. Also needed for Inactive Aether.");
             add("jei.cryonite.info.inactive_aether", "Crafting table: Netherite Ingot + Cryonite Ingot + Infernite Ingot + Void Ingot.\n\nSmelt it in the Primordial Smelter with a Block of Infernite as fuel to get an Aether Ingot.");
+            add("jei.cryonite.info.aether_nugget", "One ninth of an Aether Ingot. Craft 9 nuggets into an ingot on the crafting table (and back).");
             add("jei.cryonite.info.aether_ingot", "Inactive Aether smelted in the Primordial Smelter on a Block of Infernite.\n\nAether weapons, tools and armor are crafted on the crafting table in the usual shapes (ingots and sticks), no template needed.");
             add("jei.cryonite.info.primordial_smelter", "Crafting: 4 Obsidian, 2 Blaze Rods, 2 Netherite Scrap and a Blast Furnace.\n\nSlots: main ingredient, up to two catalysts, fuel and result. Catalyst slots a recipe does not use must stay empty. Every recipe burns its own fuel, ordinary fuel does not work:\n- Raw Cryonite, Cryonite dust: Blaze Rod or Magma Block\n- Cooled Infernite Blank: Blaze Powder, Blaze Rod or Lava Bucket\n- Stabilized Void Clusters: Blaze Rod or Lava Bucket\n- Inactive Aether: Block of Infernite");
             add("jei.cryonite.info.kinetic_energy_converter", "Needs the Create mod. Crafting: Cryonite, Infernite, Void and Aether Ingots in the corners, a Block of Redstone on top, an Electron Tube, a Brass Casing and a Shaft in the middle row, a Precision Mechanism at the bottom.\n\nTurns Forge Energy into rotation. The shaft leaves through the front; the other five sides accept up to 1,000,000 FE/t from the cables of any mod into a buffer of 10,000,000 FE.\n\nRight-click opens the control panel: speed from 0 to 8048 RPM, direction and a power switch.\n- Stress capacity: 1024 SU per RPM (8,241,152 SU at 8048 RPM)\n- Consumption: 4 FE/t per RPM (32,192 FE/t at 8048 RPM)\nWithout energy the generator stops.\n\nWith this block installed Create's speed limit (maxRotationSpeed) is raised from 256 to 8048 RPM.");
@@ -403,6 +410,9 @@ public final class ModLanguageProvider {
             add("death.attack.cryonite.aether_burst.player", "%1$s стёрт Эфиром игрока %2$s");
             add("death.attack.cryonite.aether_burst.item", "%1$s стёрт игроком %2$s с помощью %3$s");
 
+            // Имена измерений в карусели терминала.
+            add("dimension.cryonite.mining_dimension", "Шахтёрское измерение");
+
             add("message.cryonite.terminal.teleporting", "Открываю разлом в %s...");
             add("message.cryonite.terminal.teleported", "Вы прибыли.");
             add("message.cryonite.terminal.teleport", "ТЕЛЕПОРТАЦИЯ");
@@ -496,17 +506,21 @@ public final class ModLanguageProvider {
             // JEI info pages: what the categories cannot show.
             add("jei.cryonite.info.raw_cryonite", "Сырой крионит излучает холод: пока он в инвентаре, вас замедляет и постепенно замораживает. Спасают кожаная или крионитовая броня и Незер.\n\nПереплавьте его в Первородной Плавильне (топливо: огненный стержень или блок магмы) в Кристаллическую пыль крионита.");
             add("jei.cryonite.info.cryonite_crystal_dust", "Выплавляется из Сырого крионита в Первородной Плавильне (топливо: огненный стержень или блок магмы).\n\nПыль + незеритовый лом или осколок эха = Крионитовый слиток: на верстаке либо в Плавильне (лом или осколок в слот катализатора).\n\nНа верстаке пыль также остужает Раскалённый осколок инфернита.");
+            add("jei.cryonite.info.cryonite_nugget", "Одна девятая крионитового слитка. 9 кусочков крафтятся в слиток на верстаке (и обратно).");
             add("jei.cryonite.info.cryonite_ingot", "Кристаллическая пыль крионита + незеритовый лом или осколок эха (верстак или Первородная Плавильня).\n\nКузнечный стол: шаблон «Крионитовое улучшение» + незеритовый предмет + слиток. 7 слитков дублируют шаблон «Инфернитовое улучшение». Также нужен для Неактивного Эфира.");
             add("jei.cryonite.info.molten_infernite_shard", "Третий способ: соедините осколок с Кристаллической пылью крионита на верстаке.\n\nСнежки, лёд, плотный или синий лёд в инвентаре не дают осколку жечь вас и ваши вещи.");
             add("jei.cryonite.info.cooled_infernite_blank", "Раскалённый осколок инфернита, остуженный в котле с рыхлым снегом, о Синий лёд или Кристаллической пылью крионита.\n\nПервородная Плавильня: заготовка + блок золота и слеза гаста (катализаторы), топливо: огненный порошок, огненный стержень или ведро лавы. Получается Инфернитовый слиток.");
+            add("jei.cryonite.info.infernite_nugget", "Одна девятая инфернитового слитка. 9 кусочков крафтятся в слиток на верстаке (и обратно).");
             add("jei.cryonite.info.infernite_ingot", "Выплавляется из Охлаждённой инфернитовой заготовки в Первородной Плавильне (блок золота + слеза гаста).\n\nКузнечный стол: шаблон «Инфернитовое улучшение» + крионитовый предмет + слиток. 9 слитков дают Блок инфернита. Также нужен для Расплавленной заготовки Войда, Неактивного Эфира и дублирования шаблона «Улучшение Войда».");
             add("jei.cryonite.info.infernite_block", "9 Инфернитовых слитков на верстаке (разбирается обратно).\n\nЕдинственное топливо Первородной Плавильни, достаточно жаркое, чтобы пробудить Неактивный Эфир.");
             add("jei.cryonite.info.unstable_void_shard", "Без дракона: 8 осколков вокруг бутылки драконьего дыхания на верстаке дают 8 Стабилизированных кластеров Войда.");
             add("jei.cryonite.info.stabilized_void_cluster", "Нестабильный осколок Войда, стабилизированный в облаке дыхания дракона или на верстаке.\n\n4 кластера + 4 Инфернитовых слитка + панцирь шалкера = Расплавленная заготовка Войда: на верстаке либо в Первородной Плавильне (топливо: огненный стержень или ведро лавы).");
             add("jei.cryonite.info.molten_void_blank", "Получается из 4 Стабилизированных кластеров Войда, 4 Инфернитовых слитков и панциря шалкера (верстак или Первородная Плавильня).");
             add("jei.cryonite.info.molten_void_blank.craft", "Без обсидиана: соедините заготовку с синим льдом на верстаке.");
+            add("jei.cryonite.info.void_nugget", "Одна девятая слитка Войда. 9 кусочков крафтятся в слиток на верстаке (и обратно).");
             add("jei.cryonite.info.void_ingot", "Расплавленная заготовка Войда, закалённая на плачущем обсидиане или синим льдом.\n\nКузнечный стол: шаблон «Улучшение Войда» + инфернитовый предмет + слиток. Также нужен для Неактивного Эфира.");
             add("jei.cryonite.info.inactive_aether", "Верстак: незеритовый слиток + Крионитовый слиток + Инфернитовый слиток + Слиток Войда.\n\nПереплавьте в Первородной Плавильне, используя Блок инфернита как топливо, и получите Эфирный слиток.");
+            add("jei.cryonite.info.aether_nugget", "Одна девятая эфирного слитка. 9 кусочков крафтятся в слиток на верстаке (и обратно).");
             add("jei.cryonite.info.aether_ingot", "Неактивный Эфир, переплавленный в Первородной Плавильне на Блоке инфернита.\n\nЭфирное оружие, инструменты и броня крафтятся на верстаке по обычным схемам (слитки и палки), шаблон не нужен.");
             add("jei.cryonite.info.primordial_smelter", "Крафт: 4 обсидиана, 2 огненных стержня, 2 незеритовых лома и плавильная печь.\n\nСлоты: основной ингредиент, до двух катализаторов, топливо и результат. Слоты катализаторов, не занятые рецептом, должны быть пустыми. У каждого рецепта своё топливо, обычное не подходит:\n- Сырой крионит, пыль крионита: огненный стержень или блок магмы\n- Охлаждённая инфернитовая заготовка: огненный порошок, огненный стержень или ведро лавы\n- Стабилизированные кластеры Войда: огненный стержень или ведро лавы\n- Неактивный Эфир: Блок инфернита");
             add("jei.cryonite.info.kinetic_energy_converter", "Нужен мод Create. Крафт: слитки крионита, инфернита, Войда и Эфира по углам, блок редстоуна сверху, электронная лампа, латунный корпус и вал в среднем ряду, механизм точности снизу.\n\nПревращает энергию FE во вращение. Вал выходит из передней стороны, остальные пять сторон принимают до 1 000 000 FE/t от кабелей любого мода в буфер на 10 000 000 FE.\n\nПКМ открывает панель управления: скорость от 0 до 8048 RPM, направление и выключатель.\n- Мощность: 1024 SU на каждый RPM (8 241 152 SU при 8048 RPM)\n- Потребление: 4 FE/t на каждый RPM (32 192 FE/t при 8048 RPM)\nБез энергии генератор останавливается.\n\nС этим блоком лимит скорости Create (maxRotationSpeed) поднят с 256 до 8048 RPM.");

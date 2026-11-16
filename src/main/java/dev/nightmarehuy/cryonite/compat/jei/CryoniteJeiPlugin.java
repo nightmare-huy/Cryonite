@@ -57,11 +57,13 @@ public class CryoniteJeiPlugin implements IModPlugin {
         // ---- tier 1: Cryonite
         info(registration, ModItems.CRYONITE_ORE, acquisition("cryonite_ore"), tool("cryonite_ore"));
         info(registration, ModItems.RAW_CRYONITE, acquisition("cryonite_ore"), tool("cryonite_ore"), page("raw_cryonite"));
+        info(registration, ModItems.CRYONITE_NUGGET, page("cryonite_nugget"));
         info(registration, ModItems.CRYONITE_CRYSTAL_DUST, page("cryonite_crystal_dust"));
         info(registration, ModItems.CRYONITE_INGOT, page("cryonite_ingot"));
         info(registration, ModItems.CRYONITE_UPGRADE_SMITHING_TEMPLATE, acquisition("cryonite_template"));
 
         // ---- tier 2: Infernite
+        info(registration, ModItems.INFERNITE_NUGGET, page("infernite_nugget"));
         info(registration, ModItems.INFERNITE_ORE, acquisition("infernite_ore"), tool("infernite_ore"));
         info(registration, ModItems.MOLTEN_INFERNITE_SHARD, acquisition("infernite_ore"), tool("infernite_ore"),
                 interaction("powder_snow_cauldron"), interaction("blue_ice"), page("molten_infernite_shard"));
@@ -71,6 +73,7 @@ public class CryoniteJeiPlugin implements IModPlugin {
         info(registration, ModItems.INFERNITE_UPGRADE_SMITHING_TEMPLATE, acquisition("infernite_template"));
 
         // ---- tier 3: Void
+        info(registration, ModItems.VOID_NUGGET, page("void_nugget"));
         info(registration, ModItems.VOID_ORE, acquisition("void_ore"), tool("void_ore"));
         info(registration, ModItems.UNSTABLE_VOID_SHARD, acquisition("void_ore"), tool("void_ore"),
                 interaction("dragon_breath"), page("unstable_void_shard"));
@@ -80,6 +83,7 @@ public class CryoniteJeiPlugin implements IModPlugin {
         info(registration, ModItems.VOID_UPGRADE_SMITHING_TEMPLATE, acquisition("void_template"));
 
         // ---- tier 4: Aether, and the smelter
+        info(registration, ModItems.AETHER_NUGGET, page("aether_nugget"));
         info(registration, ModItems.INACTIVE_AETHER, page("inactive_aether"));
         info(registration, ModItems.AETHER_INGOT, page("aether_ingot"));
         info(registration, ModItems.PRIMORDIAL_SMELTER, page("primordial_smelter"));
