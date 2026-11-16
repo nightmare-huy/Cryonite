@@ -4,6 +4,7 @@
   "sea_level": 64,
   "legacy_random_source": false,
   "disable_mob_generation": false,
+  "spawn_target": "minecraft:overworld",
   "aquifers_enabled": true,
   "ore_veins_enabled": true,
   "noise": {
