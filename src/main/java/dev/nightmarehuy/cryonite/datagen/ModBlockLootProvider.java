@@ -25,6 +25,7 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.RAW_CRYONITE_BLOCK.get());
         dropSelf(ModBlocks.RAW_INFERNITE_BLOCK.get());
         dropSelf(ModBlocks.RAW_VOID_BLOCK.get());
+        dropSelf(ModBlocks.DIMENSION_TERMINAL.get());
         add(ModBlocks.CRYONITE_ORE.get(), block -> createOreDrop(block, ModItems.RAW_CRYONITE.get()));
         add(ModBlocks.INFERNITE_ORE.get(), block -> createOreDrop(block, ModItems.MOLTEN_INFERNITE_SHARD.get()));
         add(ModBlocks.VOID_ORE.get(), block -> createOreDrop(block, ModItems.UNSTABLE_VOID_SHARD.get()));
