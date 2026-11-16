@@ -68,7 +68,7 @@ public final class ModNetworking {
         }
 
         BlockPos spot = findSafeSpot(targetLevel);
-        player.changeLevel(targetLevel);
+        player.changeLevel(targetKey);
         player.teleportTo(spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5);
         player.setYRot(player.getRandom().nextFloat() * 360.0F);
 
