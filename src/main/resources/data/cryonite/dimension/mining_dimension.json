@@ -3,7 +3,7 @@
   "generator": {
     "type": "minecraft:noise",
     "seed": 1729,
-    "settings": "cryonite:mining_dimension",
+    "settings": "minecraft:overworld",
     "biome_source": {
       "type": "minecraft:multi_noise",
       "biomes": [
