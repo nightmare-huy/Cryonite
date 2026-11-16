@@ -1,5 +1,11 @@
 {
   "values": [
-    "cryonite:infernite_block"
+    "cryonite:infernite_block",
+    "cryonite:cryonite_block",
+    "cryonite:void_block",
+    "cryonite:aether_block",
+    "cryonite:raw_cryonite_block",
+    "cryonite:raw_infernite_block",
+    "cryonite:raw_void_block"
   ]
 }

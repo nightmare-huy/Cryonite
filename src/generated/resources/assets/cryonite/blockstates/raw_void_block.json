@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "cryonite:block/raw_void_block"
+    }
+  }
+}
