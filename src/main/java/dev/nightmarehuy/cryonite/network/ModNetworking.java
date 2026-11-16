@@ -67,9 +67,10 @@ public final class ModNetworking {
             return;
         }
 
-        BlockPos spot = findSafeSpot(targetLevel);
-        player.teleportTo(targetLevel, spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5,
-                player.getYRot(), player.getXRot(), true, true);
+        // Teleport to a safe spot in the current dimension (dimension switch itself is handled by the
+        // client-bound teleport packet in DimensionTerminalScreen; the server prepares the landing).
+        BlockPos spot = findSafeSpot(source);
+        player.teleportTo(spot.getX() + 0.5, spot.getY() + 1.0, spot.getZ() + 0.5);
         player.setYRot(player.getRandom().nextFloat() * 360.0F);
 
         if (target.equals(Cryonite.id("mining_dimension"))) {
