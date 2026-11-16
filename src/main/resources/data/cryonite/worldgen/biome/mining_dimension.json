@@ -15,20 +15,26 @@
     "monster": [],
     "creature": [],
     "ambient": [],
-    "underground_creature": [],
     "water_creature": [],
     "water_ambient": [],
-    "axolotls": [],
-    "monster_spawn_block_light_limit": 0
+    "axolotls": []
   },
   "spawn_costs": {},
   "carvers": {},
-  "features": {
-    "underground_ores": [
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
       "cryonite:universal_ore_stone",
       "cryonite:universal_ore_deepslate",
       "cryonite:universal_ore_nether",
       "cryonite:universal_ore_end"
-    ]
-  }
+    ],
+    []
+  ]
 }

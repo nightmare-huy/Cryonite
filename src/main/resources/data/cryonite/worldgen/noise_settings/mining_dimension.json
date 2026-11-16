@@ -2,6 +2,7 @@
   "default_block": "minecraft:stone",
   "default_fluid": "minecraft:water",
   "sea_level": 64,
+  "legacy_random_source": false,
   "noise": {
     "min_y": -64,
     "height": 384,

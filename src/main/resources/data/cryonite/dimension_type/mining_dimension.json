@@ -14,8 +14,6 @@
     "height": 384,
     "logical_height": 256,
     "armor_type": "minecraft:all",
-    "effects": "minecraft:overworld",
-    "monster_spawn_block_light_limit": 0,
-    "monster_spawn_light_level": 0
+    "effects": "minecraft:overworld"
   }
 }
