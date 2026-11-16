@@ -1,0 +1,427 @@
+package dev.nightmarehuy.cryonite.client;
+
+import dev.nightmarehuy.cryonite.Cryonite;
+import dev.nightmarehuy.cryonite.network.ListDimensionsRequestPayload;
+import dev.nightmarehuy.cryonite.network.TeleportDimensionPayload;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.joml.Quaternionf;
+import org.lwjgl.glfw.GLFW;
+
+/**
+ * Пространственный Терминал — экран выбора измерений в стиле Cover Flow.
+ * <p>
+ * Карусель карточек с плавной инерцией скролла, настоящим 3D-поворотом центральной карточки
+ * вокруг оси Y и зеркальным отражением на глянцевом полу.
+ */
+public class DimensionTerminalScreen extends Screen {
+
+    private static final ResourceLocation BG_TEXTURE = Cryonite.id("textures/gui/container/dimension_terminal.png");
+
+    /** Размер одной карточки измерения. */
+    private static final int CARD_W = 110;
+    private static final int CARD_H = 150;
+    /** Расстояние между центрами соседних карточек. */
+    private static final int CARD_SPACING = 130;
+    /** По умолчанию 4 главных измерения + модовые. */
+    private static final int VIEW_W = 260;
+    private static final int VIEW_H = 200;
+
+    /** Скорость сглаживания скролла (кадры в секунду). */
+    private static final float SCROLL_SPEED = 10.0f;
+
+    /** Целевой индекс карточки и текущее дробное положение карусели. */
+    private int selectedIndex = 0;
+    private float currentScroll = 0.0f;
+
+    /** Время последнего кадра для вычисления deltaTime. */
+    private long lastTimeNanos = System.nanoTime();
+
+    /** Карточки, которые сейчас показываются (заполняются после ответа сервера). */
+    private final List<DimensionTerminalClient.DimensionEntry> cards = new ArrayList<>();
+
+    /** Кнопка телепортации внизу экрана. */
+    private Button teleportButton;
+    private Button leftArrow;
+    private Button rightArrow;
+
+    public DimensionTerminalScreen() {
+        super(Component.translatable("block.cryonite.dimension_terminal"));
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        requestDimensions();
+
+        int cx = width / 2;
+        int cy = height / 2;
+
+        // Стрелки по краям экрана.
+        leftArrow = addRenderableWidget(Button.builder(Component.literal("◀"), button -> previousCard())
+                .bounds(cx - VIEW_W / 2 - 40, cy - 20, 30, 40).build());
+        rightArrow = addRenderableWidget(Button.builder(Component.literal("▶"), button -> nextCard())
+                .bounds(cx + VIEW_W / 2 + 10, cy - 20, 30, 40).build());
+
+        teleportButton = addRenderableWidget(Button.builder(Component.translatable("message.cryonite.terminal.teleport"),
+                button -> teleportSelected()).bounds(cx - 60, cy + VIEW_H / 2 + 10, 120, 20).build());
+        updateTeleportButton();
+    }
+
+    /** Запросить с сервера список всех доступных измерений. */
+    private void requestDimensions() {
+        PacketDistributor.sendToServer(new ListDimensionsRequestPayload());
+    }
+
+    /** Установить карточки из ответа сервера (вызывается из обработчика пакета). */
+    public void setCards(List<DimensionTerminalClient.DimensionEntry> entries) {
+        cards.clear();
+        cards.addAll(entries);
+        if (cards.isEmpty()) {
+            cards.add(new DimensionTerminalClient.DimensionEntry(Cryonite.id("mining_dimension"), "Mining Dimension"));
+        }
+        if (selectedIndex >= cards.size()) {
+            selectedIndex = cards.size() - 1;
+        }
+        currentScroll = selectedIndex;
+        updateTeleportButton();
+    }
+
+    private void nextCard() {
+        if (cards.isEmpty()) {
+            return;
+        }
+        selectedIndex = Math.min(selectedIndex + 1, cards.size() - 1);
+        updateTeleportButton();
+    }
+
+    private void previousCard() {
+        if (cards.isEmpty()) {
+            return;
+        }
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        updateTeleportButton();
+    }
+
+    private void selectCard(int index) {
+        if (index >= 0 && index < cards.size()) {
+            selectedIndex = index;
+            updateTeleportButton();
+        }
+    }
+
+    private void updateTeleportButton() {
+        if (teleportButton != null) {
+            boolean hasCards = !cards.isEmpty();
+            teleportButton.visible = hasCards;
+            teleportButton.active = hasCards && selectedIndex >= 0 && selectedIndex < cards.size();
+        }
+    }
+
+    private void teleportSelected() {
+        if (cards.isEmpty() || selectedIndex < 0 || selectedIndex >= cards.size()) {
+            return;
+        }
+        DimensionTerminalClient.DimensionEntry entry = cards.get(selectedIndex);
+        PacketDistributor.sendToServer(new TeleportDimensionPayload(entry.key()));
+        this.onClose();
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (cards.isEmpty()) {
+            return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        }
+        if (scrollY > 0) {
+            previousCard();
+        } else if (scrollY < 0) {
+            nextCard();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (cards.isEmpty()) {
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+        if (keyCode == GLFW.GLFW_KEY_LEFT || keyCode == GLFW.GLFW_KEY_A) {
+            previousCard();
+            return true;
+        }
+        if (keyCode == GLFW.GLFW_KEY_RIGHT || keyCode == GLFW.GLFW_KEY_D) {
+            nextCard();
+            return true;
+        }
+        if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER || keyCode == GLFW.GLFW_KEY_SPACE) {
+            teleportSelected();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button != 0 || cards.isEmpty()) {
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+        // Клик по карточке: определить, какая карточка подошла под курсор.
+        int cx = width / 2;
+        int cy = height / 2 - 20;
+        float delta = getDeltaTime();
+        float scroll = currentScroll;
+        // Приблизительная позиция карточек: перебираем все и проверяем попадание в их экранную область.
+        for (int i = 0; i < cards.size(); i++) {
+            float offset = i - scroll;
+            float xOffset = (float) (Math.signum(offset) * Math.pow(Math.abs(offset), 0.78) * 95.0);
+            int cardX = cx + Math.round(xOffset) - CARD_W / 2;
+            int cardY = cy - CARD_H / 2;
+            if (mouseX >= cardX && mouseX < cardX + CARD_W && mouseY >= cardY && mouseY < cardY + CARD_H) {
+                if (i == selectedIndex) {
+                    teleportSelected();
+                } else {
+                    selectCard(i);
+                }
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private float getDeltaTime() {
+        long now = System.nanoTime();
+        float delta = (now - lastTimeNanos) / 1_000_000_000.0f;
+        lastTimeNanos = now;
+        return Mth.clamp(delta, 0.0f, 0.1f);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (cards.isEmpty()) {
+            return;
+        }
+        float delta = getDeltaTime();
+        currentScroll += (selectedIndex - currentScroll) * Mth.clamp(delta * SCROLL_SPEED, 0.0f, 1.0f);
+        if (Math.abs(selectedIndex - currentScroll) < 0.01f) {
+            currentScroll = selectedIndex;
+        }
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        renderBackground(graphics);
+        int cx = width / 2;
+        int cy = height / 2 - 20;
+
+        if (cards.isEmpty()) {
+            graphics.drawCenteredString(font, Component.translatable("message.cryonite.terminal.loading"), cx, cy - 10, 0xFFFFFF);
+            super.render(graphics, mouseX, mouseY, partialTick);
+            return;
+        }
+
+        // Рисуем карточки от краёв к центру, чтобы центральная была поверх боковых.
+        int count = cards.size();
+        int[] order = new int[count];
+        for (int i = 0; i < count; i++) {
+            order[i] = i;
+        }
+        java.util.Arrays.sort(order, (a, b) -> Float.compare(Math.abs(b - currentScroll), Math.abs(a - currentScroll)));
+
+        for (int i : order) {
+            renderCard(graphics, i, cx, cy, mouseX, mouseY, partialTick);
+        }
+
+        // Заголовок и подсказки.
+        graphics.drawCenteredString(font, title, cx, cy - VIEW_H / 2 - 30, 0xEBD9A8);
+        if (cards.size() > 1) {
+            graphics.drawString(font, Component.literal((selectedIndex + 1) + " / " + cards.size()),
+                    cx - VIEW_W / 2 + 5, cy + VIEW_H / 2 + 40, 0xA9A5B4);
+        }
+
+        super.render(graphics, mouseX, mouseY, partialTick);
+        renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    private void renderCard(GuiGraphics graphics, int index, int cx, int cy, int mouseX, int mouseY, float partialTick) {
+        DimensionTerminalClient.DimensionEntry entry = cards.get(index);
+        float offset = index - currentScroll;
+
+        float xOffset = (float) (Math.signum(offset) * Math.pow(Math.abs(offset), 0.78) * 95.0);
+        float zOffset = -Math.abs(offset) * 40.0f;
+        float scale = Mth.clamp(1.0f - Math.abs(offset) * 0.22f, 0.55f, 1.0f);
+        float yAngle = Mth.clamp(-offset * 38.0f, -58.0f, 58.0f);
+
+        boolean selected = Math.abs(offset) < 0.01f;
+
+        int cardX = cx + Math.round(xOffset) - CARD_W / 2;
+        int cardY = cy - CARD_H / 2;
+
+        // --- Отражение на полу (перевернутая затухающая копия) ---
+        int reflectY = cardY + CARD_H + 2;
+        graphics.pose().pushPose();
+        graphics.pose().translate(cardX + CARD_W / 2.0f, reflectY + CARD_H / 2.0f, 100.0f + zOffset);
+        graphics.pose().scale(scale, -scale, 1.0f);
+        graphics.pose().mulPose(new Quaternionf().rotateY((float) Math.toRadians(yAngle)));
+        drawCardContent(graphics, index, -CARD_W / 2, -CARD_H / 2, 0.15f, false);
+        graphics.pose().popPose();
+
+        // --- Сама карточка ---
+        graphics.pose().pushPose();
+        graphics.pose().translate(cardX + CARD_W / 2.0f, cardY + CARD_H / 2.0f, 150.0f + zOffset);
+        graphics.pose().scale(scale, scale, 1.0f);
+        graphics.pose().mulPose(new Quaternionf().rotateY((float) Math.toRadians(yAngle)));
+        drawCardContent(graphics, index, -CARD_W / 2, -CARD_H / 2, 1.0f, selected);
+        graphics.pose().popPose();
+    }
+
+    /** Отрисовывает содержимое одной карточки относительно её центра. */
+    private void drawCardContent(GuiGraphics graphics, int index, int x, int y, float alpha, boolean selected) {
+        DimensionTerminalClient.DimensionEntry entry = cards.get(index);
+
+        // Фон карточки: тёмный неоновый фон с цветной рамкой.
+        int bgColor = 0x222222 | ((int) (alpha * 255) << 24);
+        graphics.fill(x + 2, y + 2, x + CARD_W - 2, y + CARD_H - 2, bgColor);
+
+        // Цвет рамки зависит от измерения.
+        int borderColor = borderColor(entry.key());
+        if (selected) {
+            // Пульсация выбранной карточки.
+            float pulse = 0.6f + 0.4f * Mth.sin((float) (System.nanoTime() / 1e9) * 3.0f);
+            borderColor = blend(borderColor, 0xFFFFFF, pulse);
+        }
+        int a = Math.min(255, (int) (alpha * 255));
+        drawRectOutline(graphics, x, y, CARD_W, CARD_H, (a << 24) | (borderColor & 0xFFFFFF));
+
+        // Заглушка пейзажа измерения (процедурный пиксель-арт).
+        drawDimensionPreview(graphics, entry.key(), x + CARD_W / 2 - 32, y + 20, 64, 64);
+
+        // Название измерения.
+        Component name = DimensionTerminalClient.formattedName(entry.name());
+        int nameWidth = font.width(name.getString());
+        graphics.drawString(font, name, x + CARD_W / 2 - nameWidth / 2, y + 96, 0xFFFFFF | (a << 24), false);
+
+        // Статус.
+        Component status = index == getCurrentDimensionIndex()
+                ? Component.translatable("gui.cryonite.terminal.status.current")
+                : Component.translatable("gui.cryonite.terminal.status.available");
+        graphics.drawString(font, status, x + CARD_W / 2 - font.width(status.getString()) / 2, y + 112, 0xA9A5B4 | (a << 24), false);
+
+        // Парящие иконки руд под названием.
+        renderOreIcons(graphics, entry.key(), x + CARD_W / 2 - 40, y + 128);
+    }
+
+    private int getCurrentDimensionIndex() {
+        return DimensionTerminalClient.currentDimensionIndex;
+    }
+
+    private int borderColor(ResourceLocation key) {
+        String path = key.getPath();
+        if (path.equals("mining_dimension")) {
+            return 0xFFD700; // Золото-эфирный для Шахтерского измерения
+        }
+        if (path.equals("overworld")) {
+            return 0x00BFFF; // Голубой для Обычного мира
+        }
+        if (path.equals("the_nether")) {
+            return 0xFF4500; // Огненный для Незера
+        }
+        if (path.equals("the_end")) {
+            return 0x8B00FF; // Пурпурный для Энда
+        }
+        return 0xAAAAAA; // Универсальный серый для модовых измерений
+    }
+
+    private void drawRectOutline(GuiGraphics graphics, int x, int y, int w, int h, int color) {
+        graphics.fill(x, y, x + w, y + 1, color);           // верх
+        graphics.fill(x, y + h - 1, x + w, y + h, color);   // низ
+        graphics.fill(x, y, x + 1, y + h, color);           // лево
+        graphics.fill(x + w - 1, y, x + w, y + h, color);   // право
+    }
+
+    private int blend(int color1, int color2, float factor) {
+        int r1 = (color1 >> 16) & 0xFF, g1 = (color1 >> 8) & 0xFF, b1 = color1 & 0xFF;
+        int r2 = (color2 >> 16) & 0xFF, g2 = (color2 >> 8) & 0xFF, b2 = color2 & 0xFF;
+        int r = (int) (r1 + (r2 - r1) * factor);
+        int g = (int) (g1 + (g2 - g1) * factor);
+        int b = (int) (b1 + (b2 - b1) * factor);
+        return (r << 16) | (g << 8) | b;
+    }
+
+    /** Процедурный пиксель-арт превью измерения (заглушка до готовых текстур баннеров). */
+    private void drawDimensionPreview(GuiGraphics graphics, ResourceLocation key, int x, int y, int size, int cell) {
+        String path = key.getPath();
+        boolean overworld = path.equals("overworld");
+        boolean mining = path.equals("mining_dimension");
+        boolean nether = path.equals("the_nether");
+        boolean end = path.equals("the_end");
+
+        for (int dy = 0; dy < size; dy += cell) {
+            for (int dx = 0; dx < size; dx += cell) {
+                boolean fill;
+                if (overworld) {
+                    fill = (dx / cell + dy / cell) % 2 == 0;
+                } else if (mining) {
+                    fill = dx < size / 2 || dy > size / 2;
+                } else if (nether) {
+                    fill = (dx / cell) % 2 == 0;
+                } else if (end) {
+                    fill = dx == 0 || dx == size - cell || dy == 0 || dy == size - cell;
+                } else {
+                    fill = (dx + dy) % (cell * 2) == 0;
+                }
+                if (fill) {
+                    graphics.fill(x + dx, y + dy, x + dx + cell, y + dy + cell, previewColor(key));
+                }
+            }
+        }
+    }
+
+    private int previewColor(ResourceLocation key) {
+        String path = key.getPath();
+        if (path.equals("mining_dimension")) return 0xFFD700;
+        if (path.equals("overworld")) return 0x00BFFF;
+        if (path.equals("the_nether")) return 0xFF4500;
+        if (path.equals("the_end")) return 0x8B00FF;
+        return 0xAAAAAA;
+    }
+
+    private void renderOreIcons(GuiGraphics graphics, ResourceLocation key, int x, int y) {
+        String path = key.getPath();
+        List<ItemStack> ores;
+        if (path.equals("overworld")) {
+            ores = List.of(new ItemStack(Items.COAL_ORE), new ItemStack(Items.IRON_ORE), new ItemStack(Items.DIAMOND_ORE));
+        } else if (path.equals("mining_dimension")) {
+            ores = List.of(new ItemStack(Items.COAL_ORE), new ItemStack(Items.IRON_ORE), new ItemStack(Items.GOLD_ORE));
+        } else if (path.equals("the_nether")) {
+            ores = List.of(new ItemStack(Items.QUARTZ_ORE), new ItemStack(Items.ANCIENT_DEBRIS), new ItemStack(Items.GOLD_ORE));
+        } else if (path.equals("the_end")) {
+            ores = List.of(new ItemStack(Items.END_STONE), new ItemStack(Items.END_CRYSTAL), new ItemStack(Items.ELYTRA));
+        } else {
+            ores = List.of(new ItemStack(Items.STONE), new ItemStack(Items.DIRT), new ItemStack(Items.GRASS_BLOCK));
+        }
+        for (int i = 0; i < ores.size(); i++) {
+            graphics.renderItem(ores.get(i), x + i * 22, y);
+        }
+    }
+
+    /** Добавить иконку предмета в реестр Item для превью карточки (заглушка). */
+    private static Item previewItem(ResourceLocation key) {
+        return Items.CHEST;
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+}
