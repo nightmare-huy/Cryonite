@@ -8,12 +8,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Vec3;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity.DimensionTransition;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -100,10 +102,14 @@ public final class ModNetworking {
 
         // 7. Перемещаем игрока в целевой уровень и телепортируем на точные координаты.
         // changeDimension корректно убирает игрока из исходного уровня и добавляет в целевой,
-        // а колбэк выставляет точные координаты (1:1 X/Z, безопасная Y, сохранение yaw/pitch).
-        player.changeDimension(targetKey, (p) -> {
-            p.teleportTo(targetX + 0.5, targetY, targetZ + 0.5, yaw, pitch);
-        });
+        // а DimensionTransition выставляет точные координаты (1:1 X/Z, безопасная Y, сохранение yaw/pitch).
+        player.changeDimension(new DimensionTransition(
+            targetKey,
+            new Vec3(targetX + 0.5, targetY, targetZ + 0.5),
+            yaw,
+            pitch,
+            (p) -> {}
+        ));
 
         player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
     }
