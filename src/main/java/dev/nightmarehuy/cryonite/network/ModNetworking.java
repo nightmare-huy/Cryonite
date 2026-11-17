@@ -72,10 +72,14 @@ public final class ModNetworking {
         float yaw = player.getYRot();
         float pitch = player.getXRot();
 
-        // 2. Получаем целевой уровень; если не загружен — загружаем через changeDimension(ResourceKey)
+        // 2. Получаем целевой уровень; если не загружен — загружаем через changeDimension(ResourceKey, DimensionTransition)
         ServerLevel targetLevel = source.getServer().getLevel(targetKey);
         if (targetLevel == null) {
-            player.changeDimension(targetKey);
+            final int loadX = targetX;
+            final int loadZ = targetZ;
+            player.changeDimension(targetKey, (entity, currentLevel, targetLevel1) -> {
+                return net.minecraft.world.phys.Vec3.atBottomCenterof(targetLevel1.getBlockPos(loadX, 0, loadZ));
+            });
             targetLevel = player.serverLevel();
             if (targetLevel == null || !targetLevel.dimension().equals(targetKey)) {
                 player.displayClientMessage(Component.literal("Не удалось загрузить измерение: " + target), true);
