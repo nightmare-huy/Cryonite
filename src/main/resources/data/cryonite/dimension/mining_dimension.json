@@ -9,7 +9,7 @@
       "preset": "minecraft:overworld",
       "biomes": [
         {
-          "biome": "cryonite:mining_dimension_biome",
+          "biome": "cryonite:mining_dimension",
           "parameters": {
             "temperature": 0.5,
             "humidity": 0.5,
