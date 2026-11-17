@@ -72,12 +72,12 @@ public final class ModNetworking {
         float yaw = player.getYRot();
         float pitch = player.getXRot();
 
-        // 2. Получаем целевой уровень; если не загружен — загружаем через changeDimension(ResourceKey, DimensionTransition)
+        // 2. Получаем целевой уровень; если не загружен — загружаем через changeDimension(DimensionTransition)
         ServerLevel targetLevel = source.getServer().getLevel(targetKey);
         if (targetLevel == null) {
             final int loadX = targetX;
             final int loadZ = targetZ;
-            player.changeDimension(targetKey, (entity, currentLevel, targetLevel1) -> {
+            player.changeDimension((ServerPlayer.DimensionTransition) (entity, currentLevel, targetLevel1) -> {
                 return net.minecraft.world.phys.Vec3.atBottomCenterof(targetLevel1.getBlockPos(loadX, 0, loadZ));
             });
             targetLevel = player.serverLevel();
