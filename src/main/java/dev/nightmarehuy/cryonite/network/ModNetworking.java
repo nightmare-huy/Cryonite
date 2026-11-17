@@ -65,23 +65,8 @@ public final class ModNetworking {
         ResourceKey<Level> targetKey = ResourceKey.create(Registries.DIMENSION, target);
         ServerLevel targetLevel = source.getServer().getLevel(targetKey);
         if (targetLevel == null) {
-            // Target dimension not loaded yet — load it (e.g. mining dimension on a fresh test server).
-            try {
-                targetLevel = source.getServer().loadLevel(
-                        targetKey,
-                        source.getSeed(),
-                        false,
-                        false,
-                        (net.minecraft.core.WorldGenVersion) null
-                ).join();
-            } catch (Exception e) {
-                player.displayClientMessage(Component.literal("Failed to load dimension: " + target), true);
-                return;
-            }
-            if (targetLevel == null) {
-                player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
-                return;
-            }
+            player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
+            return;
         }
 
         // 1. Сохраняем точные координаты игрока 1:1 (нет сброса в 0,0, нет деления на 8 для Незера)
