@@ -98,8 +98,7 @@ public final class ModNetworking {
             placeReturnTerminal(targetLevel, targetX, targetY, targetZ);
         }
 
-        // 7. Удаляем игрока из текущего уровня и добавляем в целевой, телепортируем на точные координаты
-        source.remove(player);
+        // 7. Добавляем игрока в целевой уровень и телепортируем на точные координаты
         targetLevel.addFreshEntity(player);
         player.teleportTo(targetX + 0.5, targetY, targetZ + 0.5);
         player.setYRot(yaw);
