@@ -73,7 +73,6 @@ neoForge {
 
 configurations {
     runtimeClasspath.extendsFrom localRuntime
-    testImplementation.extendsFrom compileClasspath
 }
 
 repositories {
@@ -121,8 +120,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     // Netty ByteBuf is used by payload StreamCodec tests.
-    testImplementation 'io.netty:netty-buffer:4.1.106.Final'
-    testImplementation 'io.netty:netty-common:4.1.106.Final'
+    testImplementation 'io.netty:netty-buffer:4.1.97.Final'
+    testImplementation 'io.netty:netty-common:4.1.97.Final'
 }
 
 tasks.named('test') {
