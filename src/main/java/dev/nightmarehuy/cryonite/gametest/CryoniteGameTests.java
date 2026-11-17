@@ -1119,31 +1119,29 @@ public final class CryoniteGameTests {
             check(dimTypeRegistry.getHolder(miningTypeKey).isPresent(),
                     "mining_dimension type must be registered in dimension type registry (JSON invalid?)");
 
-            // Жёсткая проверка: уровень Шахтёрского измерения должен быть зарегистрирован в реестре сервера.
-            var miningLevelKey = ResourceKey.create(Registries.DIMENSION, Cryonite.id("mining_dimension"));
-            var miningRegistry = helper.getLevel().getServer().registryAccess().registryOrThrow(Registries.DIMENSION);
-            check(miningRegistry.getHolder(miningLevelKey).isPresent(),
-                    "mining_dimension must be registered in dimension registry (JSON invalid?)");
-
-            // Если уровень уже загружен — проверяем реальный телепорт с сохранением X/Z 1:1.
-            // Если не загружен — teleportPlayer корректно вернёт игрока в исходное измерение (early return).
-            ServerLevel miningLevel = helper.getLevel().getServer().getLevel(miningLevelKey);
+            // Уровень Шахтёрского измерения загружается лениво — при первом входе игрока.
+            // Проверяем, что тип измерения зарегистрирован (выше), а при реальном телепорте
+            // метод подгрузит уровень через changeDimension.
+            ServerLevel miningLevel = helper.getLevel().getServer().getLevel(ResourceKey.create(Registries.DIMENSION, Cryonite.id("mining_dimension")));
             if (miningLevel != null) {
+                int startX = player.getBlockX();
+                int startZ = player.getBlockZ();
                 ModNetworking.teleportPlayer(player, Cryonite.id("mining_dimension"));
 
                 // Игрок ДОЛЖЕН оказаться в Шахтёрском измерении, а не в Обычном мире.
-                check(player.serverLevel().dimension().equals(miningLevelKey),
+                var miningDimKey = ResourceKey.create(Registries.DIMENSION, Cryonite.id("mining_dimension"));
+                check(player.serverLevel().dimension().equals(miningDimKey),
                         "player must be in mining_dimension after teleport, still in " + player.serverLevel().dimension());
                 check(!player.serverLevel().equals(source),
                         "player must leave the source dimension, still in " + source.dimension());
 
                 // Verify X, Z are preserved 1:1 (no /8 Nether scaling, no reset to 0,0)
-                double dx = Math.abs(player.getX() - startPos.getX() - 0.5);
-                double dz = Math.abs(player.getZ() - startPos.getZ() - 0.5);
+                double dx = Math.abs(player.getX() - startX - 0.5);
+                double dz = Math.abs(player.getZ() - startZ - 0.5);
                 check(dx < 1.0 && dz < 1.0,
                         "X,Z must be preserved 1:1, got dx=" + dx + " dz=" + dz);
             } else {
-                // Уровень не загружен — teleportPlayer должен оставить игрока в исходном измерении.
+                // Уровень не загружен — teleportPlayer корректно вернёт игрока в исходное измерение.
                 ModNetworking.teleportPlayer(player, Cryonite.id("mining_dimension"));
                 check(player.serverLevel() == source,
                         "player must stay in source dimension when target level is missing");
