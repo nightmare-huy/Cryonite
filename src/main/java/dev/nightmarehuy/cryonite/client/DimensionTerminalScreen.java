@@ -262,9 +262,15 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+        // Убрана зелёная текстура фона (dimension_terminal.png) — она загораживала карточки Cover Flow.
+        // Чистый полупрозрачный тёмный фон с тонкой рамкой.
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        graphics.blit(BG_TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        graphics.fillGradient(x, y, x + imageWidth, y + imageHeight, 0xC806060C, 0xC8020208);
+        graphics.fill(x, y, x + imageWidth, y + 1, 0xFF444444); // верхняя рамка
+        graphics.fill(x, y + imageHeight - 1, x + imageWidth, y + imageHeight, 0xFF444444); // нижняя рамка
+        graphics.fill(x, y, x + 1, y + imageHeight, 0xFF444444); // левая рамка
+        graphics.fill(x + imageWidth - 1, y, x + imageWidth, y + imageHeight, 0xFF444444); // правая рамка
     }
 
     @Override

@@ -109,9 +109,33 @@ public final class ModNetworking {
     /**
      * Находит безопасную высоту Y на заданных X, Z в целевом измерении.
      * Для измерений с открытым небом (Overworld, Шахтёрское, Энд) — поверхность.
-     * Для пустоты или потолка бедрока (Незер, пустота Энда) — clamping текущей Y игрока.
+     * Для измерений с потолком (Незер) — ищет поверхность внутри измерения (Y 32..100).
+     * Если не находит — clamping текущей Y игрока.
      */
     private static int findSafeY(ServerLevel level, int x, int z, int currentY) {
+        boolean hasCeiling = level.dimensionType().hasCeiling();
+
+        if (hasCeiling) {
+            // Незер: не используем getHeight (вернёт бедрочную крышу Y=128).
+            // Ищем твердый блок под ногами + 2 блока воздуха над ним в диапазоне Y=32..100.
+            for (int y = 100; y >= 32; y--) {
+                BlockPos pos = new BlockPos(x, y, z);
+                BlockPos below = pos.below();
+                BlockState blockState = level.getBlockState(pos);
+                BlockState belowState = level.getBlockState(below);
+                // Нужен твердый блок под ногами (не воздух, не лава, не бедрок) и 2 блока воздуха над головой.
+                if (!blockState.isAir() && !blockState.is(Blocks.LAVA) && !blockState.is(Blocks.BEDROCK)
+                        && !belowState.isAir() && !belowState.is(Blocks.LAVA) && !belowState.is(Blocks.BEDROCK)
+                        && level.getBlockState(pos.above()).isAir()
+                        && level.getBlockState(pos.above(2)).isAir()) {
+                    return y;
+                }
+            }
+            // Вся колонка забита — выбираем высоту игрока, clamping 40..95, создаём безопасную площадку.
+            return Mth.clamp(currentY, 40, 95);
+        }
+
+        // Открытое небо: используем поверхность.
         int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
         int minY = level.getMinBuildHeight() + 8;
         int maxY = level.getMaxBuildHeight() - 8;
@@ -122,7 +146,7 @@ public final class ModNetworking {
             return surfaceY;
         }
 
-        // Пустота или потолок бедрока: используем clamping текущей высоты игрока
+        // Пустота: clamping текущей высоты игрока.
         return Mth.clamp(currentY, minY, maxY);
     }
 

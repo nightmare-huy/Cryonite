@@ -1112,28 +1112,21 @@ public final class CryoniteGameTests {
             // Place a terminal at the start position (return terminal will be placed nearby)
             helper.setBlock(startPos, ModBlocks.DIMENSION_TERMINAL.get());
 
-            // Check if the mining dimension level is loaded on the test server.
-            // On a fresh GameTest server only the overworld is loaded; custom
-            // dimensions are not loaded until something travels to them.
+            // Деревянная проверка: измерение шахты должно загрузиться сервером.
             ServerLevel miningLevel = helper.getLevel().getServer().getLevel(ResourceKey.create(Registries.DIMENSION, Cryonite.id("mining_dimension")));
+            check(miningLevel != null, "mining_dimension must be loadable on the server (dimension JSON invalid?)");
 
             ModNetworking.teleportPlayer(player, Cryonite.id("mining_dimension"));
 
-            if (miningLevel != null) {
-                // Dimension was loaded — verify the teleport actually worked.
-                check(!player.serverLevel().equals(source),
-                        "player must leave the source dimension, still in " + source.dimension());
+            // Игрок должен оказаться в Шахтёрском измерении.
+            check(!player.serverLevel().equals(source),
+                    "player must teleport to mining_dimension, still in " + source.dimension());
 
-                // Verify X, Z are preserved 1:1 (no /8 Nether scaling, no reset to 0,0)
-                double dx = Math.abs(player.getX() - startPos.getX() - 0.5);
-                double dz = Math.abs(player.getZ() - startPos.getZ() - 0.5);
-                check(dx < 1.0 && dz < 1.0,
-                        "X,Z must be preserved 1:1, got dx=" + dx + " dz=" + dz);
-            } else {
-                // Dimension not loaded — teleportPlayer should handle gracefully (no crash).
-                check(player.serverLevel().equals(source),
-                        "player must stay in source dimension when target not loaded");
-            }
+            // Verify X, Z are preserved 1:1 (no /8 Nether scaling, no reset to 0,0)
+            double dx = Math.abs(player.getX() - startPos.getX() - 0.5);
+            double dz = Math.abs(player.getZ() - startPos.getZ() - 0.5);
+            check(dx < 1.0 && dz < 1.0,
+                    "X,Z must be preserved 1:1, got dx=" + dx + " dz=" + dz);
 
             helper.succeed();
         } finally {
