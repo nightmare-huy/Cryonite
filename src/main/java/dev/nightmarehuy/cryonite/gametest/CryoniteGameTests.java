@@ -1115,7 +1115,7 @@ public final class CryoniteGameTests {
             // Check if the mining dimension level is loaded on the test server.
             // On a fresh GameTest server only the overworld is loaded; custom
             // dimensions are not loaded until something travels to them.
-            ServerLevel miningLevel = helper.getLevel().getServer().getLevel(Cryonite.id("mining_dimension"));
+            ServerLevel miningLevel = helper.getLevel().getServer().getLevel(ResourceKey.create(Registries.DIMENSION, Cryonite.id("mining_dimension")));
 
             ModNetworking.teleportPlayer(player, Cryonite.id("mining_dimension"));
 
