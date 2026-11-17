@@ -18,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.neoforge.common.DimensionTransition;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -100,8 +99,8 @@ public final class ModNetworking {
         }
 
         // 7. Удаляем игрока из текущего уровня и добавляем в целевой (ручной перенос измерения)
-        source.removePlayer(player);
-        targetLevel.addDuringChunkLoad(player);
+        source.removeEntity(player);
+        targetLevel.addFreshEntity(player);
         player.setPos(targetX + 0.5, targetY, targetZ + 0.5);
         player.setYRot(yaw);
         player.setXRot(pitch);
