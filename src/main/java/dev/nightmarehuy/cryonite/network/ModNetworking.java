@@ -99,9 +99,10 @@ public final class ModNetworking {
             placeReturnTerminal(targetLevel, targetX, targetY, targetZ);
         }
 
-        // 7. Перемещаем игрока в целевое измерение и телепортируем на точные координаты
-        player.changeDimension(new DimensionTransition(targetKey));
-        player.teleportTo(targetX + 0.5, targetY, targetZ + 0.5);
+        // 7. Удаляем игрока из текущего уровня и добавляем в целевой (ручной перенос измерения)
+        source.removePlayer(player);
+        targetLevel.addDuringChunkLoad(player);
+        player.setPos(targetX + 0.5, targetY, targetZ + 0.5);
         player.setYRot(yaw);
         player.setXRot(pitch);
 
