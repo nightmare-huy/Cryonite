@@ -5,7 +5,6 @@ import dev.nightmarehuy.cryonite.registry.ModBlocks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.DimensionTransition;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -74,14 +72,10 @@ public final class ModNetworking {
         float yaw = player.getYRot();
         float pitch = player.getXRot();
 
-        // 2. Получаем целевой уровень; если не загружен — загружаем через changeDimension
+        // 2. Получаем целевой уровень; если не загружен — загружаем через changeDimension(ResourceKey)
         ServerLevel targetLevel = source.getServer().getLevel(targetKey);
         if (targetLevel == null) {
-            final int loadX = targetX;
-            final int loadZ = targetZ;
-            player.changeDimension(targetKey, new DimensionTransition((entity, currentLevel, targetLevel1) -> {
-                return new Vec3(loadX + 0.5, entity.getY(), loadZ + 0.5);
-            }));
+            player.changeDimension(targetKey);
             targetLevel = player.serverLevel();
             if (targetLevel == null || !targetLevel.dimension().equals(targetKey)) {
                 player.displayClientMessage(Component.literal("Не удалось загрузить измерение: " + target), true);

@@ -1159,10 +1159,10 @@ public final class CryoniteGameTests {
             helper.setBlock(startPos, ModBlocks.DIMENSION_TERMINAL.get());
 
             // Телепортируем в Незер.
-            ModNetworking.teleportPlayer(player, new ResourceLocation("minecraft", "the_nether"));
+            ModNetworking.teleportPlayer(player, ResourceLocation.fromNamespaceAndPath("minecraft", "the_nether"));
 
             // Игрок должен оказаться в Незере.
-            check(player.serverLevel().dimension().equals(ResourceKey.create(Registries.DIMENSION, new ResourceLocation("minecraft", "the_nether"))),
+            check(player.serverLevel().dimension().equals(ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("minecraft", "the_nether"))),
                     "player must be in the_nether after teleport, in " + player.serverLevel().dimension());
 
             // Игрок НЕ должен быть на бедроковой крыше (Y >= 120). Ожидаем Y = 35..95.
