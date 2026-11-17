@@ -55,6 +55,13 @@ jobs:
           set -o pipefail
           ./gradlew build 2>&1 | tee build.log
 
+      - name: Run unit tests
+        id: test
+        if: steps.build.outcome == 'success'
+        run: |
+          set -o pipefail
+          ./gradlew test 2>&1 | tee test.log
+
       - name: Run GameTests
         id: gametest
         if: steps.build.outcome == 'success' && hashFiles('src/main/java/**/gametest/*.java') != ''
@@ -83,6 +90,7 @@ jobs:
           compile=${{ steps.compile.outcome }}
           datagen=${{ steps.datagen.outcome }}
           build=${{ steps.build.outcome }}
+          test=${{ steps.test.outcome }}
           gametest=${{ steps.gametest.outcome }}
 
       - name: Upload mod jar
@@ -95,7 +103,7 @@ jobs:
       # Keeps one GitHub release per mod version (tag v<mod_version>) and puts the freshly built jar into it.
       # Runs only when every stage above succeeded. Bump mod_version in gradle.properties to start a new release.
       - name: Publish release
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.compile.outcome == 'success' && steps.datagen.outcome == 'success' && steps.build.outcome == 'success' && steps.test.outcome == 'success' && steps.gametest.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

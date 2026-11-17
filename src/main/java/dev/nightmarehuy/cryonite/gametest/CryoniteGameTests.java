@@ -5,10 +5,12 @@ import dev.nightmarehuy.cryonite.Cryonite;
 import dev.nightmarehuy.cryonite.ability.TierAbilityHandler;
 import dev.nightmarehuy.cryonite.ability.ToolAbilities;
 import dev.nightmarehuy.cryonite.ability.WeaponAbilities;
+import dev.nightmarehuy.cryonite.block.DimensionTerminalBlock;
 import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlock;
 import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlockEntity;
 import dev.nightmarehuy.cryonite.compat.jei.AcquisitionJeiRecipe;
 import dev.nightmarehuy.cryonite.compat.jei.WorldInteractionJeiRecipe;
+import dev.nightmarehuy.cryonite.network.ModNetworking;
 import dev.nightmarehuy.cryonite.network.ToggleToolModePayload;
 import dev.nightmarehuy.cryonite.recipe.PrimordialRecipeInput;
 import dev.nightmarehuy.cryonite.registry.ModBlocks;
@@ -1073,6 +1075,84 @@ public final class CryoniteGameTests {
         entity.setItemSlot(EquipmentSlot.CHEST, new ItemStack(gear.chestplate().get()));
         entity.setItemSlot(EquipmentSlot.LEGS, new ItemStack(gear.leggings().get()));
         entity.setItemSlot(EquipmentSlot.FEET, new ItemStack(gear.boots().get()));
+    }
+
+    // ================================================================ step 6: Dimension Terminal teleportation
+
+    @GameTest(template = EMPTY)
+    public static void dimensionTerminalRightClickOpensMenu(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 2, 2);
+        helper.setBlock(pos, ModBlocks.DIMENSION_TERMINAL.get());
+
+        ServerPlayer player = mockPlayer(helper);
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            BlockState state = helper.getBlockState(pos);
+            BlockPos absolute = helper.absolutePos(pos);
+            BlockHitResult hit = new BlockHitResult(
+                    Vec3.atCenterOf(absolute), Direction.UP, absolute, false);
+
+            InteractionResult result = state.getBlock().useWithoutItem(
+                    state, helper.getLevel(), absolute, player, hit);
+
+            check(result == InteractionResult.SUCCESS,
+                    "terminal right-click must return SUCCESS, got " + result);
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void dimensionTerminalTeleportsToMiningDimension(GameTestHelper helper) {
+        ServerPlayer player = mockPlayer(helper);
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            ServerLevel source = player.serverLevel();
+
+            // Place the player at a known position so we can verify X/Z preservation
+            BlockPos startPos = helper.absolutePos(new BlockPos(4, 4, 4));
+            player.moveTo(startPos.getX() + 0.5, startPos.getY(), startPos.getZ() + 0.5, 0.0F, 0.0F);
+
+            // Place a terminal at the start position (return terminal will be placed nearby)
+            helper.setBlock(startPos, ModBlocks.DIMENSION_TERMINAL.get());
+
+            ModNetworking.teleportPlayer(player, Cryonite.id("mining_dimension"));
+
+            // Verify player left the source dimension
+            check(!player.serverLevel().equals(source),
+                    "player must leave the source dimension, still in " + source.dimension());
+
+            // Verify X, Z are preserved 1:1 (no /8 Nether scaling, no reset to 0,0)
+            double dx = Math.abs(player.getX() - startPos.getX() - 0.5);
+            double dz = Math.abs(player.getZ() - startPos.getZ() - 0.5);
+            check(dx < 1.0 && dz < 1.0,
+                    "X,Z must be preserved 1:1, got dx=" + dx + " dz=" + dz);
+
+            helper.succeed();
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void dimensionTerminalTeleportsDoesNotCrashWhenLevelMissing(GameTestHelper helper) {
+        ServerPlayer player = mockPlayer(helper);
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+
+            // Teleport to a dimension that is not loaded on the test server.
+            // teleportPlayer must handle this gracefully (send a message, return).
+            ModNetworking.teleportPlayer(player, Cryonite.id("the_nether"));
+
+            // Player should still be in the source dimension since the target level was not loaded.
+            check(player.serverLevel() == helper.getLevel(),
+                    "player must stay in the source dimension when target level is missing");
+
+            helper.succeed();
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
     }
 
     /**
