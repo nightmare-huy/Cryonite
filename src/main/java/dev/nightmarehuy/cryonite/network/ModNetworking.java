@@ -98,11 +98,12 @@ public final class ModNetworking {
             placeReturnTerminal(targetLevel, targetX, targetY, targetZ);
         }
 
-        // 7. Добавляем игрока в целевой уровень и телепортируем на точные координаты
-        targetLevel.addFreshEntity(player);
-        player.teleportTo(targetX + 0.5, targetY, targetZ + 0.5);
-        player.setYRot(yaw);
-        player.setXRot(pitch);
+        // 7. Перемещаем игрока в целевой уровень и телепортируем на точные координаты.
+        // changeDimension корректно убирает игрока из исходного уровня и добавляет в целевой,
+        // а колбэк выставляет точные координаты (1:1 X/Z, безопасная Y, сохранение yaw/pitch).
+        player.changeDimension(targetKey, (p) -> {
+            p.teleportTo(targetX + 0.5, targetY, targetZ + 0.5, yaw, pitch);
+        });
 
         player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
     }
