@@ -47,5 +47,11 @@ public record ListDimensionsResponsePayload(List<Entry> entries) implements Cust
             entries.add(new DimensionTerminalClient.DimensionEntry(entry.key(), entry.name()));
         }
         DimensionTerminalClient.setDimensions(entries);
+
+        // Уведомить открытый экран терминала, чтобы он построил карусель карточек.
+        net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+        if (minecraft.screen instanceof dev.nightmarehuy.cryonite.client.DimensionTerminalScreen screen) {
+            screen.setCards(entries);
+        }
     }
 }

@@ -234,6 +234,9 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         int cx = width / 2;
         int cy = height / 2 - 20;
 
+        if (cards.isEmpty() && !DimensionTerminalClient.dimensions.isEmpty()) {
+            setCards(new ArrayList<>(DimensionTerminalClient.dimensions));
+        }
         if (cards.isEmpty()) {
             graphics.drawCenteredString(font, Component.translatable("message.cryonite.terminal.loading"), cx, cy - 10, 0xFFFFFF);
             super.render(graphics, mouseX, mouseY, partialTick);
