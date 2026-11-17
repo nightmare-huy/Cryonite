@@ -115,6 +115,17 @@ dependencies {
     compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}"
     runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}"
     implementation "com.tterrag.registrate:Registrate:${registrate_version}"
+
+    // JUnit 5 for unit tests (run via ./gradlew test in CI before release).
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    // Netty ByteBuf is used by payload StreamCodec tests.
+    testImplementation 'io.netty:netty-buffer:4.1.106.Final'
+    testImplementation 'io.netty:netty-common:4.1.106.Final'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
 
 // Expands ${...} placeholders of src/main/templates (neoforge.mods.toml).
