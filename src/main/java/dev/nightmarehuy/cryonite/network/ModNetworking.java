@@ -5,7 +5,6 @@ import dev.nightmarehuy.cryonite.registry.ModBlocks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.DimensionTransition;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -61,12 +59,16 @@ public final class ModNetworking {
      * <p>
      * Preserves the player's exact X and Z (no Nether scaling), finds a safe Y on the same column,
      * ensures the landing spot is safe, and places a return terminal next to the player.
-     * Uses {@link ServerPlayer#changeDimension(ResourceKey, DimensionTransition)} so the target
-     * level is loaded automatically and {@link ServerPlayer#serverLevel()} updates correctly.
+     * Requires the target level to be loaded (server.getLevel(targetKey) != null).
      */
     public static void teleportPlayer(ServerPlayer player, ResourceLocation target) {
         ServerLevel source = player.serverLevel();
         ResourceKey<Level> targetKey = ResourceKey.create(Registries.DIMENSION, target);
+        ServerLevel targetLevel = source.getServer().getLevel(targetKey);
+        if (targetLevel == null) {
+            player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
+            return;
+        }
 
         // 1. Сохраняем точные координаты игрока 1:1 (нет сброса в 0,0, нет деления на 8 для Незера)
         int targetX = player.getBlockX();
@@ -75,41 +77,33 @@ public final class ModNetworking {
         float yaw = player.getYRot();
         float pitch = player.getXRot();
 
-        // 2. changeDimension загружает целевой уровень автоматически и обновляет player.serverLevel()
-        final int startX = targetX;
-        final int startZ = targetZ;
-        player.changeDimension(targetKey, new DimensionTransition((entity, currentLevel, targetLevel) -> {
-            // 3. Прогружаем чанк в целевом уровне
-            targetLevel.getChunk(startX >> 4, startZ >> 4);
+        // 2. Принудительно прогружаем целевой чанк для корректных проверок блоков и Heightmap
+        targetLevel.getChunk(targetX >> 4, targetZ >> 4);
 
-            // 4. Проверяем, есть ли уже блок Пространственного Терминала рядом на тех же X, Z
-            BlockPos existingTerminal = findExistingTerminal(targetLevel, startX, startZ);
-            int tx = startX;
-            int tz = startZ;
-            int targetY;
-            if (existingTerminal != null) {
-                // Терминал уже есть — телепортируем игрока прямо рядом с ним
-                tx = existingTerminal.getX() + 1;
-                tz = existingTerminal.getZ();
-                targetY = existingTerminal.getY();
-            } else {
-                // 5. Терминала нет — ищем безопасную высоту Y на тех же X, Z
-                targetY = findSafeY(targetLevel, tx, tz, currentY);
+        // 3. Проверяем, есть ли уже блок Пространственного Терминала рядом на тех же X, Z
+        BlockPos existingTerminal = findExistingTerminal(targetLevel, targetX, targetZ);
+        int targetY;
+        if (existingTerminal != null) {
+            // Терминал уже есть — телепортируем игрока прямо рядом с ним
+            targetX = existingTerminal.getX() + 1;
+            targetZ = existingTerminal.getZ();
+            targetY = existingTerminal.getY();
+        } else {
+            // 4. Терминала нет — ищем безопасную высоту Y на тех же X, Z
+            targetY = findSafeY(targetLevel, targetX, targetZ, currentY);
 
-                // 6. Обеспечиваем безопасность точки прибытия
-                ensureSafeLanding(targetLevel, tx, targetY, tz);
+            // 5. Обеспечиваем безопасность точки прибытия
+            ensureSafeLanding(targetLevel, targetX, targetY, targetZ);
 
-                // 7. Ставим ответный терминал рядом для обратного телепорта
-                placeReturnTerminal(targetLevel, tx, targetY, tz);
-            }
+            // 6. Ставим ответный терминал рядом для обратного телепорта
+            placeReturnTerminal(targetLevel, targetX, targetY, targetZ);
+        }
 
-            // 8. Возвращаем позицию для перемещения игрока
-            return new Vec3(tx + 0.5, targetY, tz + 0.5);
-        }));
+        // 7. Перемещаем игрока в целевой уровень и телепортируем на точные координаты.
+        // teleportTo(ServerLevel, ...) корректно меняет измерение игрока (обновляет player.level),
+        // сохраняя 1:1 X/Z, безопасную Y и yaw/pitch.
+        player.teleportTo(targetLevel, targetX + 0.5, targetY, targetZ + 0.5, yaw, pitch);
 
-        // Восстанавливаем yaw/pitch после смены измерения
-        player.setYRot(yaw);
-        player.setXRot(pitch);
         player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
     }
 
