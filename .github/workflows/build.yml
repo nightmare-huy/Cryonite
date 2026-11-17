@@ -60,6 +60,7 @@ jobs:
         if: steps.build.outcome == 'success' && hashFiles('src/main/java/**/gametest/*.java') != ''
         run: |
           set -o pipefail
+          printf '#Minecraft server properties\nenable-query=false\n' > server.properties
           ./gradlew runGameTestServer 2>&1 | tee gametest.log
 
       - name: Commit generated resources
