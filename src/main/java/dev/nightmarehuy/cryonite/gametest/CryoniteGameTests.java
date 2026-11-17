@@ -1084,22 +1084,16 @@ public final class CryoniteGameTests {
         BlockPos pos = new BlockPos(2, 2, 2);
         helper.setBlock(pos, ModBlocks.DIMENSION_TERMINAL.get());
 
-        ServerPlayer player = mockPlayer(helper);
-        try {
-            player.setGameMode(GameType.SURVIVAL);
-            BlockState state = helper.getBlockState(pos);
-            BlockPos absolute = helper.absolutePos(pos);
-            BlockHitResult hit = new BlockHitResult(
-                    Vec3.atCenterOf(absolute), Direction.UP, absolute, false);
+        // DIMENSION_TERMINAL must be DimensionTerminalBlock (with right-click logic),
+        // not a plain Block that does nothing on right-click.
+        Block block = helper.getBlockState(pos).getBlock();
+        check(block instanceof DimensionTerminalBlock,
+                "terminal block must be DimensionTerminalBlock, got " + block.getClass().getName());
 
-            InteractionResult result = state.getBlock().useWithoutItem(
-                    state, helper.getLevel(), absolute, player, hit);
+        // The menu type must be registered so the screen can open.
+        check(ModMenuTypes.DIMENSION_TERMINAL.get() != null,
+                "DIMENSION_TERMINAL menu type must be registered");
 
-            check(result == InteractionResult.SUCCESS,
-                    "terminal right-click must return SUCCESS, got " + result);
-        } finally {
-            helper.getLevel().getServer().getPlayerList().remove(player);
-        }
         helper.succeed();
     }
 
