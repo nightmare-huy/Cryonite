@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -100,7 +99,7 @@ public final class ModNetworking {
         }
 
         // 7. Удаляем игрока из текущего уровня и добавляем в целевой, телепортируем на точные координаты
-        source.removeEntity(player, RemovalReason.CHANGED_DIMENSION);
+        source.remove(player);
         targetLevel.addFreshEntity(player);
         player.teleportTo(targetX + 0.5, targetY, targetZ + 0.5);
         player.setYRot(yaw);
