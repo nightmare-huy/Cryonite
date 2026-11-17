@@ -66,8 +66,6 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         super(menu, playerInventory, title);
         this.imageWidth = 320;
         this.imageHeight = 200;
-        // Запрещаем рисование стандартной надписи "Инвентарь" поверх экрана терминала.
-        this.playerInventoryTitle = net.minecraft.network.chat.Component.literal("");
     }
 
     @Override
