@@ -48,6 +48,7 @@ neoForge {
         // Boots a headless server, runs every registered GameTest of this mod and exits.
         gameTestServer {
             type = "gameTestServer"
+            programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
