@@ -1,6 +1,7 @@
 package dev.nightmarehuy.cryonite.registry;
 
 import dev.nightmarehuy.cryonite.Cryonite;
+import dev.nightmarehuy.cryonite.block.DimensionTerminalBlock;
 import dev.nightmarehuy.cryonite.block.PrimordialSmelterBlock;
 import dev.nightmarehuy.cryonite.block.RawInferniteBlock;
 import dev.nightmarehuy.cryonite.block.RawVoidBlock;
@@ -128,7 +129,9 @@ public final class ModBlocks {
                     .randomTicks());
 
     /** Spatial Dimension Terminal: glowing screen, opens the Cover Flow dimension selector on right click. */
-    public static final DeferredBlock<Block> DIMENSION_TERMINAL = REGISTER.registerSimpleBlock("dimension_terminal",
+    public static final DeferredBlock<DimensionTerminalBlock> DIMENSION_TERMINAL = REGISTER.registerBlock(
+            "dimension_terminal",
+            DimensionTerminalBlock::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
