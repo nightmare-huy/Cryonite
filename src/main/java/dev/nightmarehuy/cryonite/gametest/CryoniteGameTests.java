@@ -1112,14 +1112,15 @@ public final class CryoniteGameTests {
             // Place a terminal at the start position (return terminal will be placed nearby)
             helper.setBlock(startPos, ModBlocks.DIMENSION_TERMINAL.get());
 
-            // Жёсткая проверка: измерение шахты должно быть зарегистрировано в реестре измерений сервера.
-            var dimRegistry = helper.getLevel().getServer().registryAccess().registryOrThrow(Registries.DIMENSION);
-            var miningKey = ResourceKey.create(Registries.DIMENSION, Cryonite.id("mining_dimension"));
-            check(dimRegistry.getHolder(miningKey).isPresent(),
-                    "mining_dimension must be registered in dimension registry (JSON invalid?)");
+            // Жёсткая проверка: тип измерения шахты должен быть зарегистрирован в реестре сервера.
+            var dimTypeRegistry = helper.getLevel().getServer().registryAccess().registryOrThrow(Registries.DIMENSION_TYPE);
+            var miningTypeKey = ResourceKey.create(Registries.DIMENSION_TYPE, Cryonite.id("mining_dimension"));
+            check(dimTypeRegistry.getHolder(miningTypeKey).isPresent(),
+                    "mining_dimension type must be registered in dimension type registry (JSON invalid?)");
 
             // Проверяем, загружен ли уровень на тестовом сервере.
-            ServerLevel miningLevel = helper.getLevel().getServer().getLevel(miningKey);
+            var miningLevelKey = ResourceKey.create(Registries.DIMENSION, Cryonite.id("mining_dimension"));
+            ServerLevel miningLevel = helper.getLevel().getServer().getLevel(miningLevelKey);
 
             ModNetworking.teleportPlayer(player, Cryonite.id("mining_dimension"));
 
