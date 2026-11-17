@@ -99,7 +99,7 @@ public final class ModNetworking {
         }
 
         // 7. Удаляем игрока из текущего уровня и добавляем в целевой (ручной перенос измерения)
-        source.removeEntity(player);
+        source.removeEntityImmediately(player);
         targetLevel.addFreshEntity(player);
         player.setPos(targetX + 0.5, targetY, targetZ + 0.5);
         player.setYRot(yaw);
