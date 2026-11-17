@@ -72,15 +72,11 @@ public final class ModNetworking {
         float yaw = player.getYRot();
         float pitch = player.getXRot();
 
-        // 2. Получаем целевой уровень; если не загружен — загружаем через PlayerList.changeDimension
+        // 2. Получаем целевой уровень; если не загружен — отменяем teleport (player remains in overworld)
         ServerLevel targetLevel = source.getServer().getLevel(targetKey);
         if (targetLevel == null) {
-            source.getServer().getPlayerList().changeDimension(player, targetKey, false);
-            targetLevel = source.getServer().getLevel(targetKey);
-            if (targetLevel == null) {
-                player.displayClientMessage(Component.literal("Не удалось загрузить измерение: " + target), true);
-                return;
-            }
+            player.displayClientMessage(Component.literal("Измерение не загружено: " + target), true);
+            return;
         }
 
         // 3. Принудительно прогружаем целевой чанк для корректных проверок блоков и Heightmap
