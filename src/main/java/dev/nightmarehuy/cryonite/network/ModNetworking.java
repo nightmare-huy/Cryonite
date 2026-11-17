@@ -77,9 +77,9 @@ public final class ModNetworking {
         if (targetLevel == null) {
             final int loadX = targetX;
             final int loadZ = targetZ;
-            player.changeDimension((ServerPlayer.DimensionTransition) (entity, currentLevel, targetLevel1) -> {
+            player.changeDimension(new ServerPlayer.DimensionTransition(targetKey, (entity, currentLevel, targetLevel1) -> {
                 return net.minecraft.world.phys.Vec3.atBottomCenterof(targetLevel1.getBlockPos(loadX, 0, loadZ));
-            });
+            }));
             targetLevel = player.serverLevel();
             if (targetLevel == null || !targetLevel.dimension().equals(targetKey)) {
                 player.displayClientMessage(Component.literal("Не удалось загрузить измерение: " + target), true);
