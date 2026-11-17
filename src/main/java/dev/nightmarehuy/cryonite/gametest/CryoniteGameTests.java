@@ -15,6 +15,7 @@ import dev.nightmarehuy.cryonite.network.ToggleToolModePayload;
 import dev.nightmarehuy.cryonite.recipe.PrimordialRecipeInput;
 import dev.nightmarehuy.cryonite.registry.ModBlocks;
 import dev.nightmarehuy.cryonite.registry.ModDataComponents;
+import dev.nightmarehuy.cryonite.registry.ModMenuTypes;
 import dev.nightmarehuy.cryonite.registry.ModFeatures;
 import dev.nightmarehuy.cryonite.registry.ModItems;
 import dev.nightmarehuy.cryonite.registry.ModRecipes;
