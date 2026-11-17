@@ -137,6 +137,7 @@ public final class ModLanguageProvider {
 
             add("death.attack.cryonite.aether_burst", "%1$s was erased by Aether");
 
+            add("message.cryonite.terminal.loading", "Loading dimensions...");
             add("message.cryonite.terminal.teleporting", "Opening a rift to %s...");
             add("message.cryonite.terminal.teleported", "You have arrived.");
             add("message.cryonite.terminal.teleport", "TELEPORT");
@@ -413,6 +414,7 @@ public final class ModLanguageProvider {
             // Имена измерений в карусели терминала.
             add("dimension.cryonite.mining_dimension", "Шахтёрское измерение");
 
+            add("message.cryonite.terminal.loading", "Загрузка измерений...");
             add("message.cryonite.terminal.teleporting", "Открываю разлом в %s...");
             add("message.cryonite.terminal.teleported", "Вы прибыли.");
             add("message.cryonite.terminal.teleport", "ТЕЛЕПОРТАЦИЯ");
