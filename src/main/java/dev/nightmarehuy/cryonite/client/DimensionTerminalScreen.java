@@ -66,6 +66,8 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         super(menu, playerInventory, title);
         this.imageWidth = 320;
         this.imageHeight = 200;
+        // Запрещаем рисование стандартной надписи "Инвентарь" поверх экрана терминала.
+        this.playerInventoryTitle = net.minecraft.network.chat.Component.literal("");
     }
 
     @Override
@@ -108,9 +110,9 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
 
         // Гарантированно добавляем 4 главных измерения, если их нет в сете.
         addIfMissing(entries, Cryonite.id("mining_dimension"), "Шахтёрское измерение");
-        addIfMissing(entries, new ResourceLocation("minecraft", "overworld"), "Обычный мир");
-        addIfMissing(entries, new ResourceLocation("minecraft", "the_nether"), "Незер");
-        addIfMissing(entries, new ResourceLocation("minecraft", "the_end"), "Энд");
+        addIfMissing(entries, ResourceLocation.fromNamespaceAndPath("minecraft", "overworld"), "Обычный мир");
+        addIfMissing(entries, ResourceLocation.fromNamespaceAndPath("minecraft", "the_nether"), "Незер");
+        addIfMissing(entries, ResourceLocation.fromNamespaceAndPath("minecraft", "the_end"), "Энд");
 
         cards.clear();
         cards.addAll(entries);
@@ -433,12 +435,6 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         for (int i = 0; i < ores.size(); i++) {
             graphics.renderItem(ores.get(i), x + i * 22, y);
         }
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        // Не рисуем стандартную надпись "Инвентарь" (playerInventoryTitle) посреди экрана терминала.
-        // Заголовок уже рисуется в render() поверх фона.
     }
 
     @Override
