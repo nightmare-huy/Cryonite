@@ -42,8 +42,6 @@ public final class DataGenerators {
         generator.addProvider(event.includeClient(), new ModLanguageProvider.Russian(output));
 
         // ---- server data
-        ModDimensionProvider.register(event);
-
         ModTagProviders.Blocks blockTags = new ModTagProviders.Blocks(output, lookup, files);
         generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(event.includeServer(), new ModTagProviders.Items(output, lookup, blockTags.contentsGetter(), files));
