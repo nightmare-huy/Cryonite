@@ -1118,27 +1118,56 @@ public final class CryoniteGameTests {
             check(dimTypeRegistry.getHolder(miningTypeKey).isPresent(),
                     "mining_dimension type must be registered in dimension type registry (JSON invalid?)");
 
-            // Проверяем, загружен ли уровень на тестовом сервере.
+            // Жёсткая проверка: уровень Шахтёрского измерения должен быть доступен для загрузки.
             var miningLevelKey = ResourceKey.create(Registries.DIMENSION, Cryonite.id("mining_dimension"));
-            ServerLevel miningLevel = helper.getLevel().getServer().getLevel(miningLevelKey);
+            var miningRegistry = helper.getLevel().getServer().registryAccess().registryOrThrow(Registries.DIMENSION);
+            check(miningRegistry.getHolder(miningLevelKey).isPresent(),
+                    "mining_dimension must be registered in dimension registry (JSON invalid?)");
 
+            // Телепортируем в Шахтёрское измерение (метод сам загрузит уровень если нужно).
             ModNetworking.teleportPlayer(player, Cryonite.id("mining_dimension"));
 
-            if (miningLevel != null) {
-                // Измерение загружено — проверяем, что телепорт сработал.
-                check(!player.serverLevel().equals(source),
-                        "player must teleport to mining_dimension, still in " + source.dimension());
+            // Игрок ДОЛЖЕН оказаться в Шахтёрском измерении, а не в Обычном мире.
+            check(player.serverLevel().dimension().equals(miningLevelKey),
+                    "player must be in mining_dimension after teleport, still in " + player.serverLevel().dimension());
+            check(!player.serverLevel().equals(source),
+                    "player must leave the source dimension, still in " + source.dimension());
 
-                // Verify X, Z are preserved 1:1 (no /8 Nether scaling, no reset to 0,0)
-                double dx = Math.abs(player.getX() - startPos.getX() - 0.5);
-                double dz = Math.abs(player.getZ() - startPos.getZ() - 0.5);
-                check(dx < 1.0 && dz < 1.0,
-                        "X,Z must be preserved 1:1, got dx=" + dx + " dz=" + dz);
-            } else {
-                // Измерение не загружено — teleportPlayer должен обработать это без краша.
-                check(player.serverLevel().equals(source),
-                        "player must stay in source dimension when target not loaded");
-            }
+            // Verify X, Z are preserved 1:1 (no /8 Nether scaling, no reset to 0,0)
+            double dx = Math.abs(player.getX() - startPos.getX() - 0.5);
+            double dz = Math.abs(player.getZ() - startPos.getZ() - 0.5);
+            check(dx < 1.0 && dz < 1.0,
+                    "X,Z must be preserved 1:1, got dx=" + dx + " dz=" + dz);
+
+            helper.succeed();
+        } finally {
+            helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void dimensionTerminalNetherNotOnRoof(GameTestHelper helper) {
+        ServerPlayer player = mockPlayer(helper);
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            ServerLevel source = player.serverLevel();
+
+            // Place the player at a known position
+            BlockPos startPos = helper.absolutePos(new BlockPos(8, 8, 8));
+            player.moveTo(startPos.getX() + 0.5, startPos.getY(), startPos.getZ() + 0.5, 0.0F, 0.0F);
+            helper.setBlock(startPos, ModBlocks.DIMENSION_TERMINAL.get());
+
+            // Телепортируем в Незер.
+            ModNetworking.teleportPlayer(player, new ResourceLocation("minecraft", "the_nether"));
+
+            // Игрок должен оказаться в Незере.
+            check(player.serverLevel().dimension().equals(ResourceKey.create(Registries.DIMENSION, new ResourceLocation("minecraft", "the_nether"))),
+                    "player must be in the_nether after teleport, in " + player.serverLevel().dimension());
+
+            // Игрок НЕ должен быть на бедроковой крыше (Y >= 120). Ожидаем Y = 35..95.
+            int playerY = player.getBlockY();
+            check(playerY > 25 && playerY < 115,
+                    "player must not be on Nether roof, Y=" + playerY + " (expected 35..95)");
 
             helper.succeed();
         } finally {

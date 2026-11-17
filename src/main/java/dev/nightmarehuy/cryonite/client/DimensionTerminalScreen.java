@@ -442,6 +442,13 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
     }
 
     @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // Полностью пустой: предотвращаем рисование ванильных надписей
+        // "Инвентарь" (playerInventoryTitle) и заголовка контейнера (title)
+        // позади карточек Cover Flow. Заголовок рисуется только один раз в render().
+    }
+
+    @Override
     public boolean isPauseScreen() {
         return false;
     }

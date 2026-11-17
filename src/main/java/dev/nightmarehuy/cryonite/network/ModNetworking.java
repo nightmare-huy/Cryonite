@@ -59,16 +59,11 @@ public final class ModNetworking {
      * <p>
      * Preserves the player's exact X and Z (no Nether scaling), finds a safe Y on the same column,
      * ensures the landing spot is safe, and places a return terminal next to the player.
-     * Requires the target level to be loaded (server.getLevel(targetKey) != null).
+     * Loads the target dimension level automatically if it is not yet loaded on the server.
      */
     public static void teleportPlayer(ServerPlayer player, ResourceLocation target) {
         ServerLevel source = player.serverLevel();
         ResourceKey<Level> targetKey = ResourceKey.create(Registries.DIMENSION, target);
-        ServerLevel targetLevel = source.getServer().getLevel(targetKey);
-        if (targetLevel == null) {
-            player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
-            return;
-        }
 
         // 1. Сохраняем точные координаты игрока 1:1 (нет сброса в 0,0, нет деления на 8 для Незера)
         int targetX = player.getBlockX();
@@ -77,7 +72,18 @@ public final class ModNetworking {
         float yaw = player.getYRot();
         float pitch = player.getXRot();
 
-        // 2. Принудительно прогружаем целевой чанк для корректных проверок блоков и Heightmap
+        // 2. Получаем целевой уровень; если не загружен — загружаем через changeDimension
+        ServerLevel targetLevel = source.getServer().getLevel(targetKey);
+        if (targetLevel == null) {
+            player.changeDimension(targetKey);
+            targetLevel = player.serverLevel();
+            if (targetLevel == null || !targetLevel.dimension().equals(targetKey)) {
+                player.displayClientMessage(Component.literal("Не удалось загрузить измерение: " + target), true);
+                return;
+            }
+        }
+
+        // 3. Принудительно прогружаем целевой чанк для корректных проверок блоков и Heightmap
         targetLevel.getChunk(targetX >> 4, targetZ >> 4);
 
         // 3. Проверяем, есть ли уже блок Пространственного Терминала рядом на тех же X, Z
@@ -104,7 +110,15 @@ public final class ModNetworking {
         // сохраняя 1:1 X/Z, безопасную Y и yaw/pitch.
         player.teleportTo(targetLevel, targetX + 0.5, targetY, targetZ + 0.5, yaw, pitch);
 
-        player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
+        // Подтверждение с реальным ID измерения и координатами.
+        String dimName = Component.translatable("dimension." + target.getNamespace() + "." + target.getPath())
+                .getString();
+        if (dimName.equals("dimension." + target.getNamespace() + "." + target.getPath())) {
+            dimName = target.getPath();
+        }
+        player.displayClientMessage(
+                Component.literal("⚡ Телепортация завершена: " + dimName + " [" + target + "] (" + targetX + ", " + targetY + ", " + targetZ + ")"),
+                true);
     }
 
     /**
