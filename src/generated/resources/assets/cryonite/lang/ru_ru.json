@@ -148,6 +148,7 @@
   "message.cryonite.item_burned": "Раскалённый осколок инфернита сжёг: %s!",
   "message.cryonite.mode_state": "%s: %s",
   "message.cryonite.mode_unsupported": "Предмет в руке не поддерживает режим «%s»",
+  "message.cryonite.terminal.loading": "Загрузка измерений...",
   "message.cryonite.terminal.teleport": "ТЕЛЕПОРТАЦИЯ",
   "message.cryonite.terminal.teleported": "Вы прибыли.",
   "message.cryonite.terminal.teleporting": "Открываю разлом в %s...",

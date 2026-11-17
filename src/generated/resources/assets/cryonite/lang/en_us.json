@@ -148,6 +148,7 @@
   "message.cryonite.item_burned": "The Molten Infernite Shard burned %s!",
   "message.cryonite.mode_state": "%s: %s",
   "message.cryonite.mode_unsupported": "The held item does not support %s",
+  "message.cryonite.terminal.loading": "Loading dimensions...",
   "message.cryonite.terminal.teleport": "TELEPORT",
   "message.cryonite.terminal.teleported": "You have arrived.",
   "message.cryonite.terminal.teleporting": "Opening a rift to %s...",
