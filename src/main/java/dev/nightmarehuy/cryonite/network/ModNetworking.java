@@ -65,23 +65,8 @@ public final class ModNetworking {
         ResourceKey<Level> targetKey = ResourceKey.create(Registries.DIMENSION, target);
         ServerLevel targetLevel = source.getServer().getLevel(targetKey);
         if (targetLevel == null) {
-            // Target dimension not loaded yet — load it (e.g. mining dimension on a fresh test server).
-            try {
-                targetLevel = source.getServer().loadLevel(
-                        targetKey,
-                        source.getLevelData().getWorldGenOptions().seed(),
-                        source.getLevelData().isHardcore(),
-                        source.isDebug(),
-                        net.minecraft.world.level.levelgen.WorldGenVersion.DEFAULT
-                ).join();
-            } catch (Exception e) {
-                player.displayClientMessage(Component.literal("Failed to load dimension: " + target), true);
-                return;
-            }
-            if (targetLevel == null) {
-                player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
-                return;
-            }
+            player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
+            return;
         }
 
         // 1. Сохраняем точные координаты игрока 1:1 (нет сброса в 0,0, нет деления на 8 для Незера)
@@ -114,11 +99,9 @@ public final class ModNetworking {
         }
 
         // 7. Перемещаем игрока в целевой уровень и телепортируем на точные координаты.
-        // addFreshEntity добавляет игрока в целевой уровень и устанавливает player.level = targetLevel.
-        targetLevel.addFreshEntity(player);
-        player.setPos(targetX + 0.5, targetY, targetZ + 0.5);
-        player.setYRot(yaw);
-        player.setXRot(pitch);
+        // teleportTo(ServerLevel, ...) корректно меняет измерение игрока (обновляет player.level),
+        // сохраняя 1:1 X/Z, безопасную Y и yaw/pitch.
+        player.teleportTo(targetLevel, targetX + 0.5, targetY, targetZ + 0.5, yaw, pitch);
 
         player.displayClientMessage(Component.translatable("message.cryonite.terminal.teleported"), true);
     }
