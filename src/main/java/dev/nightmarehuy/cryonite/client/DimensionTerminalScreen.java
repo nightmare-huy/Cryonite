@@ -2,18 +2,20 @@ package dev.nightmarehuy.cryonite.client;
 
 import dev.nightmarehuy.cryonite.Cryonite;
 import dev.nightmarehuy.cryonite.menu.DimensionTerminalMenu;
-import dev.nightmarehuy.cryonite.network.ListDimensionsRequestPayload;
 import dev.nightmarehuy.cryonite.network.TeleportDimensionPayload;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Quaternionf;
@@ -62,14 +64,14 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
 
     public DimensionTerminalScreen(DimensionTerminalMenu menu, net.minecraft.world.entity.player.Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 256;
+        this.imageWidth = 320;
         this.imageHeight = 200;
     }
 
     @Override
     protected void init() {
         super.init();
-        requestDimensions();
+        populateDimensionsFromClient();
 
         int cx = width / 2;
         int cy = height / 2;
@@ -85,9 +87,47 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         updateTeleportButton();
     }
 
-    /** Запросить с сервера список всех доступных измерений. */
-    private void requestDimensions() {
-        PacketDistributor.sendToServer(new ListDimensionsRequestPayload());
+    /** Заполнить карточки измерений немедленно из клиентского соединения (без ожидания пакета сервера). */
+    private void populateDimensionsFromClient() {
+        var minecraft = Minecraft.getInstance();
+        var player = minecraft.player;
+        if (player == null || player.connection == null) {
+            return;
+        }
+
+        List<DimensionTerminalClient.DimensionEntry> entries = new ArrayList<>();
+        for (ResourceKey<Level> key : player.connection.levels()) {
+            ResourceLocation loc = key.location();
+            String name = Component.translatable("dimension." + loc.getNamespace() + "." + loc.getPath())
+                    .getString();
+            if (name.equals("dimension." + loc.getNamespace() + "." + loc.getPath())) {
+                name = loc.getPath();
+            }
+            entries.add(new DimensionTerminalClient.DimensionEntry(loc, name));
+        }
+
+        // Гарантированно добавляем 4 главных измерения, если их нет в сете.
+        addIfMissing(entries, Cryonite.id("mining_dimension"), "Шахтёрское измерение");
+        addIfMissing(entries, new ResourceLocation("minecraft", "overworld"), "Обычный мир");
+        addIfMissing(entries, new ResourceLocation("minecraft", "the_nether"), "Незер");
+        addIfMissing(entries, new ResourceLocation("minecraft", "the_end"), "Энд");
+
+        cards.clear();
+        cards.addAll(entries);
+        if (selectedIndex >= cards.size()) {
+            selectedIndex = cards.size() - 1;
+        }
+        currentScroll = selectedIndex;
+        updateTeleportButton();
+    }
+
+    private static void addIfMissing(List<DimensionTerminalClient.DimensionEntry> entries, ResourceLocation key, String name) {
+        for (var e : entries) {
+            if (e.key().equals(key)) {
+                return;
+            }
+        }
+        entries.add(new DimensionTerminalClient.DimensionEntry(key, name));
     }
 
     /** Установить карточки из ответа сервера (вызывается из обработчика пакета). */
@@ -236,11 +276,6 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
 
         if (cards.isEmpty() && !DimensionTerminalClient.dimensions.isEmpty()) {
             setCards(new ArrayList<>(DimensionTerminalClient.dimensions));
-        }
-        if (cards.isEmpty()) {
-            graphics.drawCenteredString(font, Component.translatable("message.cryonite.terminal.loading"), cx, cy - 10, 0xFFFFFF);
-            super.render(graphics, mouseX, mouseY, partialTick);
-            return;
         }
 
         // Рисуем карточки от краёв к центру, чтобы центральная была поверх боковых.
@@ -398,6 +433,12 @@ public class DimensionTerminalScreen extends AbstractContainerScreen<DimensionTe
         for (int i = 0; i < ores.size(); i++) {
             graphics.renderItem(ores.get(i), x + i * 22, y);
         }
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        // Не рисуем стандартную надпись "Инвентарь" (playerInventoryTitle) посреди экрана терминала.
+        // Заголовок уже рисуется в render() поверх фона.
     }
 
     @Override
