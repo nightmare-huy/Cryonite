@@ -65,8 +65,23 @@ public final class ModNetworking {
         ResourceKey<Level> targetKey = ResourceKey.create(Registries.DIMENSION, target);
         ServerLevel targetLevel = source.getServer().getLevel(targetKey);
         if (targetLevel == null) {
-            player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
-            return;
+            // Target dimension not loaded yet — load it (e.g. mining dimension on a fresh test server).
+            try {
+                targetLevel = source.getServer().loadLevel(
+                        targetKey,
+                        source.getLevelData().getWorldGenOptions().seed(),
+                        source.getLevelData().isHardcore(),
+                        source.isDebug(),
+                        net.minecraft.world.level.levelgen.WorldGenVersion.DEFAULT
+                ).join();
+            } catch (Exception e) {
+                player.displayClientMessage(Component.literal("Failed to load dimension: " + target), true);
+                return;
+            }
+            if (targetLevel == null) {
+                player.displayClientMessage(Component.literal("Unknown dimension: " + target), true);
+                return;
+            }
         }
 
         // 1. Сохраняем точные координаты игрока 1:1 (нет сброса в 0,0, нет деления на 8 для Незера)
@@ -99,9 +114,7 @@ public final class ModNetworking {
         }
 
         // 7. Перемещаем игрока в целевой уровень и телепортируем на точные координаты.
-        // removePlayer убирает из списка игроков исходного уровня,
-        // addFreshEntity добавляет в целевой и устанавливает player.level = targetLevel.
-        source.removePlayer(player);
+        // addFreshEntity добавляет игрока в целевой уровень и устанавливает player.level = targetLevel.
         targetLevel.addFreshEntity(player);
         player.setPos(targetX + 0.5, targetY, targetZ + 0.5);
         player.setYRot(yaw);
