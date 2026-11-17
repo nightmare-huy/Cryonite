@@ -99,9 +99,9 @@ public final class ModNetworking {
         }
 
         // 7. Перемещаем игрока в целевой уровень и телепортируем на точные координаты.
-        // removeEntityImmediately убирает игрока из исходного уровня (включая список игроков),
+        // removePlayer убирает из списка игроков исходного уровня,
         // addFreshEntity добавляет в целевой и устанавливает player.level = targetLevel.
-        source.removeEntityImmediately(player);
+        source.removePlayer(player);
         targetLevel.addFreshEntity(player);
         player.setPos(targetX + 0.5, targetY, targetZ + 0.5);
         player.setYRot(yaw);
